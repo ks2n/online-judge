@@ -1,3 +1,5 @@
+import threading
+
 import markdown as _markdown
 import bleach
 from django.utils.html import escape
@@ -6,9 +8,14 @@ from pymdownx import superfences, arithmatex
 from django.conf import settings
 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 
-from judge.markdown_extensions import YouTubeExtension, EmoticonExtension
+from judge.markdown_extensions import (
+    YouTubeExtension,
+    EmoticonExtension,
+    BlockMathPaddingExtension,
+)
 
 EXTENSIONS = [
+    BlockMathPaddingExtension(),
     "pymdownx.arithmatex",
     "pymdownx.magiclink",
     "pymdownx.betterem",
@@ -57,6 +64,7 @@ EXTENSION_CONFIGS = {
         "auto_title_map": {
             "Text Only": "",
         },
+        "guess_lang": False,
     },
 }
 
@@ -208,11 +216,22 @@ def _sanitize_iframe_autoplay(soup):
     return soup
 
 
+_markdown_local = threading.local()
+
+
+def _get_markdown_instance():
+    inst = getattr(_markdown_local, "instance", None)
+    if inst is None:
+        inst = _markdown.Markdown(
+            extensions=EXTENSIONS, extension_configs=EXTENSION_CONFIGS
+        )
+        _markdown_local.instance = inst
+    return inst
+
+
 def markdown(value, lazy_load=False):
-    extensions = EXTENSIONS
-    html = _markdown.markdown(
-        value, extensions=extensions, extension_configs=EXTENSION_CONFIGS
-    )
+    md = _get_markdown_instance()
+    html = md.reset().convert(value)
 
     html = bleach.clean(html, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRS)
 

@@ -6,6 +6,7 @@ import json
 
 import reversion
 from django.apps import apps
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
 from django.core.files.storage import default_storage
@@ -14,10 +15,19 @@ from django.utils.translation import gettext as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
+from judge.utils.ratelimit import ratelimit
 from judge.utils.upload_handler import UploadHandler
 from judge.widgets.direct_upload import get_upload_token_data, UPLOAD_TOKEN_PREFIX
 
+PAGEDOWN_IMAGE_MAX_SIZE = getattr(
+    settings, "PAGEDOWN_IMAGE_UPLOAD_MAX_SIZE", 5 * 1024 * 1024
+)
+PAGEDOWN_IMAGE_UPLOAD_PATH = getattr(
+    settings, "PAGEDOWN_IMAGE_UPLOAD_PATH", "pagedown-uploads"
+)
 
+
+@ratelimit(key="user", rate="60/m")
 @login_required
 @require_POST
 def get_upload_config(request):
@@ -71,8 +81,8 @@ def get_upload_config(request):
         )
 
 
-@login_required
 @csrf_exempt
+@login_required
 @require_POST
 def local_upload(request):
     """
@@ -281,3 +291,144 @@ def delete_file(request):
 
     except Exception:
         return JsonResponse({"error": _("Failed to delete file")}, status=500)
+
+
+@login_required
+@require_POST
+def pagedown_upload_config(request):
+    """
+    Return a presigned upload config for pagedown image uploads.
+
+    When the storage backend is S3/R2, the response contains a presigned PUT
+    URL so the browser uploads image bytes directly to object storage,
+    bypassing Django. When storage is local, the response signals a fallback
+    to the legacy /pagedown/image-upload/ endpoint.
+
+    Request: filename, content_type, file_size
+    Response (S3): storage_type='s3', upload_url, method, file_key, file_url
+    Response (local): storage_type='local'
+    """
+    if not getattr(settings, "PAGEDOWN_IMAGE_UPLOAD_ENABLED", False):
+        return JsonResponse({"error": _("Image upload is disabled")}, status=400)
+
+    try:
+        if request.content_type == "application/json":
+            data = json.loads(request.body)
+        else:
+            data = request.POST
+
+        filename = data.get("filename", "").strip()
+        content_type = data.get("content_type", "").strip()
+        file_size = int(data.get("file_size", 0))
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({"error": _("Invalid request data")}, status=400)
+
+    if not filename:
+        return JsonResponse({"error": _("filename is required")}, status=400)
+    if not content_type.startswith("image/"):
+        return JsonResponse({"error": _("Only image uploads are allowed")}, status=400)
+    if file_size <= 0 or file_size > PAGEDOWN_IMAGE_MAX_SIZE:
+        return JsonResponse(
+            {"error": _("File size exceeds maximum allowed")}, status=400
+        )
+
+    try:
+        config = UploadHandler.get_upload_config(
+            profile=request.profile,
+            upload_to=PAGEDOWN_IMAGE_UPLOAD_PATH,
+            filename=filename,
+            content_type=content_type,
+            file_size=file_size,
+            max_size=PAGEDOWN_IMAGE_MAX_SIZE,
+            prefix="pd",
+            object_id=request.profile.id,
+        )
+    except ValueError as e:
+        return JsonResponse({"error": str(e)}, status=400)
+    except Exception:
+        return JsonResponse(
+            {"error": _("Failed to generate upload configuration")}, status=500
+        )
+
+    if config.get("storage_type") != "s3":
+        return JsonResponse({"storage_type": "local"})
+
+    return JsonResponse(
+        {
+            "storage_type": "s3",
+            "upload_url": config["upload_url"],
+            "method": config["method"],
+            "file_key": config["file_key"],
+            "file_url": config["file_url"],
+            "content_type": config["content_type"],
+        }
+    )
+
+
+SUBMISSION_UPLOAD_MAX_SIZE = getattr(
+    settings, "SUBMISSION_UPLOAD_MAX_SIZE", 50 * 1024 * 1024
+)
+SUBMISSION_UPLOAD_PATH = "submissions"
+
+
+@ratelimit(key="user", rate="30/m")
+@login_required
+@require_POST
+def submission_upload_config(request):
+    """
+    Return a presigned upload config for output-only submission files.
+
+    Mirrors pagedown_upload_config but for submission output files. When the
+    storage backend is S3/R2, returns a presigned URL the browser uploads to
+    directly, bypassing Django. When storage is local, signals fallback to the
+    legacy multipart submission path.
+    """
+    try:
+        if request.content_type == "application/json":
+            data = json.loads(request.body)
+        else:
+            data = request.POST
+        filename = data.get("filename", "").strip()
+        content_type = data.get("content_type", "application/octet-stream")
+        file_size = int(data.get("file_size", 0))
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({"error": _("Invalid request data")}, status=400)
+
+    if not filename:
+        return JsonResponse({"error": _("filename is required")}, status=400)
+    if file_size <= 0 or file_size > SUBMISSION_UPLOAD_MAX_SIZE:
+        return JsonResponse(
+            {"error": _("File size exceeds maximum allowed")}, status=400
+        )
+
+    try:
+        config = UploadHandler.get_upload_config(
+            profile=request.profile,
+            upload_to=SUBMISSION_UPLOAD_PATH,
+            filename=filename,
+            content_type=content_type,
+            file_size=file_size,
+            max_size=SUBMISSION_UPLOAD_MAX_SIZE,
+            prefix="sub",
+            object_id=request.profile.id,
+        )
+    except ValueError as e:
+        return JsonResponse({"error": str(e)}, status=400)
+    except Exception:
+        return JsonResponse(
+            {"error": _("Failed to generate upload configuration")}, status=500
+        )
+
+    if config.get("storage_type") != "s3":
+        return JsonResponse({"storage_type": "local"})
+
+    return JsonResponse(
+        {
+            "storage_type": "s3",
+            "upload_url": config["upload_url"],
+            "method": config["method"],
+            "file_key": config["file_key"],
+            "file_url": config["file_url"],
+            "content_type": config["content_type"],
+        }
+    )

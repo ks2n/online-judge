@@ -1,6 +1,5 @@
 from django.conf import settings
-from django.conf.urls import include
-from django.urls import re_path, path
+from django.urls import include, re_path, path
 from django.conf.urls.static import static as url_static
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
@@ -66,6 +65,14 @@ from judge.views import (
 )
 from judge.views import package_import
 from judge.views import quiz_import
+from judge.views.problem_attachment import (
+    attachment_delete,
+    attachment_download,
+    attachment_reorder,
+    attachment_update,
+    attachment_upload,
+    attachments_tab,
+)
 from judge.views.problem_data import (
     ProblemDataView,
     ProblemSubmissionDiff,
@@ -462,6 +469,36 @@ urlpatterns = [
                     r"^/data/(?P<path>.+)$", problem_data_file, name="problem_data_file"
                 ),
                 re_path(
+                    r"^/attachments$",
+                    attachments_tab,
+                    name="problem_attachments",
+                ),
+                re_path(
+                    r"^/attachments/upload$",
+                    attachment_upload,
+                    name="problem_attachment_upload",
+                ),
+                re_path(
+                    r"^/attachments/reorder$",
+                    attachment_reorder,
+                    name="problem_attachment_reorder",
+                ),
+                re_path(
+                    r"^/attachments/(?P<attachment_id>\d+)/delete$",
+                    attachment_delete,
+                    name="problem_attachment_delete",
+                ),
+                re_path(
+                    r"^/attachments/(?P<attachment_id>\d+)/update$",
+                    attachment_update,
+                    name="problem_attachment_update",
+                ),
+                re_path(
+                    r"^/attachments/(?P<attachment_id>\d+)$",
+                    attachment_download,
+                    name="problem_attachment_download",
+                ),
+                re_path(
                     r"^/tickets$",
                     ticket.ProblemTicketListView.as_view(),
                     name="problem_ticket_list",
@@ -809,7 +846,7 @@ urlpatterns = [
                 ),
                 re_path(
                     r"^/edit_contest/(?P<contest>\w+)$",
-                    course.EditCourseContest.as_view(),
+                    course.CourseContestEditRedirect.as_view(),
                     name="edit_course_contest",
                 ),
                 re_path(
@@ -1034,6 +1071,11 @@ urlpatterns = [
             [
                 re_path(r"^$", contests.ContestDetail.as_view(), name="contest_view"),
                 re_path(
+                    r"^/edit$",
+                    contests.ContestEdit.as_view(),
+                    name="contest_edit",
+                ),
+                re_path(
                     r"^/problems$",
                     contests.ContestProblems.as_view(),
                     name="contest_problems",
@@ -1182,7 +1224,7 @@ urlpatterns = [
                 ),
                 re_path(
                     r"^/contest/edit/(?P<contest>\w+)",
-                    organization.EditOrganizationContest.as_view(),
+                    organization.OrganizationContestEditRedirect.as_view(),
                     name="organization_contest_edit",
                 ),
                 re_path(
@@ -1329,6 +1371,13 @@ urlpatterns = [
         ),
     ),
     re_path(r"^blog/", blog.PostList.as_view(), name="blog_post_list"),
+    # Must come BEFORE blog_post: blog_post's slug regex (.*)$ is greedy and
+    # would otherwise swallow `/edit`.
+    re_path(
+        r"^post/(?P<id>\d+)-(?P<slug>.*)/edit$",
+        blog.EditBlogPost.as_view(),
+        name="edit_blog_post",
+    ),
     re_path(
         r"^post/(?P<id>\d+)-(?P<slug>.*)$", blog.PostView.as_view(), name="blog_post"
     ),
@@ -1864,6 +1913,16 @@ urlpatterns = [
         r"^api/upload/delete/$",
         direct_upload.delete_file,
         name="direct_upload_delete",
+    ),
+    re_path(
+        r"^api/upload/pagedown/$",
+        direct_upload.pagedown_upload_config,
+        name="pagedown_upload_config",
+    ),
+    re_path(
+        r"^submission/upload-config$",
+        direct_upload.submission_upload_config,
+        name="submission_upload_config",
     ),
 ] + url_static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

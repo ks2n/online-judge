@@ -1,3 +1,5 @@
+from datetime import timezone as datetime_timezone
+
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
@@ -9,7 +11,6 @@ from django.utils.functional import cached_property
 from django.utils.translation import gettext, gettext_lazy as _
 from django.contrib.contenttypes.fields import GenericRelation
 
-from jsonfield import JSONField
 from lupa import LuaRuntime
 from moss import (
     MOSS_LANG_C,
@@ -98,13 +99,13 @@ class Contest(models.Model, PageVotable, Bookmarkable):
         (SCOREBOARD_AFTER_PARTICIPATION, _("Hidden for duration of participation")),
     )
     key = models.CharField(
-        max_length=20,
+        max_length=30,
         verbose_name=_("contest id"),
         unique=True,
         validators=[RegexValidator("^[a-z0-9]+$", _("Contest id must be ^[a-z0-9]+$"))],
     )
     name = models.CharField(
-        max_length=100, verbose_name=_("contest name"), db_index=True
+        max_length=150, verbose_name=_("contest name"), db_index=True
     )
     authors = models.ManyToManyField(
         Profile,
@@ -289,7 +290,7 @@ class Contest(models.Model, PageVotable, Bookmarkable):
     )
     banned_users = models.ManyToManyField(
         Profile,
-        verbose_name=_("personae non gratae"),
+        verbose_name=_("Banned users"),
         blank=True,
         help_text=_("Bans the selected users from joining this contest."),
     )
@@ -300,7 +301,7 @@ class Contest(models.Model, PageVotable, Bookmarkable):
         choices=contest_format.choices(),
         help_text=_("The contest format module to use."),
     )
-    format_config = JSONField(
+    format_config = models.JSONField(
         verbose_name=_("contest format configuration"),
         null=True,
         blank=True,
@@ -376,7 +377,7 @@ class Contest(models.Model, PageVotable, Bookmarkable):
                 )
 
     def save(self, *args, **kwargs):
-        earliest_start_time = datetime(1999, 5, 4).replace(tzinfo=timezone.utc)
+        earliest_start_time = datetime(1999, 5, 4).replace(tzinfo=datetime_timezone.utc)
         if self.start_time < earliest_start_time:
             self.start_time = earliest_start_time
 
@@ -423,6 +424,18 @@ class Contest(models.Model, PageVotable, Bookmarkable):
         if not self.show_scoreboard and not self.is_in_contest(user):
             return False
         return True
+
+    def can_see_problems(self, user):
+        if user.is_authenticated:
+            if user.has_perm("judge.see_private_contest") or user.has_perm(
+                "judge.edit_all_contest"
+            ):
+                return True
+            if user.profile.id in self.editor_ids:
+                return True
+            if user.profile.id in self.tester_ids:
+                return True
+        return self.can_join
 
     def can_see_full_scoreboard(self, user):
         if self.show_scoreboard:
@@ -764,10 +777,10 @@ class ContestParticipation(models.Model):
         default=LIVE,
         help_text=_("0 means non-virtual, otherwise the n-th virtual participation."),
     )
-    format_data = JSONField(
+    format_data = models.JSONField(
         verbose_name=_("contest format specific data"), null=True, blank=True
     )
-    format_data_final = JSONField(
+    format_data_final = models.JSONField(
         verbose_name=_("same as format_data, but including frozen results"),
         null=True,
         blank=True,

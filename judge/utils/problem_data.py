@@ -138,15 +138,13 @@ class ProblemDataCompiler(object):
         for i, case in enumerate(self.cases, 1):
             if case.type == "C":
                 data = {}
+                if case.points is None:
+                    raise ProblemDataError(
+                        _("Points must be defined for case #%d.") % i
+                    )
                 if batch:
-                    if case.points is None:
-                        case.points = 0
                     case.is_pretest = batch["is_pretest"]
                 else:
-                    if case.points is None:
-                        raise ProblemDataError(
-                            _("Points must be defined for non-batch case #%d.") % i
-                        )
                     data["is_pretest"] = case.is_pretest
 
                 if not self.generator:
@@ -371,15 +369,22 @@ def get_file_cachekey(file):
 
 def get_problem_case(problem, files):
     result = {}
-    uncached_files = []
+    unique_files = list(dict.fromkeys(files))
+    if not unique_files:
+        return result
 
-    for file in files:
-        cache_key = "problem_archive:%s:%s" % (problem.code, get_file_cachekey(file))
-        qs = cache.get(cache_key)
-        if qs is None:
-            uncached_files.append(file)
+    file_to_key = {
+        file: "problem_archive:%s:%s" % (problem.code, get_file_cachekey(file))
+        for file in unique_files
+    }
+    cached = cache.get_many(list(file_to_key.values()))
+
+    uncached_files = []
+    for file, key in file_to_key.items():
+        if key in cached:
+            result[file] = cached[key]
         else:
-            result[file] = qs
+            uncached_files.append(file)
 
     if not uncached_files:
         return result
@@ -396,8 +401,8 @@ def get_problem_case(problem, files):
         log_exception('bad archive: "%s"' % archive_path)
         return {}
 
+    to_set = {}
     for file in uncached_files:
-        cache_key = "problem_archive:%s:%s" % (problem.code, get_file_cachekey(file))
         with archive.open(file) as f:
             s = f.read(settings.TESTCASE_VISIBLE_LENGTH + 3)
             # add this so there are no characters left behind (ex, 'á' = 2 utf-8 chars)
@@ -414,8 +419,11 @@ def get_problem_case(problem, files):
                         s = s.encode("utf-8")
                         break
             qs = get_visible_content(s)
-        cache.set(cache_key, qs, 86400)
+        to_set[file_to_key[file]] = qs
         result[file] = qs
+
+    if to_set:
+        cache.set_many(to_set, 86400)
 
     return result
 

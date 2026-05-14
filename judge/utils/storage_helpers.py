@@ -15,8 +15,9 @@ typically `default_storage`.
 import fnmatch
 import mimetypes
 
+from django.conf import settings
 from django.core.files.base import ContentFile
-from django.http import HttpResponse, Http404
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.utils import timezone
 
 
@@ -285,9 +286,6 @@ def serve_file_with_nginx(
     Raises:
         Http404: If file doesn't exist
     """
-    from django.conf import settings
-    from django.http import HttpResponseRedirect
-
     # Check if using S3/remote storage (has custom URL generation)
     storage_url = storage.url(file_path)
     is_remote_storage = storage_url.startswith(("http://", "https://"))
@@ -303,7 +301,6 @@ def serve_file_with_nginx(
     use_nginx = request.META.get("SERVER_SOFTWARE", "").startswith("nginx/")
 
     if use_nginx:
-        # Let Nginx serve the file directly using MEDIA_URL
         media_url = getattr(settings, "MEDIA_URL", "/media/")
         response["X-Accel-Redirect"] = f"{media_url}{file_path}"
     else:
@@ -351,9 +348,6 @@ def serve_file_inline(
     Raises:
         Http404: If file doesn't exist
     """
-    from django.conf import settings
-    from django.http import HttpResponseRedirect
-
     # Check if using S3/remote storage
     storage_url = storage.url(file_path)
     is_remote_storage = storage_url.startswith(("http://", "https://"))
