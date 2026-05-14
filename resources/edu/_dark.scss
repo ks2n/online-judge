@@ -1,0 +1,639 @@
+// ============================================================
+// _dark.scss — Edu dark palette override
+// ============================================================
+// Strategy: rather than compiling a parallel SCSS bundle with $edu-*
+// rebound to dark values, we override the *resolved* colour properties
+// on `body.edu.dark` selectors. This is verbose but keeps the bundle
+// small (no duplicate ruleset for the whole edu theme) and lets us
+// change only what actually shifts in dark mode.
+//
+// Activated server-side by templates/base.html when `use_darkmode`
+// session flag is set: <body class="edu dark">.
+//
+// We deliberately do NOT load `darkmode.min.css` (DarkReader filter
+// invert) anymore on edu pages — it produces washed gradients and
+// breaks indigo accents. The native palette below replaces it.
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu.dark {
+    // ── Page chrome ─────────────────────────────────────────
+    background: #0F1419 !important;
+    color: #E5E7EB;
+    color-scheme: dark;
+
+    // Accent strong used as link colour by global rules
+    --edu-accent: #818CF8;
+
+    // Reset legacy generic styles that drag light bg back in
+    #page-container,
+    #content,
+    #content-body { background: transparent !important; }
+
+    // ── Surfaces ────────────────────────────────────────────
+    .edu-greeting,
+    .edu-section-head,
+    .info-float,
+    .sidebox,
+    .blog-sidebox,
+    .blog-box,
+    .list-contest,
+    .organization-card,
+    .submission-row,
+    .form-area,
+    .edu-course-card,
+    .edu-problem-card,
+    .edu-workspace-briefing,
+    .edu-workspace-sidebar-panel,
+    .left-sidebar-item,
+    .testcases-table,
+    .edu-dashboard-stats,
+    #problem-table,
+    #users-table,
+    #source-header,
+    .toggled .source-wrap,
+    .highlight pre,
+    .source-wrap,
+    .edu-progress {
+        background-color: #1A1F2E !important;
+        border-color: #2F3548 !important;
+        color: #E5E7EB;
+    }
+
+    // Soft surface (table headers, hover bg, alt rows)
+    #problem-table thead tr th,
+    #users-table thead tr th,
+    .testcases-table thead tr,
+    .sidebox h3,
+    .edu-section-head .edu-section-title,
+    .tabs.tabs-no-flex,
+    .submission .stats-bar,
+    .submission > .stats-graph,
+    .filter-form-group,
+    .pretest-tip,
+    .edu-pill,
+    .edu-meta-pill,
+    .edu-problem-card:hover,
+    .edu-greeting--beginner,
+    .edu-pdf-link {
+        background-color: #252B3D !important;
+        border-color: #3F4658 !important;
+    }
+
+    // Page background (cream replacement)
+    .edu-greeting {
+        background: linear-gradient(135deg, #312E81 0%, #1A1F2E 80%) !important;
+        border-color: #4338CA !important;
+    }
+    .edu-greeting--beginner {
+        background: linear-gradient(135deg, #4C1D24 0%, #1A1F2E 80%) !important;
+        border-color: #7C2D12 !important;
+    }
+
+    // ── Text ────────────────────────────────────────────────
+    color: #E5E7EB;
+
+    h1, h2, h3, h4, h5, h6,
+    .edu-text-strong,
+    .edu-greeting-title,
+    .edu-section-title,
+    .edu-stat-value,
+    .edu-course-title,
+    .edu-problem-title,
+    #comment-header,
+    .problem-title h2,
+    .username,
+    #overall-row b,
+    .testcases-table tbody td b,
+    .submission-row .sub-info .sub-user a,
+    .submission-row .sub-info .sub-problem a,
+    .blog-box .title a,
+    .contest-list-title,
+    .edu-footer-brand b,
+    .content-description h1,
+    .content-description h2,
+    .content-description h3,
+    .content-description h4,
+    .content-description.screen h1,
+    .content-description.screen h2,
+    .content-description.screen h3,
+    .content-description.screen h4,
+    .content-description strong,
+    .content-description b,
+    .edu-workspace-briefing h3,
+    .edu-workspace-briefing strong,
+    .left-sidebar-item .sidebar-text,
+    .left-sidebar-item {
+        color: #F9FAFB !important;
+    }
+
+    .edu-text-muted,
+    .edu-stat-label,
+    .edu-greeting-eyebrow,
+    .edu-section-action,
+    .edu-greeting-meta,
+    .submission-info,
+    .submission-info .submission-date,
+    .actionbar-button,
+    .pagevote-score,
+    .comment-info-tabular,
+    .comment-info,
+    .edu-footer,
+    .edu-footer-meta,
+    .edu-footer-brand-tagline,
+    .col-title,
+    .testcases-table tbody td:nth-child(3),
+    .testcases-table tbody td:nth-child(4),
+    .testcases-table tbody td:nth-child(5),
+    .submission-row .language,
+    .sidebar-text,
+    .left-sidebar-header,
+    .pagination li > a,
+    .pagination li > span,
+    .post-content-header.time {
+        color: #9CA3AF !important;
+    }
+
+    .edu-text-faint,
+    .edu-footer-sep,
+    .edu-footer-lang-icon,
+    .actionbar-button .pagevote-score,
+    .edu-pdf-link,
+    .relative-time,
+    .time {
+        color: #6B7280 !important;
+    }
+
+    a:not(.edu-btn):not(.action-btn):not(.actionbar-button):not(.left-sidebar-item):not(.btn):not(.pagination li > a) {
+        color: #A5B4FC;
+
+        &:hover { color: #C7D2FE; }
+    }
+
+    // ── Inputs / form controls ──────────────────────────────
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="search"],
+    input[type="number"],
+    input[type="url"],
+    textarea,
+    select,
+    .select2-container--default .select2-selection {
+        background-color: #1A1F2E !important;
+        border-color: #2F3548 !important;
+        color: #F9FAFB !important;
+
+        &::placeholder { color: #6B7280; }
+
+        &:focus {
+            border-color: #818CF8 !important;
+            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.25) !important;
+            background-color: #252B3D !important;
+        }
+    }
+
+    .select2-dropdown,
+    .select2-results__option {
+        background-color: #1A1F2E !important;
+        color: #E5E7EB !important;
+        border-color: #2F3548 !important;
+    }
+
+    .select2-results__option--highlighted {
+        background-color: #312E81 !important;
+        color: #F9FAFB !important;
+    }
+
+    // ── Buttons ─────────────────────────────────────────────
+    .edu-btn--primary,
+    .action-btn,
+    button.action-btn,
+    input.submit-btn,
+    #submit-button,
+    .form-area button[type="submit"],
+    .form-area input[type="submit"] {
+        background-color: #818CF8 !important;
+        border-color: #818CF8 !important;
+        color: #0F1419 !important;
+
+        &:hover {
+            background-color: #A5B4FC !important;
+            border-color: #A5B4FC !important;
+        }
+    }
+
+    .edu-btn--secondary {
+        background: #1A1F2E !important;
+        color: #E5E7EB !important;
+        border-color: #2F3548 !important;
+
+        &:hover {
+            background: #252B3D !important;
+            border-color: #3F4658 !important;
+        }
+    }
+
+    // ── Verdict pills (semantic darkening) ──────────────────
+    .sub-result.AC,
+    .case-AC,
+    .edu-verdict--ac {
+        background-color: #0E2C1B !important;
+        color: #86EFAC !important;
+        border-color: #166534 !important;
+    }
+
+    .sub-result.WA, .sub-result.IR, .sub-result.RTE,
+    .case-WA, .case-IR, .case-RTE,
+    .edu-verdict--wa, .edu-verdict--ir, .edu-verdict--rte {
+        background-color: #3F0E0E !important;
+        color: #FCA5A5 !important;
+        border-color: #991B1B !important;
+    }
+
+    .sub-result.TLE, .sub-result.MLE, .sub-result.OLE,
+    .case-TLE, .case-MLE, .case-OLE,
+    .edu-verdict--tle, .edu-verdict--mle, .edu-verdict--ole {
+        background-color: #3D2A0B !important;
+        color: #FCD34D !important;
+        border-color: #92400E !important;
+    }
+
+    // ── Comments ────────────────────────────────────────────
+    .comment {
+        background-color: #1A1F2E !important;
+        border-color: #2F3548 !important;
+    }
+    .comment.highlight_comment {
+        background-color: #312E81 !important;
+        border-color: #818CF8 !important;
+    }
+
+    // ── Borders & dividers ──────────────────────────────────
+    hr,
+    .edu-section-head + *,
+    .edu-greeting hr,
+    .form-area hr,
+    .pagination,
+    .edu-footer {
+        border-color: #2F3548 !important;
+    }
+
+    // ── Code blocks (problem statement, source preview) ─────
+    pre, code {
+        background: #0F1419 !important;
+        color: #F9FAFB !important;
+    }
+    pre {
+        border-color: #2F3548 !important;
+    }
+
+    // ── Avatar (override outline ring on dark) ──────────────
+    .user-img,
+    .gravatar,
+    img.user-img {
+        border-color: #2F3548 !important;
+        background-color: #252B3D !important;
+    }
+
+    // ── Sidebar item active state ───────────────────────────
+    .left-sidebar-item.active {
+        background-color: #312E81 !important;
+        border-color: #4338CA !important;
+        color: #C7D2FE !important;
+
+        .sidebar-icon, .sidebar-icon i { color: #C7D2FE !important; }
+    }
+
+    // ── Testcase table specifics ────────────────────────────
+    .testcases-table tbody tr:hover {
+        background-color: #252B3D !important;
+    }
+    .testcases-table #overall-row {
+        background: linear-gradient(180deg, #252B3D 0%, #1A1F2E 100%) !important;
+    }
+    .case-feedback { background-color: #0F1419 !important; }
+    .case-output {
+        background-color: #0F1419 !important;
+        border-color: #2F3548 !important;
+        color: #E5E7EB !important;
+    }
+
+    // ── Footer ──────────────────────────────────────────────
+    .edu-footer {
+        background:
+            radial-gradient(circle at 0% 0%, rgba(129, 140, 248, 0.06) 0%, transparent 40%),
+            radial-gradient(circle at 100% 100%, rgba(249, 112, 102, 0.06) 0%, transparent 40%),
+            linear-gradient(180deg, #1A1F2E 0%, #0F1419 100%) !important;
+    }
+
+    // ── Navbar (top) ────────────────────────────────────────
+    #navigation,
+    .edu-nav-shell,
+    nav#navigation {
+        background-color: #1A1F2E !important;
+        border-bottom-color: #2F3548 !important;
+    }
+
+    #navigation a,
+    #navigation #nav-list li > a,
+    #nav-list li > button,
+    .edu-nav-shell a,
+    .edu-nav-utility a,
+    .edu-nav-utility button {
+        color: #E5E7EB !important;
+
+        &:hover { color: #FFFFFF !important; background-color: #252B3D !important; }
+    }
+
+    .edu-nav-search input,
+    #search-form input,
+    .edu-nav-search-input {
+        background-color: #252B3D !important;
+        border-color: #2F3548 !important;
+        color: #E5E7EB !important;
+
+        &::placeholder { color: #6B7280 !important; }
+    }
+
+    .edu-nav-search-kbd {
+        background-color: #0F1419 !important;
+        border-color: #2F3548 !important;
+        color: #9CA3AF !important;
+    }
+
+    // User avatar dropdown — text inside admin pill on dark
+    .nav-user-pill,
+    .user-pill,
+    [class*="nav-user"] {
+        color: #E5E7EB !important;
+    }
+
+    // ── Empty states ────────────────────────────────────────
+    .no-comments-message,
+    .middle-content > i:only-child,
+    .middle-content > i:not([class]),
+    #content > i:only-child,
+    .blog-sidebox > i:only-child {
+        background-color: #1A1F2E !important;
+        border-color: #2F3548 !important;
+        color: #9CA3AF !important;
+    }
+
+    // ── Code editor (Ace) ───────────────────────────────────
+    #editor {
+        background-color: #1A1F2E !important;
+        border-color: #2F3548 !important;
+    }
+    .ace_editor.ace-github {
+        background-color: #1A1F2E !important;
+        color: #E5E7EB !important;
+    }
+    .ace-github .ace_gutter {
+        background-color: #252B3D !important;
+        color: #9CA3AF !important;
+    }
+
+    // ── Course (list, detail, lesson) ────────────────────────
+    .course-list-page,
+    .course-content,
+    .lesson-content {
+        background: transparent !important;
+    }
+    .edu-course-card,
+    .course-card,
+    .lesson-card {
+        background: #1A1F2E !important;
+        border-color: #2F3548 !important;
+
+        .edu-course-title,
+        .course-title,
+        .lesson-title { color: #F9FAFB !important; }
+
+        .edu-course-meta,
+        .course-meta { color: #9CA3AF !important; }
+
+        .course-image,
+        .edu-course-cover {
+            background: #252B3D !important;
+            color: #A5B4FC !important;
+        }
+
+        &:hover {
+            background: #252B3D !important;
+            border-color: #4338CA !important;
+        }
+    }
+
+    // ── Contest (list, detail) ───────────────────────────────
+    .contest-list,
+    .list-contest,
+    .contest-tag {
+        background: #1A1F2E !important;
+        border-color: #2F3548 !important;
+    }
+    .contest-tag {
+        background: #252B3D !important;
+        color: #C7D2FE !important;
+        border-color: #3F4658 !important;
+    }
+    .contest-rate-icon { color: #FCD34D !important; }
+    .timer.tic,
+    #contest-time-remaining {
+        color: #F9FAFB !important;
+        background: #252B3D !important;
+        border-color: #3F4658 !important;
+    }
+
+    // ── Blog (detail, list) ──────────────────────────────────
+    .blog-description,
+    .blog-list-tags,
+    .post-summary,
+    .post-content {
+        color: #E5E7EB;
+
+        a:not(.edu-btn) { color: #A5B4FC; }
+    }
+    .blog-list-tags a,
+    .post-tags a {
+        background: #252B3D !important;
+        color: #C7D2FE !important;
+        border-color: #3F4658 !important;
+    }
+    .welcome-banner {
+        background: linear-gradient(135deg, #312E81 0%, #1A1F2E 80%) !important;
+        border-color: #4338CA !important;
+        color: #F9FAFB !important;
+    }
+
+    // ── Chat (chat shell uses edu--bare; only message styling needed) ─
+    .chat-message,
+    .chat-bubble,
+    .message-content {
+        background: #1A1F2E !important;
+        color: #E5E7EB !important;
+        border-color: #2F3548 !important;
+    }
+    .chat-message.outgoing,
+    .chat-bubble.self,
+    .message-self {
+        background: #312E81 !important;
+        color: #F9FAFB !important;
+    }
+    #chat-input,
+    #chat-message-input {
+        background: #1A1F2E !important;
+        color: #F9FAFB !important;
+        border-color: #2F3548 !important;
+    }
+
+    // ── Comments — extend prior partial ──────────────────────
+    .reply-form textarea,
+    .comment-form textarea,
+    .comment-input,
+    #id_body {
+        background: #1A1F2E !important;
+        color: #F9FAFB !important;
+        border-color: #2F3548 !important;
+
+        &:focus {
+            border-color: #818CF8 !important;
+            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.25) !important;
+        }
+    }
+    .comment-info-tabular .username a,
+    .comment .username a { color: #A5B4FC !important; }
+
+    // ── Tables (problem list, ranklist, contest) — generic ───
+    table.table tbody tr {
+        background: #1A1F2E !important;
+        border-color: #2F3548 !important;
+    }
+    table.table tbody tr:hover { background: #252B3D !important; }
+    table.table thead tr,
+    table.table thead th {
+        background: #252B3D !important;
+        color: #C7D2FE !important;
+        border-color: #3F4658 !important;
+    }
+
+    // ── Sidebox / right-rail widgets — match Round 2 #10 ─────
+    .blog-sidebox,
+    .sidebox {
+        background: #1A1F2E !important;
+        border-color: #2F3548 !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+
+        > h3 {
+            background: #252B3D !important;
+            color: #F9FAFB !important;
+            border-bottom-color: #3F4658 !important;
+
+            .fa {
+                background: #312E81 !important;
+                color: #C7D2FE !important;
+            }
+        }
+
+        > .sidebox-content { background: #1A1F2E !important; }
+    }
+
+    .profile-card {
+        .card-header { border-bottom-color: #2F3548 !important; }
+        .user-info > div:last-child,
+        .user-info-body { color: #F9FAFB !important; }
+        .user-info > div:first-child { color: #9CA3AF !important; }
+    }
+
+    // ── Heatmap (Round 2 #2/#3 dark counterparts) ────────────
+    #submission-activity #submission-activity-display {
+        border-color: #2F3548 !important;
+    }
+    #submission-activity #submission-activity-display .info-bar {
+        background: #252B3D !important;
+        border-top-color: #3F4658 !important;
+
+        #submission-total-count,
+        .info-table-text { color: #9CA3AF !important; }
+    }
+    #submission-activity #submission-activity-table th.submission-date-col {
+        color: #9CA3AF !important;
+    }
+
+    // ── Statistics pie chart wrap (Round 2 #18) ──────────────
+    #statistics-table .total {
+        color: #9CA3AF !important;
+
+        #total-submission-count { color: #F9FAFB !important; }
+    }
+
+    // ── Difficulty pill (Step 3.1) — dark variant ────────────
+    .edu-difficulty {
+        &.edu-difficulty--helper {
+            background: #252B3D !important;
+            color: #CBD5E1 !important;
+            border-color: #475569 !important;
+        }
+        &.edu-difficulty--easy {
+            background: #0E2C1B !important;
+            color: #86EFAC !important;
+            border-color: #166534 !important;
+        }
+        &.edu-difficulty--medium {
+            background: #3D2A0B !important;
+            color: #FCD34D !important;
+            border-color: #92400E !important;
+        }
+        &.edu-difficulty--hard {
+            background: #3A1A05 !important;
+            color: #FDBA74 !important;
+            border-color: #9A3412 !important;
+        }
+        &.edu-difficulty--expert {
+            background: #3F0E0E !important;
+            color: #FCA5A5 !important;
+            border-color: #991B1B !important;
+        }
+    }
+
+    // ── Toast (Step 3.2) — dark surface ──────────────────────
+    .edu-toast {
+        background: #1A1F2E !important;
+        border-color: #2F3548 !important;
+        color: #E5E7EB !important;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5) !important;
+
+        .edu-toast-title { color: #F9FAFB !important; }
+        .edu-toast-message { color: #9CA3AF !important; }
+        .edu-toast-close { color: #9CA3AF !important; &:hover { color: #F9FAFB !important; } }
+
+        &.edu-toast--success { border-left-color: #166534 !important; }
+        &.edu-toast--error   { border-left-color: #991B1B !important; }
+        &.edu-toast--warning { border-left-color: #92400E !important; }
+        &.edu-toast--info    { border-left-color: #4338CA !important; }
+    }
+
+    // ── Modal (Step 3.4) — dark surface ──────────────────────
+    .edu-modal-backdrop { background: rgba(0, 0, 0, 0.7) !important; }
+    .edu-modal {
+        background: #1A1F2E !important;
+        border-color: #2F3548 !important;
+        color: #E5E7EB !important;
+        box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6) !important;
+    }
+    .edu-modal-header { border-bottom-color: #2F3548 !important; }
+    .edu-modal-footer { border-top-color: #2F3548 !important; background: #0F1419 !important; }
+    .edu-modal-close { color: #9CA3AF !important; &:hover { color: #F9FAFB !important; } }
+
+    // ── Skeleton (Step 3.3) — dark shimmer ───────────────────
+    .edu-skeleton {
+        background: linear-gradient(90deg, #1A1F2E 0%, #252B3D 50%, #1A1F2E 100%) !important;
+    }
+
+    // ── Theme toggle button (Step 2.2) ───────────────────────
+    #edu-theme-toggle {
+        color: #FCD34D !important;
+        &:hover { background: #252B3D !important; }
+    }
+}

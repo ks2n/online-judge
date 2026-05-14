@@ -1,0 +1,145 @@
+// ============================================================
+// _modal.scss — Edu dialog/modal chrome
+// ============================================================
+// Markup (open with `data-edu-modal-open="<id>"` on the trigger,
+// close with `data-edu-modal-close` inside the modal):
+//
+//   <div class="edu-modal-backdrop" id="confirm-delete" data-edu-modal hidden>
+//     <div class="edu-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-delete-title">
+//       <header class="edu-modal-header">
+//         <h3 id="confirm-delete-title">Xác nhận xoá</h3>
+//         <button class="edu-modal-close" data-edu-modal-close aria-label="Đóng">
+//           <i class="fa fa-times"></i>
+//         </button>
+//       </header>
+//       <div class="edu-modal-body">…</div>
+//       <footer class="edu-modal-footer">
+//         <button class="edu-btn edu-btn--secondary" data-edu-modal-close>Huỷ</button>
+//         <button class="edu-btn edu-btn--primary">Xoá</button>
+//       </footer>
+//     </div>
+//   </div>
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+    .edu-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 9998;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        background: rgba(15, 20, 25, 0.45);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+        animation: edu-modal-fade-in 200ms $edu-ease-out both;
+
+        &[hidden] { display: none !important; }
+        &.is-open { display: flex; }
+        &.is-leaving { animation: edu-modal-fade-out 180ms $edu-ease-out both; }
+    }
+
+    .edu-modal {
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-lg;
+        box-shadow: $edu-shadow-lg;
+        width: 100%;
+        max-width: 520px;
+        max-height: calc(100vh - 32px);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        animation: edu-modal-pop-in 220ms $edu-ease-out both;
+
+        .edu-modal-backdrop.is-leaving & {
+            animation: edu-modal-pop-out 160ms $edu-ease-out both;
+        }
+    }
+
+    .edu-modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 18px;
+        border-bottom: 1px solid $edu-border;
+
+        h3, h2 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: $edu-text-strong;
+            line-height: 1.3;
+        }
+    }
+
+    .edu-modal-close {
+        background: transparent;
+        border: 0;
+        padding: 6px 8px;
+        font-size: 14px;
+        line-height: 1;
+        color: $edu-text-faint;
+        border-radius: $edu-radius-sm;
+        cursor: pointer;
+        transition: color $edu-duration-fast $edu-ease-out, background $edu-duration-fast $edu-ease-out;
+
+        &:hover {
+            color: $edu-text-strong;
+            background: $edu-bg-soft;
+        }
+    }
+
+    .edu-modal-body {
+        padding: 16px 18px;
+        overflow-y: auto;
+        font-size: 14px;
+        line-height: 1.55;
+        color: $edu-text;
+    }
+
+    .edu-modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 12px 18px;
+        background: $edu-bg-soft;
+        border-top: 1px solid $edu-border;
+    }
+
+    @keyframes edu-modal-fade-in {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+
+    @keyframes edu-modal-fade-out {
+        from { opacity: 1; }
+        to   { opacity: 0; }
+    }
+
+    @keyframes edu-modal-pop-in {
+        from { opacity: 0; transform: translateY(-12px) scale(0.97); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes edu-modal-pop-out {
+        from { opacity: 1; transform: translateY(0) scale(1); }
+        to   { opacity: 0; transform: translateY(-8px) scale(0.98); }
+    }
+
+    @media (max-width: 599px) {
+        .edu-modal-backdrop { padding: 12px; }
+        .edu-modal { max-width: 100%; }
+        .edu-modal-footer { flex-direction: column-reverse; }
+        .edu-modal-footer .edu-btn { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .edu-modal-backdrop,
+        .edu-modal { animation-duration: 0.01ms !important; }
+    }
+}

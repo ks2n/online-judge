@@ -1,0 +1,497 @@
+// ============================================================
+// _problem-list.scss — Problem list table + filter sidebar
+// ============================================================
+// Educational lens: easy to scan, status icon prominent,
+// difficulty + AC% visible at a glance, monospaced code.
+// Override DMOJ legacy `.problems #problem-table` + filter form.
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+    // ── Problem table ─────────────────────────────────────────
+    #problem-table {
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-lg;
+        overflow: hidden;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin: 0;
+
+        thead tr th {
+            background: $edu-bg-soft !important;
+            border-bottom: 1px solid $edu-border;
+            padding: 12px 14px !important;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: $edu-text-muted;
+            line-height: 1.2;
+
+            // Cancel legacy purple/orange header gradients
+            &.solved,
+            &.problem,
+            &.pcode,
+            &.category,
+            &.points,
+            &.ac-rate,
+            &.users,
+            &.editorial {
+                background: $edu-bg-soft !important;
+                color: $edu-text-muted !important;
+            }
+
+            a {
+                color: $edu-text-muted !important;
+                text-decoration: none;
+
+                &:hover { color: $edu-accent !important; }
+            }
+
+            // Status (solved) column: narrow
+            &.solved { width: 36px; padding: 12px 0 12px 14px !important; }
+
+            // Code column: monospaced, narrow
+            &.pcode { width: 130px; }
+
+            // Numeric columns: keep header on a single line so labels like "AC %" / "AC #"
+            // don't wrap into two-line stacks ("AC", "%") on narrow column widths.
+            &.points,
+            &.ac-rate,
+            &.users {
+                width: 100px;
+                text-align: right;
+                white-space: nowrap;
+
+                a { white-space: nowrap; }
+            }
+
+            // Category column: keep label on one line; allow shrinking gracefully
+            // with text-overflow if site uses long taxonomy names.
+            &.category {
+                white-space: nowrap;
+                a { white-space: nowrap; }
+            }
+        }
+
+        tbody {
+            tr {
+                background: $edu-bg-paper;
+                transition: background $edu-duration-fast $edu-ease-out;
+
+                &:not(:last-child) td { border-bottom: 1px solid $edu-border; }
+                &:hover { background: $edu-bg-soft; }
+            }
+
+            td {
+                padding: 12px 14px;
+                vertical-align: middle;
+                font-size: 14px;
+                color: $edu-text;
+
+                // Status icon column
+                &[solved] {
+                    padding: 12px 0 12px 14px;
+                    text-align: left;
+
+                    a {
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 24px; height: 24px;
+                        border-radius: 50%;
+                        text-decoration: none;
+                    }
+
+                    i {
+                        font-size: 18px;
+                        line-height: 1;
+                    }
+                }
+
+                // Solved → green checkmark
+                &[solved="1"] i {
+                    color: $edu-ac-text !important;
+                }
+                // Attempted → muted dash
+                &[solved="0"] i {
+                    color: $edu-tle-text !important;
+                }
+                // Unsolved → faint outline
+                &[solved="-1"] i {
+                    color: $edu-text-faint !important;
+                }
+
+                // Problem name link
+                &.problem a {
+                    color: $edu-text-strong;
+                    font-weight: 500;
+                    font-size: 14px;
+                    text-decoration: none;
+
+                    &:hover {
+                        color: $edu-accent;
+                        text-decoration: underline;
+                        text-underline-offset: 3px;
+                    }
+                }
+
+                // Code — monospace pill
+                &.pcode {
+                    white-space: nowrap;
+
+                    a.pcodecell,
+                    a {
+                        display: inline-block;
+                        padding: 2px 10px;
+                        font-family: $edu-font-code;
+                        font-size: 12px;
+                        font-weight: 500;
+                        color: $edu-text-muted;
+                        background: $edu-bg-muted;
+                        border-radius: $edu-radius-pill;
+                        text-decoration: none;
+                        text-transform: uppercase;
+                        letter-spacing: 0.04em;
+                        white-space: nowrap;
+                        line-height: 1.4;
+
+                        &:hover {
+                            background: $edu-accent-soft;
+                            color: $edu-accent-strong;
+                        }
+                    }
+                }
+
+                // Category
+                &.category {
+                    color: $edu-text-muted;
+                    font-size: 13px;
+                }
+
+                // Types row (when show_types enabled)
+                &.types {
+                    .type-tag {
+                        display: inline-block;
+                        margin: 2px 4px 2px 0;
+                        padding: 2px 8px;
+                        background: $edu-accent-soft;
+                        color: $edu-accent-strong;
+                        border-radius: $edu-radius-pill;
+                        font-size: 12px;
+                        font-weight: 500;
+                    }
+                }
+
+                // Points → "difficulty pill"
+                &.p {
+                    text-align: right;
+                    font-family: $edu-font-code;
+                    font-variant-numeric: tabular-nums;
+                    font-weight: 600;
+                    color: $edu-text-strong;
+                }
+
+                // AC%
+                &.ac-rate {
+                    text-align: right;
+                    font-family: $edu-font-code;
+                    font-variant-numeric: tabular-nums;
+                    color: $edu-text-muted;
+                }
+
+                // AC count
+                &.users {
+                    text-align: right;
+                    font-family: $edu-font-code;
+                    font-variant-numeric: tabular-nums;
+
+                    a {
+                        color: $edu-text;
+                        text-decoration: none;
+
+                        &:hover { color: $edu-accent; text-decoration: underline; }
+                    }
+                }
+
+                // Editorial link
+                &.editorial a {
+                    font-size: 13px;
+                    color: $edu-accent;
+                    text-decoration: none;
+
+                    &:hover { text-decoration: underline; }
+                }
+            }
+        }
+    }
+
+    // Cancel legacy `striped` zebra (we use hover row instead).
+    #problem-table.striped tbody tr:nth-child(2n) {
+        background: $edu-bg-paper;
+    }
+
+    // ── AC% header: prevent 2-line wrap on narrow column ──────
+    // Numeric headers all stay on a single line — only the problem-name column
+    // is allowed to wrap. Without this, "AC %" wraps on widths < ~85px.
+    #problem-table thead th {
+        &.solved,
+        &.pcode,
+        &.category,
+        &.points,
+        &.ac-rate,
+        &.users,
+        &.editorial,
+        &.solving,
+        &.score { white-space: nowrap; }
+    }
+
+    // ── Mobile horizontal pill strip (legacy `.left-sidebar` flips to row
+    //    flex with overflow-x:auto under 800px, see base.scss:1534-1547).
+    //    Add a right-edge gradient mask so users notice it scrolls when the
+    //    last visible tab is partially clipped (e.g. "Thêm m…").
+    @media (max-width: 799px) {
+        .left-sidebar {
+            // Gradient mask fades the rightmost ~36px to transparent so any
+            // hidden tabs hint they're swipeable. Pair with -webkit- prefix
+            // for Safari coverage.
+            -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent 100%);
+                    mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent 100%);
+            // When the user scrolls to the end, drop the mask so the last tab
+            // isn't permanently faded. CSS-only via scroll-snap is unreliable
+            // across browsers; leaving as a hint accepts the trade-off.
+            scroll-padding-right: 40px;
+            scroll-snap-type: x proximity;
+
+            .left-sidebar-item {
+                scroll-snap-align: start;
+                white-space: nowrap;
+                flex: 0 0 auto;     // don't equal-distribute; let labels drive width
+                padding: 10px 14px;
+                border-radius: $edu-radius-pill;
+                background: $edu-bg-soft;
+                border: 1px solid $edu-border;
+                color: $edu-text;
+                font-weight: 500;
+
+                &.active {
+                    background: $edu-accent-soft !important;
+                    color: $edu-accent-strong !important;
+                    border-color: $edu-accent-border;
+                }
+            }
+        }
+    }
+
+    // 3-col rebalance promoted to _dashboard.scss (global) — applies on
+    // home / problems / contests / blog uniformly. See _dashboard.scss.
+
+    // ── Filter sidebar polish ────────────────────────────────
+    // The filter lives in `.right-sidebar > .sidebox` with form#filter-form.
+    .right-sidebar .sidebox {
+        // Picked up by _cards.scss base; refine spacing of inputs.
+        form#filter-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 0;
+
+            > div { margin: 0; }
+
+            input[type="text"],
+            input[type="search"] {
+                width: 100%;
+            }
+
+            // Toggle checkboxes → "filter chip" treatment
+            > div:has(> input[type="checkbox"]) {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 6px 10px;
+                background: $edu-bg-soft;
+                border: 1px solid $edu-border;
+                border-radius: $edu-radius-pill;
+                font-size: 13px;
+                cursor: pointer;
+                transition: background $edu-duration-fast $edu-ease-out, border-color $edu-duration-fast $edu-ease-out;
+
+                &:hover {
+                    background: $edu-bg-paper;
+                    border-color: $edu-border-strong;
+                }
+
+                input[type="checkbox"] {
+                    margin: 0;
+                    accent-color: $edu-accent;
+                    cursor: pointer;
+                }
+
+                label {
+                    margin: 0;
+                    cursor: pointer;
+                    color: $edu-text;
+                    font-weight: 500;
+                }
+
+                &:has(input:checked) {
+                    background: $edu-accent-soft;
+                    border-color: $edu-accent-border;
+
+                    label { color: $edu-accent-strong; }
+                }
+            }
+
+            .filter-form-group {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+
+                label.bold-text,
+                label.margin-label {
+                    font-size: 12px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.04em;
+                    color: $edu-text-muted;
+                    font-style: normal;
+
+                    i.non-italics { font-style: normal; }
+                }
+
+                .form-label,
+                .bold-text.margin-label {
+                    margin-bottom: 0;
+                }
+            }
+
+            .form-submit-group {
+                display: flex;
+                gap: 8px;
+                margin-top: 6px;
+
+                .action-btn {
+                    flex: 1 1 0;
+                    text-align: center;
+                    padding: 9px 14px;
+                    font-size: 14px;
+                    font-weight: 500;
+                    background: $edu-accent;
+                    color: #fff;
+                    border-radius: $edu-radius-md;
+                    cursor: pointer;
+                    border: 1px solid $edu-accent;
+                    transition: background $edu-duration-fast $edu-ease-out;
+
+                    &:hover { background: $edu-accent-hover; }
+
+                    &#random {
+                        background: $edu-bg-paper;
+                        color: $edu-text;
+                        border-color: $edu-border-strong;
+
+                        &:hover {
+                            background: $edu-bg-soft;
+                            color: $edu-accent;
+                            border-color: $edu-accent-border;
+                        }
+                    }
+                }
+            }
+        }
+
+        // noUiSlider edu look
+        .noUi-target {
+            background: $edu-bg-muted;
+            border: 0;
+            border-radius: 999px;
+            box-shadow: none;
+            height: 6px;
+            margin: 18px 6px 6px;
+        }
+
+        .noUi-connect {
+            background: $edu-accent;
+        }
+
+        .noUi-handle {
+            width: 16px !important;
+            height: 16px !important;
+            top: -6px !important;
+            right: -8px !important;
+            border-radius: 50%;
+            background: $edu-bg-paper;
+            border: 2px solid $edu-accent;
+            box-shadow: $edu-shadow-sm;
+            cursor: grab;
+
+            &::before, &::after { display: none; }
+        }
+
+        .noUi-tooltip {
+            font-family: $edu-font-code;
+            font-size: 11px;
+            font-weight: 600;
+            background: $edu-text-strong;
+            color: #fff;
+            border: 0;
+            padding: 2px 6px;
+            border-radius: $edu-radius-xs;
+        }
+
+        // Select2 widgets
+        .select2-container--default .select2-selection--single,
+        .select2-container--default .select2-selection--multiple {
+            border: 1px solid $edu-border-strong;
+            border-radius: $edu-radius-md;
+            min-height: 36px;
+            background: $edu-bg-paper;
+
+            .select2-selection__rendered {
+                color: $edu-text;
+                line-height: 32px;
+                padding-left: 12px;
+            }
+
+            .select2-selection__arrow {
+                top: 6px;
+            }
+        }
+
+        .select2-container--default .select2-selection--multiple {
+            min-height: 36px;
+            padding: 2px 6px;
+
+            .select2-selection__choice {
+                background: $edu-accent-soft;
+                color: $edu-accent-strong;
+                border: 1px solid $edu-accent-border;
+                border-radius: $edu-radius-pill;
+                padding: 2px 8px;
+                margin: 2px;
+                font-size: 12px;
+            }
+
+            .select2-selection__choice__remove {
+                color: $edu-accent;
+                margin-right: 4px;
+            }
+        }
+    }
+
+    // ── Mobile responsive ─────────────────────────────────────
+    @media (max-width: 799px) {
+        // Hide minor columns to keep list scannable on phone
+        #problem-table {
+            thead th.category,
+            thead th.users,
+            tbody td.category,
+            tbody td.users {
+                display: none;
+            }
+        }
+    }
+}

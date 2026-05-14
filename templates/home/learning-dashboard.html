@@ -1,0 +1,118 @@
+{# Learning Dashboard hero — injected into home.html `before_posts`.
+   Renders only for authenticated users. Beginners (problem_count == 0)
+   see an onboarding callout. Otherwise show greeting + stats + courses. #}
+
+{% if edu_dashboard %}
+<section class="edu-dashboard">
+
+  {# ── Greeting + onboarding for true beginners ─────────────────── #}
+  {% if edu_dashboard.is_beginner %}
+    <div class="edu-greeting edu-greeting--beginner">
+      <div class="edu-greeting-eyebrow">{{ _('Bắt đầu hành trình') }}</div>
+      <h2 class="edu-greeting-title">
+        {{ _('Chào,') }} {{ edu_dashboard.username }}!
+        <span class="edu-greeting-sub">{{ _('Hãy giải bài đầu tiên của bạn nhé.') }}</span>
+      </h2>
+      <p class="edu-greeting-meta">
+        {{ _('LQDOJ là nơi bạn rèn luyện thuật toán và tiến bộ mỗi ngày. Chọn một hướng để bắt đầu:') }}
+      </p>
+      <div class="edu-cluster">
+        <a class="edu-btn edu-btn--primary" href="{{ url('course_list') }}">
+          <i class="fa fa-graduation-cap"></i> {{ _('Khám phá khoá học') }}
+        </a>
+        <a class="edu-btn edu-btn--secondary" href="{{ url('problem_list') }}">
+          <i class="fa fa-puzzle-piece"></i> {{ _('Xem bài tập') }}
+        </a>
+        <a class="edu-btn edu-btn--ghost" href="{{ url('about') }}">
+          <i class="fa fa-info-circle"></i> {{ _('Hướng dẫn dùng LQDOJ') }}
+        </a>
+      </div>
+    </div>
+
+  {# ── Returning learner ────────────────────────────────────────── #}
+  {% else %}
+    <div class="edu-greeting">
+      <div class="edu-greeting-eyebrow">{{ _('Chào mừng trở lại') }}</div>
+      <h2 class="edu-greeting-title">
+        {{ _('Chào,') }} {{ edu_dashboard.username }}!
+        <span class="edu-greeting-sub">{{ _('Hôm nay bạn muốn học gì?') }}</span>
+      </h2>
+
+      {# Quick stats row #}
+      <div class="edu-dashboard-stats">
+        <div class="edu-stat">
+          <div class="edu-stat-label">{{ _('Rating') }}</div>
+          <div class="edu-stat-value {{ edu_dashboard.rating_class }}">
+            {{ edu_dashboard.rating if edu_dashboard.rating else '—' }}
+          </div>
+          {% if edu_dashboard.rating_rank %}
+            <div class="edu-stat-delta edu-text-muted">#{{ edu_dashboard.rating_rank }}</div>
+          {% endif %}
+        </div>
+        <div class="edu-stat">
+          <div class="edu-stat-label">{{ _('Bài đã AC') }}</div>
+          <div class="edu-stat-value">{{ edu_dashboard.problem_count or 0 }}</div>
+        </div>
+        <div class="edu-stat">
+          <div class="edu-stat-label">{{ _('Điểm') }}</div>
+          <div class="edu-stat-value">
+            {{ edu_dashboard.performance_points|floatformat(0) if edu_dashboard.performance_points else 0 }}
+          </div>
+          {% if edu_dashboard.points_rank %}
+            <div class="edu-stat-delta edu-text-muted">#{{ edu_dashboard.points_rank }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="edu-cluster" style="margin-top: 16px;">
+        <a class="edu-btn edu-btn--primary" href="{{ url('problem_list') }}">
+          <i class="fa fa-puzzle-piece"></i> {{ _('Tiếp tục luyện tập') }}
+        </a>
+        {% if current_contests %}
+          <a class="edu-btn edu-btn--secondary" href="{{ url('contest_list') }}">
+            <i class="fa fa-trophy"></i> {{ _('Vào kỳ thi đang diễn ra') }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  {# ── Khoá học của bạn (3 cards) ──────────────────────────────── #}
+  {% if edu_courses %}
+    <div class="edu-section">
+      <header class="edu-section-head">
+        <h3 class="edu-section-title">{{ _('Khoá học của bạn') }}</h3>
+        <a class="edu-section-action" href="{{ url('course_list') }}">{{ _('Tất cả') }} →</a>
+      </header>
+      <div class="edu-grid edu-grid--3">
+        {% for course in edu_courses %}
+          <a class="edu-course-card" href="{{ url('course_detail', course.slug) }}">
+            <div class="edu-course-cover" aria-hidden="true">
+              {% if course.course_image %}
+                <img loading="lazy" src="{{ course.course_image.url }}" alt="">
+              {% endif %}
+            </div>
+            <div class="edu-course-body">
+              <h4 class="edu-course-title">{{ course.name }}</h4>
+              <div class="edu-course-meta">
+                <span>{{ _('Tiếp tục học') }}</span>
+                <span class="edu-course-arrow" aria-hidden="true"><i class="fa fa-arrow-right"></i></span>
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {# ── Phân cách trước feed bài viết / hoạt động ───────────────── #}
+  {% if not edu_dashboard.is_beginner %}
+    <div class="edu-section">
+      <header class="edu-section-head">
+        <h3 class="edu-section-title">{{ _('Hoạt động gần đây') }}</h3>
+      </header>
+    </div>
+  {% endif %}
+
+</section>
+{% endif %}

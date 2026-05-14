@@ -1,0 +1,96 @@
+// ============================================================
+// _global.scss — body, page shell, focus rings, baseline
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+    margin: 0;
+    background: $edu-bg-cream;
+    color: $edu-text;
+    font-family: $edu-font-ui;
+    font-size: $edu-type-body;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+body.edu .edu-page {
+    background: $edu-bg-cream;
+    min-height: 100vh;
+    // Sticky footer: page is the column, main grows, footer hugs the bottom
+    // even on short pages (e.g. courses with 2 cards or contests with empty
+    // state). Without this, .edu-footer floats up against the content card.
+    display: flex;
+    flex-direction: column;
+
+    > #content,
+    > .edu-main {
+        flex: 1 0 auto;
+    }
+
+    > .edu-footer {
+        flex-shrink: 0;
+    }
+}
+
+// Universal focus ring for keyboard users.
+body.edu :focus-visible {
+    outline: none;
+    box-shadow: $edu-shadow-focus;
+    border-radius: $edu-radius-sm;
+}
+
+// Selection.
+body.edu ::selection {
+    background: $edu-accent-soft;
+    color: $edu-accent-strong;
+}
+
+// Honor reduced motion.
+@media (prefers-reduced-motion: reduce) {
+    body.edu *,
+    body.edu *::before,
+    body.edu *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+// Reset legacy heavy box-shadows on common containers — Phase 1 token swap
+// đã làm 6000 dòng SCSS legacy nhẹ nhõm hơn, nhưng còn vài chỗ "nặng tay".
+body.edu #content,
+body.edu #content-body {
+    background: transparent;
+}
+
+// Sticky footer compromise: ensure the body is at least viewport height so
+// footer doesn't ride up on short pages. We can't use display:flex on body
+// because legacy `.left-sidebar { position: fixed }` and `#three-col-container`
+// flex layout would collapse. min-height alone gets us most of the way.
+body.edu:not(.edu--bare) {
+    min-height: 100vh;
+}
+
+body.edu hr {
+    border: 0;
+    border-top: 1px solid $edu-border;
+    margin: 16px 0;
+}
+
+// Kill the legacy global `header { background:#111; color:#aaa; height:60px; margin-top:-10px; padding:10px 10px 10px 5%; }`
+// (base.scss:504-512). That rule paints a 60px black strip behind every <header>
+// element on the page — including section heads, card heads, course strip heads.
+// Edu uses semantic <header> liberally and expects no chrome.
+// Keep #navigation header (handled by _navigation.scss) and explicit nav header.
+body.edu header:not(#navigation):not(.edu-nav) {
+    background: transparent;
+    color: inherit;
+    height: auto;
+    margin-top: 0;
+    padding: 0;
+    display: block;
+}

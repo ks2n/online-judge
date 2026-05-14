@@ -1,0 +1,130 @@
+// ============================================================
+// _toast.scss — Snackbar / toast notifications
+// ============================================================
+// API surface lives in `resources/common.js` as `window.eduToast`.
+// Container is mounted from `templates/base.html`.
+//
+// Markup emitted by JS:
+//   <div class="edu-toast-container" id="edu-toast-container"></div>
+//   <div class="edu-toast edu-toast--success" role="status">
+//     <i class="edu-toast-icon fa fa-check-circle"></i>
+//     <div class="edu-toast-body">
+//       <strong class="edu-toast-title">…</strong>
+//       <div class="edu-toast-message">…</div>
+//     </div>
+//     <button class="edu-toast-close" aria-label="Close"><i class="fa fa-times"></i></button>
+//   </div>
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+    .edu-toast-container {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        pointer-events: none; // children re-enable pointer events
+        max-width: calc(100vw - 32px);
+
+        @media (max-width: 599px) {
+            bottom: 16px;
+            right: 16px;
+            left: 16px;
+            align-items: stretch;
+        }
+    }
+
+    .edu-toast {
+        pointer-events: auto;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        width: 320px;
+        max-width: 100%;
+        padding: 12px 14px;
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-left: 4px solid $edu-accent;
+        border-radius: $edu-radius-lg;
+        box-shadow: $edu-shadow-lg;
+        font-family: $edu-font-ui;
+        animation: edu-toast-slide-in 200ms $edu-ease-out both;
+
+        @media (max-width: 599px) {
+            width: auto;
+        }
+
+        &.is-leaving {
+            animation: edu-toast-slide-out 180ms $edu-ease-out both;
+        }
+
+        // Variants tweak left rail + icon colour
+        &.edu-toast--success { border-left-color: $edu-ac-text;  .edu-toast-icon { color: $edu-ac-text; } }
+        &.edu-toast--error   { border-left-color: $edu-wa-text;  .edu-toast-icon { color: $edu-wa-text; } }
+        &.edu-toast--warning { border-left-color: $edu-tle-text; .edu-toast-icon { color: $edu-tle-text; } }
+        &.edu-toast--info    { border-left-color: $edu-accent;   .edu-toast-icon { color: $edu-accent; } }
+
+        .edu-toast-icon {
+            font-size: 18px;
+            line-height: 22px;
+            flex-shrink: 0;
+        }
+
+        .edu-toast-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .edu-toast-title {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: $edu-text-strong;
+            line-height: 1.3;
+        }
+
+        .edu-toast-message {
+            margin-top: 2px;
+            font-size: 13px;
+            color: $edu-text-muted;
+            line-height: 1.5;
+        }
+
+        .edu-toast-close {
+            background: transparent;
+            border: 0;
+            padding: 2px 6px;
+            color: $edu-text-faint;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: $edu-radius-sm;
+            transition: color $edu-duration-fast $edu-ease-out, background $edu-duration-fast $edu-ease-out;
+            flex-shrink: 0;
+            line-height: 1;
+
+            &:hover {
+                color: $edu-text;
+                background: $edu-bg-soft;
+            }
+        }
+    }
+
+    @keyframes edu-toast-slide-in {
+        from { opacity: 0; transform: translateX(20px); }
+        to   { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes edu-toast-slide-out {
+        from { opacity: 1; transform: translateX(0); }
+        to   { opacity: 0; transform: translateX(20px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .edu-toast,
+        .edu-toast.is-leaving { animation-duration: 0.01ms !important; }
+    }
+}

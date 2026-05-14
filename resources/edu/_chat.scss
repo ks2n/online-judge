@@ -1,0 +1,169 @@
+// ============================================================
+// _chat.scss — Chat empty pane polish (body.edu.edu--bare)
+// ============================================================
+// Note: chat opts out of the main layout via `bare = true`,
+// so we lightly polish the empty-state placeholder + sidebar
+// without touching its 100vh shell.
+// ============================================================
+
+@use "tokens" as *;
+
+// On chat page (bare mode), kill the legacy `padding-top: 1em` and bottom margin
+// so the chat shell butts cleanly against the navbar (margin-top = navbar height
+// is required since the navbar is fixed).
+body.edu.edu--bare:has(.chat-page) #content {
+    padding-top: 0 !important;
+    margin-bottom: 0 !important;
+    width: 100% !important;
+}
+
+body.edu .chat,
+body.edu.edu--bare .chat {
+    .chat-empty-message {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        height: 100%;
+        min-height: 60vh;
+        padding: 32px 24px;
+        margin: 0;
+        text-align: center;
+        font-size: 14px;
+        line-height: 1.6;
+        color: $edu-text-muted;
+        font-style: normal;
+
+        // Decorative chat-bubble icon above the copy
+        &::before {
+            content: "\f4ad"; // fa-comment-dots (regular). Falls back to text if FA not loaded.
+            font-family: "Font Awesome 5 Free", "FontAwesome", sans-serif;
+            font-weight: 400;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+            font-size: 28px;
+            color: $edu-accent;
+            background: $edu-accent-soft;
+            border-radius: 50%;
+            margin-bottom: 4px;
+        }
+
+        // Strong line above the copy when wrapping (we can't easily
+        // inject html, but we can give the message room to breathe)
+    }
+
+    // Search container in left sidebar — calmer
+    .chat-search-container {
+        padding: 12px;
+        border-bottom: 1px solid $edu-border;
+        background: $edu-bg-paper;
+
+        #search-handle {
+            width: 100%;
+            padding: 8px 12px;
+            font-size: 13px;
+            background: $edu-bg-soft;
+            border: 1px solid $edu-border;
+            border-radius: $edu-radius-md;
+            color: $edu-text;
+            transition: border-color $edu-duration-fast $edu-ease-out, background $edu-duration-fast $edu-ease-out;
+
+            &::placeholder { color: $edu-text-faint; }
+
+            &:focus {
+                outline: none;
+                background: $edu-bg-paper;
+                border-color: $edu-accent;
+                box-shadow: $edu-shadow-focus;
+            }
+        }
+    }
+
+    // Chat input — match the input look
+    .chat-input-area {
+        padding: 12px;
+        background: $edu-bg-paper;
+        border-top: 1px solid $edu-border;
+    }
+
+    .chat-input-wrapper {
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+        padding: 8px 12px;
+        background: $edu-bg-soft;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-md;
+        transition: border-color $edu-duration-fast $edu-ease-out;
+
+        &:focus-within {
+            border-color: $edu-accent;
+            background: $edu-bg-paper;
+            box-shadow: $edu-shadow-focus;
+        }
+    }
+
+    .chat-input {
+        flex: 1 1 auto;
+        background: transparent;
+        border: 0;
+        outline: none;
+        resize: none;
+        font: 14px/1.5 $edu-font-ui;
+        color: $edu-text;
+        padding: 0;
+
+        &::placeholder { color: $edu-text-faint; }
+    }
+
+    .chat-input-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: $edu-radius-sm;
+        cursor: pointer;
+        color: $edu-text-muted;
+        transition: background $edu-duration-fast $edu-ease-out, color $edu-duration-fast $edu-ease-out;
+
+        &:hover {
+            background: $edu-accent-soft;
+            color: $edu-accent;
+        }
+    }
+
+    .chat-submit-btn {
+        background: $edu-accent;
+        color: #fff;
+
+        &:hover { background: $edu-accent-hover; color: #fff; }
+
+        i { color: inherit; }
+    }
+
+    .chat-disabled-notice {
+        text-align: center;
+        padding: 16px;
+        background: $edu-tle-bg;
+        color: $edu-tle-text;
+        border-top: 1px solid $edu-tle-border;
+        font-size: 13px;
+    }
+
+    // Online list empty state hint (when sidebar has no DMs)
+    #chat-online-list:empty::before {
+        content: "Bạn chưa có cuộc trò chuyện. Tìm kiếm người dùng phía trên.";
+        display: block;
+        padding: 24px 16px;
+        text-align: center;
+        font-size: 13px;
+        line-height: 1.55;
+        color: $edu-text-muted;
+    }
+}

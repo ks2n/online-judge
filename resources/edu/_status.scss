@@ -1,0 +1,469 @@
+// ============================================================
+// _status.scss — Submission status detail page
+// ============================================================
+// Templates:
+//   submission/status.html         → action toggles + #test-cases + code
+//   submission/status-testcases.html → .testcases-table + case-icons
+//   submission/info-base.html      → page header (date + language)
+// Goal: clear hierarchy — header card / actions / source toggle /
+// summary row / per-batch testcase grid.
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+    // ── Page header (info-base.html) ──────────────────────────
+    // Markup: <h2 class="page-title"> contains user / problem links;
+    // <span class="submission-info"> floats right with date + language.
+    // Force single-line, calm muted, mono.
+    .submission-info,
+    span.submission-info {
+        display: inline-block;
+        white-space: normal;
+        font-size: 13px;
+        color: $edu-text-muted;
+        font-family: $edu-font-code;
+        font-variant-numeric: tabular-nums;
+        text-align: right;
+        line-height: 1.6;
+
+        .submission-date {
+            display: inline-block;
+            white-space: normal;
+
+            > span,
+            > br + span {
+                color: $edu-text;
+                font-weight: 500;
+            }
+
+            a {
+                color: $edu-accent;
+                text-decoration: none;
+
+                &:hover { text-decoration: underline; }
+            }
+        }
+
+        @media (max-width: 599px) {
+            display: block;
+            text-align: left;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+    }
+
+    // ── Action link row (Resubmit / Rejudge) ──────────────────
+    // Markup: <div class="link-row"><a><i></i>Resubmit</a></div>
+    .link-row {
+        display: inline-block;
+
+        + .link-row { margin-left: 8px; }
+
+        > a,
+        > form > a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 500;
+            color: $edu-text;
+            background: $edu-bg-paper;
+            border: 1px solid $edu-border;
+            border-radius: $edu-radius-md;
+            text-decoration: none;
+            transition: border-color $edu-duration-fast $edu-ease-out, color $edu-duration-fast $edu-ease-out, background $edu-duration-fast $edu-ease-out;
+
+            i {
+                font-style: normal !important;
+                color: $edu-text-muted;
+                font-size: 12px;
+            }
+
+            &:hover {
+                border-color: $edu-accent-border;
+                background: $edu-accent-soft;
+                color: $edu-accent-strong;
+                text-decoration: none;
+
+                i { color: $edu-accent; }
+            }
+        }
+    }
+
+    // ── Source code toggle ────────────────────────────────────
+    // Markup: <h3 id="source-header" class="toggle closed"><i.fa-chevron-right>Source code</h3>
+    #source-header {
+        font-size: 14px !important;
+        font-weight: 600;
+        color: $edu-text-strong;
+        margin: 16px 0 12px !important;
+        padding: 10px 14px;
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-md;
+        cursor: pointer;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: border-color $edu-duration-fast $edu-ease-out, background $edu-duration-fast $edu-ease-out;
+
+        i {
+            font-style: normal !important;
+            color: $edu-text-muted;
+            transition: transform $edu-duration-fast $edu-ease-out;
+            font-size: 11px !important;
+        }
+
+        &:hover {
+            border-color: $edu-border-strong;
+            background: $edu-bg-soft;
+        }
+
+        &:not(.closed) i {
+            transform: rotate(90deg);
+        }
+    }
+
+    .toggled {
+        margin-top: 0 !important;
+        margin-bottom: 12px;
+    }
+
+    // Highlighted source <pre> block (highlight.js)
+    .source-wrap,
+    .highlight pre {
+        background: $edu-bg-paper !important;
+        border: 1px solid $edu-border !important;
+        border-radius: $edu-radius-md !important;
+        font-family: $edu-font-code !important;
+        font-size: 13px !important;
+        line-height: 1.5 !important;
+        padding: 14px !important;
+        overflow-x: auto;
+    }
+
+    // ── Test-cases section header (h3 with icon) ──────────────
+    // Markup: <h3><i class="far fa-check-square"></i>Execution Results</h3>
+    #test-cases > h3,
+    #test-cases h3:first-of-type {
+        font-size: 14px;
+        font-weight: 600;
+        color: $edu-text-strong;
+        margin: 16px 0 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        i {
+            font-style: normal !important;
+            color: $edu-accent;
+            font-size: 14px;
+        }
+    }
+
+    // Compile-error pre block
+    #test-cases pre {
+        background: $edu-wa-bg;
+        border: 1px solid $edu-wa-border;
+        border-radius: $edu-radius-md;
+        padding: 12px 14px;
+        font-family: $edu-font-code;
+        font-size: 12px;
+        color: $edu-wa-text;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    // ── Batch summary row of case icons ───────────────────────
+    // Markup: <div><b>Batch #1 (...): </b><span.case-AC.case-icons><i.icofont-check-circled/></span>...</div>
+    // OR (no batch): just sequence of <span.case-icons> as direct children of #test-cases.
+    #test-cases > div {
+        display: inline-flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        font-size: 13px;
+        margin: 8px 0 !important;
+        padding: 8px 12px;
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-md;
+
+        b {
+            font-weight: 600;
+            color: $edu-text;
+            margin-right: 6px;
+            font-size: 13px;
+        }
+    }
+
+    // Loose case-icons not wrapped in a div — wrap them visually
+    #test-cases > .case-icons {
+        display: inline-flex;
+        align-items: center;
+        margin: 0 2px;
+    }
+
+    .case-icons {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        i {
+            font-style: normal !important;
+            font-size: 18px !important;
+            font-weight: normal !important;
+            cursor: pointer;
+            transition: transform $edu-duration-fast $edu-ease-out;
+
+            &:hover { transform: scale(1.15); }
+        }
+
+        &.case-AC i { color: $edu-ac-text; }
+        &.case-WA i,
+        &.case-IR i,
+        &.case-RTE i { color: $edu-wa-text; }
+        &.case-TLE i,
+        &.case-MLE i,
+        &.case-OLE i { color: $edu-tle-text; }
+        &.case-SC i { color: $edu-text-faint; }
+    }
+
+    // ── Testcases table ───────────────────────────────────────
+    .testcases-table {
+        width: 100%;
+        margin: 12px 0;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border !important;
+        border-radius: $edu-radius-md;
+        overflow: hidden;
+
+        thead tr {
+            background: $edu-bg-soft;
+        }
+
+        thead td,
+        thead th {
+            padding: 12px 14px !important;
+            font-size: 12px !important;
+            font-weight: 600;
+            color: $edu-text-strong;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border-bottom: 1px solid $edu-border;
+        }
+
+        tbody tr {
+            border: 0 !important;
+            background: transparent !important;
+            transition: background $edu-duration-fast $edu-ease-out;
+
+            &.toggle { cursor: pointer; }
+            &:hover { background: $edu-bg-soft !important; }
+        }
+
+        tbody td {
+            padding: 10px 14px !important;
+            font-size: 13px !important;
+            color: $edu-text;
+            border-bottom: 1px solid $edu-border !important;
+            vertical-align: middle;
+
+            // Override legacy `background-d6e8f7` (batch AC, blue) +
+            // `background-bisque` (batch WA, orange) inline classes.
+            &.background-d6e8f7,
+            &.background-bisque {
+                background: transparent !important;
+            }
+
+            // Toggle chevron
+            i.fa-chevron-right {
+                font-style: normal !important;
+                color: $edu-text-muted;
+                transition: transform $edu-duration-fast $edu-ease-out;
+                margin-right: 6px;
+                font-size: 11px;
+            }
+
+            // Batch label / case label
+            b {
+                font-weight: 600;
+                color: $edu-text-strong;
+            }
+
+            // Col title prefix ("Điểm:", "Thời gian:")
+            .col-title {
+                font-size: 11px;
+                font-weight: 500;
+                color: $edu-text-muted;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                margin-right: 4px;
+            }
+
+            // Status spans inline
+            .case-AC,
+            .case-WA,
+            .case-TLE,
+            .case-MLE,
+            .case-OLE,
+            .case-IR,
+            .case-RTE,
+            .case-CE {
+                display: inline-block;
+                padding: 2px 10px;
+                font-family: $edu-font-code;
+                font-size: 11px;
+                font-weight: 700;
+                line-height: 16px;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                border-radius: $edu-radius-pill;
+                border: 1px solid;
+            }
+
+            .case-AC {
+                background: $edu-ac-bg;
+                color: $edu-ac-text;
+                border-color: $edu-ac-border;
+            }
+
+            .case-WA,
+            .case-IR,
+            .case-RTE {
+                background: $edu-wa-bg;
+                color: $edu-wa-text;
+                border-color: $edu-wa-border;
+            }
+
+            .case-TLE,
+            .case-MLE,
+            .case-OLE {
+                background: $edu-tle-bg;
+                color: $edu-tle-text;
+                border-color: $edu-tle-border;
+            }
+
+            .case-CE {
+                background: $edu-bg-muted;
+                color: $edu-text-muted;
+                border-color: $edu-border;
+            }
+        }
+
+        // Overall summary row (gradient highlight)
+        #overall-row {
+            background: linear-gradient(180deg, $edu-bg-soft 0%, $edu-bg-paper 100%) !important;
+            font-weight: 600;
+
+            td {
+                padding: 14px !important;
+                font-size: 13px !important;
+                background: transparent !important;
+                border-bottom: 2px solid $edu-border !important;
+            }
+        }
+
+        // Toggle expand state
+        tbody tr:not(.closed) td i.fa-chevron-right {
+            transform: rotate(90deg);
+        }
+
+        // Last row no border
+        tbody tr:last-child td { border-bottom: 0 !important; }
+
+        // Numeric cells use mono tabular nums
+        tbody td:nth-child(3),
+        tbody td:nth-child(4),
+        tbody td:nth-child(5) {
+            font-family: $edu-font-code;
+            font-variant-numeric: tabular-nums;
+            font-size: 12px !important;
+            color: $edu-text;
+        }
+
+        // Mobile: stack each row info into vertical card
+        @media (max-width: 767px) {
+            border-radius: $edu-radius-md;
+
+            tbody td {
+                display: block;
+                padding: 6px 14px !important;
+                border-bottom: 0 !important;
+
+                &:first-child {
+                    padding-top: 12px !important;
+                    font-weight: 600;
+                }
+
+                &:last-child {
+                    padding-bottom: 12px !important;
+                    border-bottom: 1px solid $edu-border !important;
+                }
+            }
+
+            tbody tr:last-child td:last-child { border-bottom: 0 !important; }
+        }
+    }
+
+    // ── Case feedback (expanded testcase output) ──────────────
+    .case-feedback {
+        background: $edu-bg-soft !important;
+
+        td {
+            padding: 0 !important;
+            border-top: 1px dashed $edu-border;
+        }
+    }
+
+    .case-info {
+        padding: 14px 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        strong {
+            font-size: 11px;
+            font-weight: 600;
+            color: $edu-text-muted;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .case-output {
+            margin: 0;
+            padding: 10px 12px;
+            background: $edu-bg-paper;
+            border: 1px solid $edu-border;
+            border-radius: $edu-radius-sm;
+            font-family: $edu-font-code;
+            font-size: 12px;
+            color: $edu-text;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 300px;
+            overflow: auto;
+        }
+    }
+
+    // ── Abort button (admin) ──────────────────────────────────
+    #abort-button input[type="submit"].button {
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 500;
+        color: $edu-bg-paper;
+        background: $edu-wa-text;
+        border: 1px solid $edu-wa-text;
+        border-radius: $edu-radius-md;
+        cursor: pointer;
+        transition: opacity $edu-duration-fast $edu-ease-out;
+
+        &:hover { opacity: 0.85; }
+    }
+}

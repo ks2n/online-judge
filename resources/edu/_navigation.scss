@@ -1,0 +1,726 @@
+// ============================================================
+// _navigation.scss — top bar (no HUD), dropdowns, mobile menu
+// ============================================================
+// Layout (desktop ≥ 1024px):
+//   ┌─────────────────────────────────────────────────────────────┐
+//   │ [logo]  Bài tập  Khoá học  Cuộc thi  …  | 🔔  Lang  Profile │
+//   └─────────────────────────────────────────────────────────────┘
+// Mobile (<1024px):
+//   - hamburger trái + logo + lang/profile compact phải
+//   - menu mở slide-down panel.
+// ============================================================
+
+@use "tokens" as *;
+
+$nav-height: 56px;
+$nav-height-mobile: 56px;
+
+body.edu {
+    #navigation.edu-nav {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        z-index: 100;
+        height: $nav-height;
+        background: $edu-bg-paper;
+        border-bottom: 1px solid $edu-border;
+        box-shadow: $edu-shadow-sm;
+        backdrop-filter: none;
+    }
+
+    .edu-nav-shell {
+        display: flex;
+        align-items: center;
+        gap: 16px;                          // was 24px — tighten so 9 nav items + search fit at 1280
+        height: 100%;
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 0 20px;
+        background: transparent !important; // legacy override
+    }
+
+    // ── Brand: logo + hamburger (mobile) ─────────────────────────
+    .edu-nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 0; // hamburger desktop hidden — no extra gap
+        flex: 0 0 auto;
+
+        #navicon {
+            display: none; // desktop hide
+            cursor: pointer;
+            font-size: 18px;
+            color: $edu-text-muted;
+            padding: 8px;
+            border-radius: $edu-radius-sm;
+            transition: background $edu-duration-fast $edu-ease-out;
+
+            &:hover {
+                background: $edu-bg-soft;
+                color: $edu-text;
+            }
+        }
+
+        .edu-nav-logo {
+            display: flex;
+            align-items: center;
+            color: $edu-text-strong;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+
+            &:hover {
+                text-decoration: none;
+                color: $edu-accent;
+            }
+
+            img, svg {
+                height: 32px !important;   // beat html height attr + legacy
+                max-height: 32px;
+                width: auto;
+                display: block;
+            }
+        }
+    }
+
+    // ── Primary nav list ─────────────────────────────────────────
+    .edu-nav-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        gap: 2px;                                // was 4px — tighten between pills
+        flex: 0 1 auto;                          // was 1 1 auto — don't fill, let search take leftover space
+        min-width: 0;
+        height: 100%;
+        text-transform: none !important;        // beat legacy `nav ul li { text-transform: uppercase }`
+
+        > li {
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            text-transform: none !important;
+        }
+
+        // Kill legacy duplicate label injected via ::after { content: attr(data-tooltip) }
+        // (base.scss:1352-1358 mobile + tooltip on desktop hover).
+        a.nav-icon-link::after,
+        a.nav-icon-link::before {
+            content: none !important;
+            display: none !important;
+        }
+
+        // Hide the duplicate "home" logo entries — beat legacy `display:flex !important`.
+        // (Template no longer renders these, kept defensively for upstream merges.)
+        > li.home-nav-element,
+        > li.home-menu-item { display: none !important; }
+
+        a.nav-icon-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;                            // was 8px — pill icon+label tighter
+            padding: 7px 10px;                   // was 8px 12px
+            // Reset legacy nav-icon-link box (base.scss:1669-1700) — kill 50×50 chip,
+            // backdrop blur, and white-translucent background that ghosts behind text.
+            width: auto !important;
+            height: auto !important;
+            min-width: 0;
+            background: transparent !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            box-shadow: none !important;
+            transform: none !important;
+            color: $edu-text;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            border-radius: $edu-radius-sm;
+            transition: background $edu-duration-fast $edu-ease-out, color $edu-duration-fast $edu-ease-out;
+
+            .nav-icon-container {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: auto !important;
+                height: auto !important;
+                background: transparent !important;
+                border-radius: 0 !important;
+                font-size: 14px;
+                color: $edu-text-muted;
+                transition: color $edu-duration-fast $edu-ease-out;
+
+                i {
+                    font-size: 14px !important;
+                    color: inherit !important;
+                    transform: none !important;
+                    font-style: normal !important;   // <i> defaults to italic in some UA stylesheets — keep FA glyphs upright
+                    -webkit-font-smoothing: antialiased;
+                }
+            }
+
+            .nav-label {
+                white-space: nowrap;
+            }
+
+            &:hover {
+                background: $edu-bg-soft !important;     // beat legacy rgba(255,255,255,.2)
+                color: $edu-accent;
+                text-decoration: none;
+                transform: none !important;              // kill legacy translateY(-2px)
+                box-shadow: none !important;             // kill legacy hover shadow
+
+                .nav-icon-container {
+                    color: $edu-accent;
+                    transform: none !important;          // kill legacy scale(1.1)
+                }
+            }
+
+            &.active {
+                color: $edu-accent;
+                background: $edu-accent-soft;
+                font-weight: 600;
+                // Kill legacy underline (base.scss:1660, 1740) — pill is enough.
+                border-bottom: none !important;
+                border-radius: $edu-radius-sm !important;
+
+                .nav-icon-container {
+                    color: $edu-accent;
+                }
+            }
+        }
+
+        // Submenu chevron is mobile-only — beat any legacy button display rule.
+        .nav-expand,
+        > li > .nav-expand {
+            display: none !important;
+        }
+
+        // Dropdown submenus (sticky on hover, desktop)
+        .nav-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 180px;
+            background: $edu-bg-paper;
+            border: 1px solid $edu-border;
+            border-radius: $edu-radius-md;
+            box-shadow: $edu-shadow-md;
+            padding: 6px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-4px);
+            transition: all $edu-duration-fast $edu-ease-out;
+
+            .nav-dropdown-item {
+                display: block;
+                padding: 8px 12px;
+                color: $edu-text;
+                font-size: 14px;
+                text-decoration: none;
+                border-radius: $edu-radius-xs;
+
+                &:hover {
+                    background: $edu-bg-soft;
+                    color: $edu-accent;
+                    text-decoration: none;
+                }
+            }
+        }
+
+        > li.has-children:hover .nav-dropdown,
+        > li.has-children:focus-within .nav-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+    }
+
+    // ── Search input — sits flush after the nav list, not at the far right.
+    // Layout target:
+    //   [brand]  [nav links]  [search]                  [utility]
+    // The big white gap between "Giới thiệu" and the search came from
+    // `margin-left: auto` on .edu-nav-search; instead, push the utility
+    // cluster to the right edge with margin-left:auto on .edu-nav-utility,
+    // so search visually anchors to the nav content rather than orphaning
+    // mid-bar.
+    .edu-nav-search {
+        flex: 0 1 clamp(220px, 22vw, 320px);
+        margin-left: 8px;                        // small gap after the last nav pill
+        position: relative;
+        display: flex;
+        align-items: center;
+        min-width: 0;
+
+        i.fa-magnifying-glass {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: $edu-text-muted;
+            font-size: 13px;
+            pointer-events: none;
+        }
+
+        input[type="search"] {
+            width: 100%;
+            height: 36px;
+            padding: 0 32px 0 34px;        // right padding leaves room for kbd hint
+            background: $edu-bg-soft;
+            border: 1px solid transparent;
+            border-radius: $edu-radius-md;
+            font: 500 13px/1 $edu-font-ui;
+            color: $edu-text;
+            transition: background $edu-duration-fast $edu-ease-out,
+                        border-color $edu-duration-fast $edu-ease-out,
+                        box-shadow $edu-duration-fast $edu-ease-out;
+            -webkit-appearance: none;
+            appearance: none;
+
+            &::placeholder {
+                color: $edu-text-muted;
+                font-weight: 400;
+            }
+
+            &::-webkit-search-cancel-button {
+                -webkit-appearance: none;
+                appearance: none;
+            }
+
+            &:focus {
+                outline: none;
+                background: $edu-bg-paper;
+                border-color: $edu-accent;
+                box-shadow: 0 0 0 3px rgba($edu-accent, 0.15);
+
+                ~ .edu-nav-search-kbd { opacity: 0; }   // hide hint while typing
+            }
+        }
+
+        // Keyboard shortcut hint — pressing "/" focuses the input.
+        // Hidden while focused (no longer needed).
+        .edu-nav-search-kbd {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            font: 600 11px/1 $edu-font-code;
+            color: $edu-text-muted;
+            background: $edu-bg-paper;
+            border: 1px solid $edu-border;
+            border-radius: $edu-radius-xs;
+            box-shadow: 0 1px 0 $edu-border;
+            pointer-events: none;
+            transition: opacity $edu-duration-fast $edu-ease-out;
+        }
+    }
+
+    // ── Utility cluster on the right ─────────────────────────────
+    .edu-nav-utility {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex: 0 0 auto;
+        margin-left: auto;                       // anchor utility to right edge
+        height: 100%;
+
+        // Force <i> upright everywhere in utility (notifications, lang globe,
+        // user chevron). Default <i> is italic in UA stylesheets and FA
+        // glyphs end up looking tilted at small sizes.
+        i { font-style: normal !important; transform: none !important; }
+
+        > span {
+            display: inline-flex;
+            align-items: center;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .navbar-icon,
+        .navbar-utility-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            color: $edu-text-muted;
+            text-decoration: none;
+            border-radius: $edu-radius-sm;
+            transition: background $edu-duration-fast $edu-ease-out, color $edu-duration-fast $edu-ease-out;
+
+            &:hover {
+                background: $edu-bg-soft;
+                color: $edu-accent;
+            }
+        }
+
+        // Language switcher carries an inline label ("Tiếng Việt" / "English")
+        // so it can't be clamped to a 36×36 square — opt it out and let the
+        // padding rule below decide its size. Without this the trailing
+        // characters ("Tiếng Việ…") get clipped by the fixed width.
+        #nav-lang-icon.navbar-icon,
+        #nav-lang-icon.navbar-utility-link {
+            width: auto;
+            height: auto;
+        }
+
+        // Notification dot
+        .notification-open .navbar-icon::after {
+            content: "";
+            position: absolute;
+            top: 8px; right: 8px;
+            width: 6px; height: 6px;
+            background: $edu-warm;
+            border-radius: 50%;
+        }
+
+        .unread_boxes {
+            position: absolute;
+            top: 4px; right: 0;
+            min-width: 16px;
+            height: 16px;
+            padding: 0 5px;
+            background: $edu-warm;
+            color: #fff;
+            font: 600 10px/16px $edu-font-ui;
+            border-radius: 999px;
+            text-align: center;
+        }
+
+        // Language inline label
+        #nav-lang-icon {
+            cursor: pointer;
+            padding: 6px 10px;
+            display: inline-flex !important;
+            align-items: center;
+            border-radius: $edu-radius-sm;
+            transition: background $edu-duration-fast $edu-ease-out;
+            white-space: nowrap;
+            line-height: 1;
+
+            &:hover { background: $edu-bg-soft; }
+
+            i { margin-right: 6px; color: $edu-text-muted; font-size: 13px; }
+
+            .nav-right-text,
+            h4.nav-right-text,
+            h4.black {
+                margin: 0 !important;        // beat legacy h4 margin (5px 0)
+                padding: 0;
+                font-size: 13px;
+                font-weight: 500;
+                line-height: 1;
+                color: $edu-text;
+                white-space: nowrap;
+                display: inline;
+            }
+        }
+
+        // User profile chip (desktop)
+        #user-links {
+            cursor: pointer;
+            padding: 4px 10px 4px 6px;
+            border-radius: $edu-radius-md;
+            border: 1px solid $edu-border;
+            transition: background $edu-duration-fast $edu-ease-out;
+
+            &:hover { background: $edu-bg-soft; }
+
+            .user-img {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                margin-right: 8px;
+                background: $edu-accent-soft;        // soft indigo behind Gravatar identicon
+                border: 1px solid $edu-accent-border;
+                padding: 0;
+                object-fit: cover;
+            }
+
+            .nav-user-meta {
+                display: inline-flex;
+                align-items: center;
+                line-height: 1;
+                margin-right: 6px;
+            }
+
+            .nav-user-name {
+                font-size: 13px;
+                font-weight: 600;
+                color: $edu-text-strong;
+            }
+
+            // "Account" subtitle adds noise next to a username that's already
+            // self-evidently the user link — hide on desktop, keep markup for
+            // a11y and mobile drawer where it gives extra context.
+            .nav-user-role {
+                display: none;
+            }
+        }
+
+        // Anonymous (login/register) buttons
+        .anon {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+
+            a {
+                text-decoration: none;
+                padding: 6px 14px;
+                border-radius: $edu-radius-md;
+                font-size: 14px;
+                font-weight: 500;
+
+                &:first-child {
+                    color: $edu-text;
+                    background: transparent;
+                    border: 1px solid transparent;
+
+                    &:hover {
+                        background: $edu-bg-soft;
+                    }
+                }
+
+                &:last-child {
+                    color: #fff;
+                    background: $edu-accent;
+                    border: 1px solid $edu-accent;
+
+                    &:hover {
+                        background: $edu-accent-hover;
+                        border-color: $edu-accent-hover;
+                    }
+                }
+
+                h4.nav-right-text {
+                    margin: 0 !important;
+                    padding: 0;
+                    font: inherit;
+                    line-height: 1;
+                    color: inherit;
+                    white-space: nowrap;
+                }
+            }
+        }
+    }
+
+    // ── Page offset for fixed nav ────────────────────────────────
+    .edu-page,
+    #page-container.edu-page {
+        padding-top: $nav-height;
+    }
+
+    // ── Loading bar (already styled by core, just colour) ────────
+    #loading-bar {
+        background: $edu-accent !important;
+    }
+
+    #nav-shadow { display: none; }
+}
+
+// ── Mobile breakpoint ────────────────────────────────────────────
+@media (max-width: 1099px) {
+    body.edu {
+        #navigation.edu-nav {
+            height: $nav-height-mobile;
+        }
+
+        // Hide search in top bar on mobile — render inside drawer instead
+        .edu-nav-search { display: none; }
+
+        // C6: shrink logo on tablet (mark-only happens at <480px below)
+        .edu-nav-logo img,
+        .edu-nav-logo svg {
+            height: 28px !important;
+            max-height: 28px;
+        }
+
+        .edu-nav-brand {
+            gap: 8px;
+            #navicon { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; }
+        }
+
+        .edu-nav-list {
+            display: none;
+            position: fixed;
+            top: $nav-height-mobile;
+            left: 0; right: 0;
+            background: $edu-bg-paper;
+            border-bottom: 1px solid $edu-border;
+            box-shadow: $edu-shadow-md;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 8px;
+            gap: 0;
+            max-height: calc(100vh - #{$nav-height-mobile});
+            overflow-y: auto;
+            z-index: 99;
+            text-transform: none !important;
+
+            > li {
+                height: auto;
+                width: 100%;
+                display: block;
+            }
+
+            a.nav-icon-link {
+                width: 100%;
+                padding: 12px 14px;
+                font-size: 15px;
+            }
+
+            .nav-expand {
+                display: inline-flex;
+                position: absolute;
+                top: 8px; right: 8px;
+                width: 32px; height: 32px;
+                align-items: center;
+                justify-content: center;
+                background: transparent;
+                border: 0;
+                color: $edu-text-muted;
+                border-radius: $edu-radius-sm;
+                cursor: pointer;
+
+                i { transition: transform $edu-duration-fast $edu-ease-out; }
+            }
+
+            .nav-dropdown {
+                position: static;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                box-shadow: none;
+                border: 0;
+                background: transparent;
+                padding: 0 0 0 12px;
+                margin: 0;
+            }
+
+            > li.has-children:not(.nav-expanded) .nav-dropdown {
+                display: none;
+            }
+
+            > li.nav-expanded .nav-expand i {
+                transform: rotate(90deg);
+            }
+        }
+
+        // When body has the toggled class (set by common.js)
+        &.nav-expanded .edu-nav-list,
+        .edu-nav-list.expanded {
+            display: flex;
+        }
+
+        // common.js sets `nav-list-open` on #navigation and inline `display:block` on #nav-list.
+        // Force flex column even when JS sets `display: block`, so spacing/scroll behave.
+        #navigation.nav-list-open .edu-nav-list,
+        #nav-list[style*="display: block"] {
+            display: flex !important;
+        }
+
+        .edu-nav-utility {
+            gap: 4px;
+            flex-shrink: 1;
+            max-width: 50%;
+            overflow: hidden;
+
+            #nav-lang-icon {
+                padding: 4px;
+                .nav-right-text,
+                h4.nav-right-text,
+                h4.black { display: none !important; }
+                i { margin-right: 0; font-size: 14px; }
+            }
+            .nav-user-role { display: none !important; }
+            #user-links {
+                padding: 2px;
+                border: 0;
+
+                .nav-user-name { display: none !important; }
+                .nav-user-meta { display: none !important; }
+                .fa-chevron-down { display: none !important; }
+                .user-img { margin-right: 0; }
+            }
+            .anon a:first-child { display: none; } // only show "Sign up" CTA on mobile
+        }
+    }
+}
+
+// C6: phone breakpoint — clip the wordmark, keep only the LQD owl mark.
+// Site logo SVG packs icon + wordmark in viewBox 2758×1062. Capping the
+// wrapper to 32px and overflowing the img preserves the mark and hides
+// the wordmark without forcing a separate icon-only asset.
+@media (max-width: 479px) {
+    body.edu .edu-nav-logo {
+        display: inline-flex;
+        overflow: hidden;
+        width: 32px;
+        max-width: 32px;
+        flex: 0 0 32px;
+
+        img, svg {
+            height: 28px !important;
+            width: auto !important;
+            max-width: none !important;
+            object-fit: cover;
+            object-position: left center;
+        }
+    }
+}
+
+// Generic dropdown popper (lang, user) — outside edu-nav-utility
+body.edu {
+    .dropdown {
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-md;
+        box-shadow: $edu-shadow-md;
+        padding: 6px;
+        min-width: 180px;
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            color: $edu-text;
+            font-size: 14px;
+            border-radius: $edu-radius-xs;
+            cursor: pointer;
+            transition: background $edu-duration-fast $edu-ease-out;
+
+            i { color: $edu-text-muted; width: 16px; }
+
+            &:hover {
+                background: $edu-bg-soft;
+                color: $edu-accent;
+
+                i { color: $edu-accent; }
+            }
+        }
+
+        a {
+            text-decoration: none;
+            display: block;
+
+            &:hover { text-decoration: none; }
+        }
+
+        a.red .dropdown-item,
+        .dropdown-item.red {
+            color: $edu-wa-text;
+
+            &:hover {
+                background: $edu-wa-bg;
+                color: $edu-wa-text;
+            }
+        }
+    }
+}

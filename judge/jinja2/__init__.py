@@ -14,6 +14,7 @@ from . import (
     camo,
     chat,
     datetime,
+    difficulty,
     filesize,
     gravatar,
     language,

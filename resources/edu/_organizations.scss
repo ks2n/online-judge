@@ -1,0 +1,321 @@
+// ============================================================
+// _organizations.scss — Organization list + detail
+// ============================================================
+// Targets: templates/organization/list.html, home.html
+// Legacy: organization-card has indigo solid bg + tall logo.
+// Replace with calm card grid. Tab pills already inherit from
+// problem-list mobile + navigation desktop styles.
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+    // ── List grid ────────────────────────────────────────────
+    .organization-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 12px;
+        margin: 0 0 16px;
+    }
+
+    .organization-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        background: $edu-bg-paper !important;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-lg;
+        transition: background $edu-duration-fast $edu-ease-out, border-color $edu-duration-fast $edu-ease-out, transform $edu-duration-fast $edu-ease-out;
+        cursor: pointer;
+
+        &:hover {
+            background: $edu-bg-soft !important;
+            border-color: $edu-border-strong;
+            transform: translateY(-1px);
+        }
+
+        .org-logo {
+            width: 44px !important;
+            height: 44px !important;
+            margin: 0 !important;
+            border-radius: $edu-radius-sm;
+            background: $edu-accent-soft;
+            padding: 6px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .org-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+            flex: 1 1 auto;
+
+            > span:first-child {
+                font-size: 14px;
+                font-weight: 600 !important;
+                color: $edu-text-strong;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            > span:last-child {
+                font-size: 12px;
+                color: $edu-text-muted;
+                font-style: normal;
+
+                i:not(.fa) { font-style: normal; }
+            }
+
+            .community-badge {
+                display: inline-flex;
+                align-items: center;
+                margin-left: 6px;
+                padding: 1px 6px;
+                font-size: 10px;
+                color: $edu-accent-strong;
+                background: $edu-accent-soft;
+                border-radius: $edu-radius-pill;
+
+                i { font-size: 10px; }
+            }
+        }
+
+        // Action button — replace legacy royalblue
+        .button.small,
+        .background-royalblue {
+            background: $edu-accent !important;
+            color: #fff !important;
+            border: 1px solid $edu-accent !important;
+            border-radius: $edu-radius-md !important;
+            padding: 6px 14px !important;
+            font-size: 13px !important;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background $edu-duration-fast $edu-ease-out;
+            white-space: nowrap;
+
+            &:hover {
+                background: $edu-accent-hover !important;
+                border-color: $edu-accent-hover !important;
+            }
+        }
+
+        // Joined → ghost button
+        form input[type="submit"][value*="Unblock"],
+        > .button.small[href*="View"] {
+            background: $edu-bg-paper !important;
+            color: $edu-accent !important;
+
+            &:hover {
+                background: $edu-accent-soft !important;
+                color: $edu-accent-strong !important;
+            }
+        }
+    }
+
+    // ── Detail page header ───────────────────────────────────
+    .org-header {
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-lg;
+        overflow: hidden;
+        margin: 0 0 24px;
+        box-shadow: $edu-shadow-sm;
+    }
+
+    .org-cover-image {
+        width: 100%;
+        height: 160px;
+        overflow: hidden;
+        background: $edu-accent-soft;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+    }
+
+    .org-header-main {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 20px 24px;
+        flex-wrap: wrap;
+
+        &.has-cover { padding-top: 16px; }
+    }
+
+    .org-header-left {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        min-width: 0;
+        flex: 1 1 auto;
+    }
+
+    .org-logo-large,
+    .org-logo-placeholder {
+        width: 72px;
+        height: 72px;
+        border-radius: $edu-radius-md;
+        flex-shrink: 0;
+        border: 1px solid $edu-border;
+        background: $edu-bg-soft;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        color: $edu-accent;
+    }
+
+    .org-logo-large { padding: 6px; object-fit: contain; }
+
+    .org-header-info { min-width: 0; }
+
+    .org-name {
+        margin: 0 0 8px;
+        font-size: 22px;
+        font-weight: 700;
+        color: $edu-text-strong;
+        line-height: 1.25;
+    }
+
+    .org-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+
+        .org-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 10px;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: $edu-radius-pill;
+            border: 1px solid transparent;
+
+            &-public {
+                background: $edu-accent-soft;
+                color: $edu-accent-strong;
+                border-color: $edu-accent-border;
+            }
+
+            &-private {
+                background: $edu-tle-bg;
+                color: $edu-tle-text;
+                border-color: $edu-tle-border;
+            }
+        }
+
+        .org-stat {
+            font-size: 13px;
+            color: $edu-text-muted;
+
+            i { margin-right: 4px; color: $edu-text-muted; }
+        }
+    }
+
+    .org-member-preview {
+        display: flex;
+        align-items: center;
+        margin-top: 12px;
+
+        a {
+            display: inline-block;
+            margin-left: -6px;
+
+            &:first-child { margin-left: 0; }
+
+            img {
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+                border: 2px solid $edu-bg-paper;
+                box-shadow: $edu-shadow-sm;
+            }
+        }
+
+        .org-member-more {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            margin-left: -6px;
+            background: $edu-bg-soft;
+            color: $edu-text-muted;
+            border: 2px solid $edu-bg-paper;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+    }
+
+    // Action buttons
+    .org-join-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        background: $edu-accent;
+        color: #fff;
+        border: 1px solid $edu-accent;
+        border-radius: $edu-radius-md;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background $edu-duration-fast $edu-ease-out, transform $edu-duration-fast $edu-ease-out;
+
+        &:hover {
+            background: $edu-accent-hover;
+            border-color: $edu-accent-hover;
+            color: #fff;
+            text-decoration: none;
+            transform: translateY(-1px);
+        }
+
+        &.org-request-btn {
+            background: $edu-bg-paper;
+            color: $edu-accent;
+            border-color: $edu-accent-border;
+
+            &:hover {
+                background: $edu-accent-soft;
+                color: $edu-accent-strong;
+                border-color: $edu-accent;
+            }
+        }
+    }
+
+    .org-joined-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 14px;
+        background: $edu-ac-bg;
+        color: $edu-ac-text;
+        border: 1px solid $edu-ac-border;
+        border-radius: $edu-radius-md;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    // ── Filter form right sidebar ────────────────────────────
+    .right-sidebar {
+        #search-organization {
+            width: 100%;
+        }
+    }
+}

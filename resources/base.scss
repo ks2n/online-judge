@@ -429,26 +429,19 @@ th {
     vertical-align: middle;
 }
 
-.form-area {
-    display: inline-block;
-    background: $background_light_gray;
-    padding: 5px 10px 10px 15px;
-    border-radius: $widget_border_radius;
-    border: 1px solid $border_gray;
-}
+// [refactor] Removed legacy `.form-area { display: inline-block }` —
+// inline-block defeated `margin: auto` centering of card. Edu now uses
+// `display: block` with max-width 420 and shadow. See edu/_forms.scss.
 
 div.info-float {
     float: right;
     padding: 10px;
 }
 
-footer {
-    color: gray;
-    display: block;
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-}
+// [refactor] Removed legacy `footer { position: absolute; bottom: 0 }` —
+// it pinned the footer to viewport bottom which collided with our flex
+// `.edu-footer` flow layout. Specific edu rules in edu/_footer.scss handle
+// it now (with cream→paper gradient and box-sizing).
 
 body {
     position: relative;
@@ -501,15 +494,11 @@ h4 {
     margin: 0;
 }
 
-header {
-    background: #111;
-    color: #aaa;
-    text-align: left;
-    display: block;
-    height: 60px;
-    margin-top: -10px;
-    padding: 10px 10px 10px 5%;
-}
+// [refactor] Removed legacy generic `header { background: #111 }` rule —
+// it painted a black 60px bar behind every <header> element, which the edu
+// theme renders as a transparent section head (e.g. learning-dashboard,
+// edu-section-head). Edu reset is now load-bearing; legacy rule was
+// causing duplicate paints on top of edu chrome.
 
 #user-links {
     display: flex;
@@ -700,12 +689,9 @@ hr {
     }
 }
 
-footer {
-    text-align: center;
-    height: 40px;
-    border-top: 1px solid $border_gray;
-    background: #ededed;
-}
+// [refactor] Removed second legacy footer rule — fixed 40px tall, gray bg.
+// Edu footer uses cream→paper gradient and a flexible min-height: 44px
+// content height. See edu/_footer.scss.
 
 html {
     position: relative;

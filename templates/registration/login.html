@@ -12,13 +12,13 @@
       {% endif %}
       <table border="0" style="text-align:left">
         <tr>
-          <th><i class="fa fa-user fa-fw"></i>
+          <th><label for="id_username"><i class="fa fa-user fa-fw" aria-hidden="true"></i><span class="sr-only">{{ _('Username') }}</span></label>
           </th>
           <td>{{ form.username }}
           </td>
         </tr>
         <tr>
-          <th><i class="fa fa-key fa-fw"></i>
+          <th><label for="id_password"><i class="fa fa-key fa-fw" aria-hidden="true"></i><span class="sr-only">{{ _('Password') }}</span></label>
           </th>
           <td>{{ form.password }}
           </td>

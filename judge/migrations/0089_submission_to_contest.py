@@ -4,6 +4,21 @@ import django.db.models.deletion
 from django.db import migrations, models
 
 
+def populate_submission_contest(apps, schema_editor):
+    Submission = apps.get_model("judge", "Submission")
+    ContestSubmission = apps.get_model("judge", "ContestSubmission")
+
+    for contest_submission in ContestSubmission.objects.select_related(
+        "submission", "participation__contest"
+    ).iterator():
+        submission = contest_submission.submission
+        participation = contest_submission.participation
+        if submission_id := getattr(submission, "id", None):
+            Submission.objects.filter(id=submission_id).update(
+                contest_object_id=participation.contest_id
+            )
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -23,15 +38,5 @@ class Migration(migrations.Migration):
                 verbose_name="contest",
             ),
         ),
-        migrations.RunSQL(
-            """
-            UPDATE `judge_submission`
-                INNER JOIN `judge_contestsubmission`
-                    ON (`judge_submission`.`id` = `judge_contestsubmission`.`submission_id`)
-                INNER JOIN `judge_contestparticipation`
-                    ON (`judge_contestsubmission`.`participation_id` = `judge_contestparticipation`.`id`)
-            SET `judge_submission`.`contest_object_id` = `judge_contestparticipation`.`contest_id`
-        """,
-            migrations.RunSQL.noop,
-        ),
+        migrations.RunPython(populate_submission_contest, migrations.RunPython.noop),
     ]

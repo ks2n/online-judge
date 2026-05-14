@@ -1,0 +1,240 @@
+// ============================================================
+// _actionbar.scss — Like / Comment / Bookmark / Share / Report
+// ============================================================
+// Markup (templates/actionbar/list.html):
+//   <div class="page-vote actionbar">
+//     <span class="actionbar-block">
+//       <span class="like-button actionbar-button [voted]"><span.pagevote-score>0</span><i><span.actionbar-text>Like</span>
+//       <span class="dislike-button actionbar-button [voted]"><i></span>
+//     </span>
+//     <span class="actionbar-block"><span class="actionbar-button actionbar-comment"><i><span.actionbar-text>Comment</span><span.actionbar-comment-count>3</span></span></span>
+//     ...
+// Goal: tighten layout (align left, not justify-evenly), edu accent on voted state,
+// proper visual grouping of the like/dislike pair.
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+    .actionbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 0 6px;
+        margin-top: 14px;
+        border-top: 1px solid $edu-border;
+
+        // Override legacy `.actionbar-block { flex: 1; justify-content: center }`
+        // which spreads the buttons full-width. We want them naturally sized,
+        // grouped left to right.
+        .actionbar-block {
+            display: inline-flex;
+            flex: 0 0 auto !important;
+            justify-content: flex-start !important;
+            align-items: center;
+            gap: 0;
+        }
+
+        // First block (like + dislike): visually a pill pair
+        > .actionbar-block:first-child {
+            background: $edu-bg-soft;
+            border: 1px solid $edu-border;
+            border-radius: $edu-radius-pill;
+            padding: 0;
+            margin-right: 4px;
+            transition: border-color $edu-duration-fast $edu-ease-out;
+
+            &:hover { border-color: $edu-border-strong; }
+        }
+
+        .actionbar-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            font-family: $edu-font-ui;
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.4;
+            color: $edu-text-muted;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: $edu-radius-md;
+            cursor: pointer;
+            text-decoration: none;
+            transition: color $edu-duration-fast $edu-ease-out, background $edu-duration-fast $edu-ease-out, border-color $edu-duration-fast $edu-ease-out;
+
+            i {
+                font-style: normal !important;
+                font-size: 14px !important;
+                color: inherit;
+                transition: transform $edu-duration-fast $edu-ease-out;
+            }
+
+            // Override legacy `font-size: large` inline style
+            > i[style*="large"] {
+                font-size: 14px !important;
+            }
+
+            &:hover {
+                background: $edu-bg-paper;
+                color: $edu-text;
+                text-decoration: none;
+                i { transform: scale(1.05); }
+            }
+
+            &:active { transform: translateY(1px); }
+
+            &.disabled {
+                opacity: 0.45;
+                cursor: not-allowed;
+                pointer-events: none;
+            }
+        }
+
+        // ── Like / Dislike pair (inside first block) ─────────────
+        .like-button,
+        .dislike-button {
+            border-radius: $edu-radius-pill;
+            padding: 6px 12px;
+            background: transparent !important;
+            border: 0 !important;
+
+            &:hover {
+                background: $edu-bg-paper !important;
+                color: $edu-text-strong !important;
+            }
+        }
+
+        .like-button {
+            padding-right: 10px;
+
+            &.voted {
+                background: $edu-accent-soft !important;
+                color: $edu-accent-strong !important;
+
+                i { font-weight: 900; color: $edu-accent !important; }
+
+                .pagevote-score { color: $edu-accent-strong; }
+
+                &:hover {
+                    background: $edu-accent-soft !important;
+                    filter: brightness(0.97);
+                }
+            }
+        }
+
+        .dislike-button {
+            padding-left: 10px;
+
+            &.voted {
+                background: $edu-wa-bg !important;
+                color: $edu-wa-text !important;
+
+                i { font-weight: 900; color: $edu-wa-text !important; }
+
+                &:hover {
+                    background: $edu-wa-bg !important;
+                    filter: brightness(0.97);
+                }
+            }
+        }
+
+        .pagevote-score {
+            display: inline-block;
+            min-width: 1.25em;
+            text-align: center;
+            font-family: $edu-font-code;
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+            font-size: 13px;
+            color: $edu-text;
+        }
+
+        // ── Comment button + count ───────────────────────────────
+        .actionbar-comment {
+            .actionbar-comment-count {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 18px;
+                height: 18px;
+                padding: 0 6px;
+                margin-left: 2px;
+                font-family: $edu-font-code;
+                font-variant-numeric: tabular-nums;
+                font-size: 11px;
+                font-weight: 600;
+                color: $edu-bg-paper;
+                background: $edu-accent;
+                border-radius: $edu-radius-pill;
+                line-height: 1;
+
+                // Template emits the span only with the number when count > 0
+                // (whitespace stripped via {%- -%}). Empty span renders as
+                // collapsed pill; hide it.
+                &:empty { display: none; }
+            }
+        }
+
+        // ── Bookmark voted state (warm) ──────────────────────────
+        .bookmark-button {
+            &.bookmarked {
+                background: $edu-warm-soft;
+                color: $edu-wa-text;
+
+                i { color: $edu-warm; font-weight: 900; }
+
+                &:hover { background: $edu-warm-soft; filter: brightness(0.97); }
+            }
+        }
+
+        // ── Share hover (cyan-ish) ───────────────────────────────
+        .actionbar-share {
+            &:hover {
+                background: rgba(8, 145, 178, 0.08);
+                color: #0E7490;
+
+                i { color: #0E7490; }
+            }
+        }
+
+        // ── Report (red flag) ────────────────────────────────────
+        a.actionbar-button.black {
+            color: $edu-text-muted;
+
+            &:hover {
+                background: $edu-wa-bg;
+                color: $edu-wa-text;
+
+                i { color: $edu-wa-text; }
+            }
+        }
+
+        // Spread: nothing on right, push comment-block to start
+        > .actionbar-block:nth-child(n+3) {
+            // Bookmark / Share / Report — keep natural width, spaced gap
+        }
+
+        // Mobile: compact, hide labels when hide_texts_on_mobile is set
+        @media (max-width: 599px) {
+            gap: 4px;
+            padding: 8px 0 4px;
+
+            .actionbar-button { padding: 6px 10px; font-size: 12px; }
+            .like-button, .dislike-button { padding-left: 10px; padding-right: 10px; }
+        }
+    }
+
+    .hide_texts_on_mobile .actionbar-text {
+        @media (max-width: 599px) { display: none; }
+    }
+
+    // ── Inline comments wrapper (rendered when "Bình luận" is clicked) ─
+    .inline-comments-container {
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px dashed $edu-border;
+    }
+}

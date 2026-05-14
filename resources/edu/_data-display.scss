@@ -1,0 +1,208 @@
+// ============================================================
+// _data-display.scss — tables, code blocks, KaTeX overrides
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+    table {
+        font-family: $edu-font-ui;
+        border-collapse: collapse;
+        width: 100%;
+        background: $edu-bg-paper;
+        font-size: 14px;
+    }
+
+    // DMOJ tables tagged with .table or sidebox-table
+    table.table,
+    .table {
+        margin: 0 0 16px;
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-md;
+        overflow: hidden;
+
+        thead {
+            background: $edu-bg-soft;
+
+            th {
+                padding: 10px 14px;
+                text-align: left;
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                color: $edu-text-muted;
+                border-bottom: 1px solid $edu-border;
+            }
+        }
+
+        tbody {
+            tr {
+                transition: background $edu-duration-fast $edu-ease-out;
+
+                &:not(:last-child) td {
+                    border-bottom: 1px solid $edu-border;
+                }
+
+                &:hover {
+                    background: $edu-bg-soft;
+                }
+            }
+
+            td {
+                padding: 12px 14px;
+                vertical-align: middle;
+                color: $edu-text;
+            }
+        }
+    }
+
+    // Submissions table verdict cell
+    .submissions-table .sub-result,
+    .sub-result {
+        font-family: $edu-font-code;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    // Inline code blocks (improve over typography baseline)
+    pre.code,
+    pre[class*="language-"] {
+        background: $edu-bg-soft;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-md;
+        padding: 14px 16px;
+
+        code { background: transparent; }
+    }
+
+    // KaTeX block centring + overflow handling
+    .katex-display {
+        margin: 16px 0;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    .katex {
+        font-size: 1em;
+    }
+
+    // Sample I/O blocks (problem statement)
+    .sample-io,
+    pre.sample {
+        background: $edu-bg-soft;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-md;
+        padding: 12px 14px;
+        font-family: $edu-font-code;
+        font-size: 13px;
+        line-height: 1.55;
+        white-space: pre-wrap;
+        margin: 0 0 12px;
+    }
+
+    // Heatmap-style calendars rendered by judge profile widgets
+    .activity-calendar,
+    .ui-calendar {
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-md;
+        padding: 12px;
+    }
+
+    // Profile contribution heatmap — override DMOJ legacy GitHub-green ramp
+    // (resources/users.scss:561-575) so it matches the indigo edu palette.
+    // Legacy selector: `#submission-activity #submission-activity-display table td.activity-N`
+    // (specificity 0,3,1,1) so we mirror the same id chain to win the cascade
+    // without resorting to !important.
+    #submission-activity #submission-activity-display table td.activity-blank,
+    #submission-activity #submission-activity-display table td.activity-0 {
+        background-color: $edu-bg-muted;
+    }
+    #submission-activity #submission-activity-display table td.activity-1 { background-color: $edu-accent-soft; }
+    #submission-activity #submission-activity-display table td.activity-2 { background-color: $edu-accent-border; }
+    #submission-activity #submission-activity-display table td.activity-3 { background-color: $edu-accent; }
+    #submission-activity #submission-activity-display table td.activity-4 { background-color: $edu-accent-strong; }
+
+    // Legend swatches at the bottom (info-bar) — legacy lives at a flatter
+    // selector so plain id+class is enough.
+    #submission-activity .info-bar .activity-0 { background-color: $edu-bg-muted; }
+    #submission-activity .info-bar .activity-1 { background-color: $edu-accent-soft; }
+    #submission-activity .info-bar .activity-2 { background-color: $edu-accent-border; }
+    #submission-activity .info-bar .activity-3 { background-color: $edu-accent; }
+    #submission-activity .info-bar .activity-4 { background-color: $edu-accent-strong; }
+
+    // Round 2 #2 — Wrap the Less/More legend so it sits on its own row, gắn
+    // vào heatmap thay vì lơ lửng góc phải khi total-count rỗng.
+    #submission-activity #submission-activity-display .info-bar {
+        margin-top: 10px;
+        padding: 10px 12px 6px;
+        border-top: 1px solid $edu-border;
+        background: $edu-bg-soft;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+
+        .info-table {
+            margin-left: auto;
+
+            th, td { padding: 2px 4px; }
+            th.info-table-text { font-size: 11px; color: $edu-text-muted; font-weight: 500; }
+            td > div {
+                width: 12px;
+                height: 12px;
+                margin: 0;
+                border-radius: 2px;
+            }
+        }
+
+        #submission-total-count {
+            padding-left: 0 !important;
+            font-size: 12px;
+            color: $edu-text-muted;
+        }
+    }
+
+    // Round 2 #3 — Mobile (≤519px) was hiding the day-of-week labels at
+    // legacy `@media (max-width: 1000px) { th.submission-date-col { display:none } }`
+    // (resources/users.scss:541-545). Bring them back as compact 10px labels
+    // so the heatmap rows have context, while still hiding above 1000px-ish
+    // empty columns.
+    @media (max-width: 519px) {
+        #submission-activity #submission-activity-table th.submission-date-col {
+            display: table-cell !important;
+            width: 26px;
+            padding-right: 4px;
+            font-size: 10px;
+            font-weight: 500;
+            color: $edu-text-muted;
+            text-align: right;
+            vertical-align: middle;
+        }
+    }
+
+    // Generic key-value list (ex. problem meta)
+    .edu-meta-list {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        gap: 6px 16px;
+
+        dt {
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: $edu-text-muted;
+            margin: 0;
+        }
+
+        dd {
+            font-size: 14px;
+            color: $edu-text;
+            margin: 0;
+        }
+    }
+}

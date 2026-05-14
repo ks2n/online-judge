@@ -43,11 +43,7 @@
           <span class="actionbar-text">
             {{_("Comment")}}
           </span>
-          <span class="actionbar-comment-count">
-            {% if all_comment_count %}
-              {{ all_comment_count }}
-            {% endif %}
-          </span>
+          <span class="actionbar-comment-count">{%- if all_comment_count -%}{{ all_comment_count }}{%- endif -%}</span>
         </span>
       </span>
     {% endif %}

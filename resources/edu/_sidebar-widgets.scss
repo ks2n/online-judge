@@ -1,0 +1,273 @@
+// ============================================================
+// _sidebar-widgets.scss — Right-sidebar widgets used on home/blog
+// ============================================================
+// Templates:
+//   profile-table.html       → .blog-sidebox.sidebox > .profile-card
+//   top-users.html           → .blog-sidebox.sidebox > table.feed-table
+//   contests-countdown.html  → .blog-sidebox.sidebox > .contest
+// Goal: unify look with edu cards, calm typography, clear ranking.
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+    // Round 2 #10 — Unify sidebox chrome with edu cards. Legacy widgets.scss
+    // ships .sidebox h3/.sidebox-content/.sidebox with `$surface-primary` bg
+    // and `box-shadow: 0 0 5px rgba(0,0,0,.2)`. That clashes with the cream
+    // page bg and the indigo card frames elsewhere. Force paper bg + edu
+    // border + edu shadow so right-rail widgets feel like edu cards.
+    .blog-sidebox,
+    .sidebox {
+        background: $edu-bg-paper !important;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-lg;
+        box-shadow: $edu-shadow-sm !important;
+        margin-bottom: 16px;
+        overflow: hidden; // contain rounded children
+
+        > h3 {
+            background: $edu-bg-paper !important;
+            border-bottom: 1px solid $edu-border;
+            padding: 12px 16px !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            color: $edu-text-strong;
+            border-radius: 0 !important;
+            margin: 0;
+
+            .fa {
+                background: $edu-accent-soft !important;
+                color: $edu-accent !important;
+                border-radius: $edu-radius-sm !important;
+            }
+        }
+
+        > .sidebox-content {
+            background: $edu-bg-paper !important;
+            border-radius: 0 !important;
+            padding: 12px 16px;
+        }
+
+        > .sidebox-content.sidebox-table {
+            padding: 0 !important;
+        }
+    }
+
+    // ── Profile card (profile-table.html) ─────────────────────
+    .profile-card {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed $edu-border;
+
+            .user-img {
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid $edu-accent-soft;
+                background: $edu-bg-soft;
+                flex-shrink: 0;
+            }
+
+            h4 {
+                margin: 0;
+                font-size: 15px;
+                font-weight: 600;
+                color: $edu-text-strong;
+                line-height: 1.3;
+
+                a { color: $edu-text-strong; text-decoration: none; }
+                a:hover { color: $edu-accent; }
+            }
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 13px;
+            line-height: 1.4;
+
+            > div:first-child {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                color: $edu-text-muted;
+
+                i {
+                    font-style: normal !important;
+                    width: 14px;
+                    text-align: center;
+                    color: $edu-text-faint;
+                    font-size: 12px;
+                }
+            }
+
+            .user-info-body,
+            > div:last-child {
+                font-family: $edu-font-code;
+                font-variant-numeric: tabular-nums;
+                font-weight: 600;
+                color: $edu-text-strong;
+                font-size: 13px;
+            }
+        }
+
+        .medals-container {
+            display: flex;
+            gap: 12px;
+            padding-top: 8px;
+            border-top: 1px dashed $edu-border;
+            justify-content: center;
+
+            .medal-item {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+
+                img {
+                    width: 22px;
+                    height: 22px;
+                    object-fit: contain;
+                }
+
+                .medal-count {
+                    font-family: $edu-font-code;
+                    font-weight: 600;
+                    font-size: 13px;
+                    color: $edu-text-strong;
+                }
+            }
+        }
+    }
+
+    // ── Top users tables (top-users.html) ─────────────────────
+    .sidebox .feed-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0;
+        background: transparent;
+
+        tbody tr {
+            border-bottom: 1px solid $edu-border;
+            transition: background $edu-duration-fast $edu-ease-out;
+
+            &:last-child { border-bottom: 0; }
+            &:hover { background: $edu-bg-soft; }
+        }
+
+        td {
+            padding: 8px 14px !important;
+            font-size: 13px;
+            line-height: 1.4;
+            border: 0;
+            vertical-align: middle;
+
+            // First col — rank number
+            &:first-child {
+                width: 32px;
+                text-align: center;
+                color: $edu-text-muted;
+                font-family: $edu-font-code;
+                font-variant-numeric: tabular-nums;
+
+                b {
+                    font-weight: 600;
+                }
+            }
+
+            // Last col — score / rating
+            &:last-child {
+                width: 56px;
+                text-align: right;
+                font-family: $edu-font-code;
+                font-variant-numeric: tabular-nums;
+                font-weight: 600;
+                color: $edu-text-strong;
+            }
+
+            // Middle col — user link
+            a {
+                color: $edu-text-strong;
+                text-decoration: none;
+                font-weight: 500;
+
+                &:hover { color: $edu-accent; }
+            }
+        }
+
+        // Top 3 rank emphasis
+        tbody tr:nth-child(1) td:first-child b { color: #D4A017; }     // gold
+        tbody tr:nth-child(2) td:first-child b { color: #94A3B8; }     // silver
+        tbody tr:nth-child(3) td:first-child b { color: #B45309; }     // bronze
+    }
+
+    // "View all →" footer link inside sidebox
+    .sidebox .sidebox-content > div:last-child > a {
+        display: block;
+        padding: 10px 16px;
+        margin: 0;
+        font-size: 12px !important;
+        font-weight: 500;
+        color: $edu-text-muted;
+        text-align: center;
+        border-top: 1px solid $edu-border;
+        background: $edu-bg-soft;
+        text-decoration: none;
+        transition: color $edu-duration-fast $edu-ease-out, background $edu-duration-fast $edu-ease-out;
+
+        &:hover {
+            color: $edu-accent;
+            background: $edu-accent-soft;
+            text-decoration: none;
+        }
+    }
+
+    // ── Contest countdown items (contests-countdown.html) ─────
+    .sidebox .contest {
+        padding: 12px 16px;
+        border-bottom: 1px solid $edu-border;
+
+        &:last-of-type { border-bottom: 0; }
+
+        .contest-list-title {
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: 4px;
+
+            a {
+                color: $edu-text-strong;
+                text-decoration: none;
+
+                &:hover { color: $edu-accent; }
+            }
+        }
+
+        .time {
+            font-size: 12px;
+            color: $edu-text-muted;
+            font-family: $edu-font-code;
+            font-variant-numeric: tabular-nums;
+        }
+    }
+
+    // Strip inline padding/border from sidebox-content when it wraps a table
+    .sidebox .sidebox-content[style*="padding: 0"] {
+        padding: 0 !important;
+    }
+}

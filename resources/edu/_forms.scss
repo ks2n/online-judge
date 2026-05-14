@@ -1,0 +1,165 @@
+// ============================================================
+// _forms.scss — login, register, profile, problem submit
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+    // Login / Register surfaces use legacy `.form-area`. Phase 1 token swap
+    // already turned its bg light. Here we polish the chrome.
+    // NOTE: problem submit form (#problem_submit) also uses .form-area —
+    // its layout overrides live in _problem-detail.scss to avoid the narrow
+    // login width.
+    // Login form has icon-only label column → tight 36px col width.
+    #login-panel .form-area table th {
+        width: 36px;
+        min-width: 0 !important;
+        text-align: center;
+        vertical-align: middle;
+        color: $edu-text-muted;
+        font-weight: 400;
+        padding-top: 8px;
+    }
+
+    .form-area:not(#problem_submit) {
+        // Override legacy `.form-area { display: inline-block }` (base.scss:432-)
+        // so margin:auto centers the card.
+        display: block;
+        max-width: 420px;
+        margin: 32px auto;
+        padding: 28px;
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-lg;
+        box-shadow: $edu-shadow-md;
+        overflow: hidden;     // contain `float:right;` button so it doesn't overflow
+
+        // Templates emit `<button style="float:right;" class="action-btn">`.
+        // Strip the float and stretch buttons to full width inside the card.
+        > button.action-btn,
+        > .action-btn[type="submit"] {
+            float: none !important;
+            display: block;
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        > hr { margin: 14px 0; border: 0; border-top: 1px solid $edu-border; }
+
+        h2, h3 {
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+
+        // Legacy form table layout. Two flavours:
+        //   1. Login: <th><i.fa-user></th><td><input></td>  → 36px icon col
+        //   2. Django form.as_table(): <th><label>Mật khẩu cũ</label></th><td><input>
+        //      → label is text, needs auto width and won't wrap vertically.
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: transparent;
+            border: 0;
+
+            th, td {
+                padding: 8px 6px;
+                border: 0;
+                vertical-align: middle;
+                background: transparent;
+            }
+
+            // Default: text label column (django-as-table). Auto width, top-aligned.
+            th {
+                text-align: left;
+                white-space: normal;
+                color: $edu-text;
+                font-weight: 500;
+                font-size: 13px;
+                vertical-align: top;
+                padding-top: 14px;
+                min-width: 120px;
+            }
+
+            input[type="text"],
+            input[type="password"],
+            input[type="email"] {
+                width: 100%;
+            }
+        }
+
+        button[type="submit"],
+        input[type="submit"] {
+            width: 100%;
+            margin-top: 12px;
+            padding: 10px 16px;
+            font-size: 15px;
+            font-weight: 500;
+            background: $edu-accent;
+            color: #fff;
+            border: 1px solid $edu-accent;
+            border-radius: $edu-radius-md;
+            cursor: pointer;
+            transition: background $edu-duration-fast $edu-ease-out;
+
+            &:hover {
+                background: $edu-accent-hover;
+                border-color: $edu-accent-hover;
+            }
+        }
+
+        .helper,
+        .form-help,
+        .helptext {
+            font-size: 12px;
+            color: $edu-text-muted;
+            margin-top: 4px;
+        }
+
+        .errorlist,
+        .errors {
+            list-style: none;
+            margin: 8px 0 0;
+            padding: 8px 12px;
+            background: $edu-wa-bg;
+            border: 1px solid $edu-wa-border;
+            color: $edu-wa-text;
+            font-size: 13px;
+            border-radius: $edu-radius-sm;
+        }
+    }
+
+    // Generic form rows
+    .form-row,
+    .field-row {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 16px;
+
+        label {
+            font-size: 13px;
+            font-weight: 500;
+            color: $edu-text-strong;
+        }
+    }
+
+    // Search / filter forms in sidebars
+    .search-form,
+    .filter-form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        select, input { width: 100%; }
+    }
+
+    // Round 2 #8 — Mobile select padding. The "Bất kỳ máy chấm" select on
+    // submit page sits flush against the viewport edge below 600px because
+    // legacy padding strips left padding entirely on small screens.
+    @media (max-width: 599px) {
+        select,
+        .select2-container--default .select2-selection__rendered {
+            padding-left: 12px !important;
+        }
+    }
+}

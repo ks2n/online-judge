@@ -1,0 +1,316 @@
+// ============================================================
+// _components.scss — buttons, badges, tabs, pagination, inputs
+// ============================================================
+
+@use "tokens" as *;
+
+// ── Button base ─────────────────────────────────────────────
+body.edu {
+    .edu-btn,
+    button.edu-btn,
+    a.edu-btn,
+    input[type="submit"].edu-btn,
+    input[type="button"].edu-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 8px 16px;
+        font-family: $edu-font-ui;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.2;
+        border: 1px solid transparent;
+        border-radius: $edu-radius-md;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background $edu-duration-fast $edu-ease-out, border-color $edu-duration-fast $edu-ease-out, color $edu-duration-fast $edu-ease-out, box-shadow $edu-duration-fast $edu-ease-out, transform $edu-duration-fast $edu-ease-out;
+        user-select: none;
+
+        &:disabled,
+        &.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+    }
+
+    // Variants
+    .edu-btn--primary {
+        background: $edu-accent;
+        color: $edu-text-on-accent;
+        border-color: $edu-accent;
+
+        &:hover {
+            background: $edu-accent-hover;
+            border-color: $edu-accent-hover;
+            color: $edu-text-on-accent;
+            text-decoration: none;
+        }
+    }
+
+    .edu-btn--secondary {
+        background: $edu-bg-paper;
+        color: $edu-text;
+        border-color: $edu-border-strong;
+
+        &:hover {
+            background: $edu-bg-soft;
+            border-color: $edu-border-strong;
+            color: $edu-accent;
+            text-decoration: none;
+        }
+    }
+
+    .edu-btn--ghost {
+        background: transparent;
+        color: $edu-text-muted;
+        border-color: transparent;
+
+        &:hover {
+            background: $edu-bg-soft;
+            color: $edu-text;
+            text-decoration: none;
+        }
+    }
+
+    .edu-btn--danger {
+        background: $edu-wa-text;
+        color: #fff;
+        border-color: $edu-wa-text;
+
+        &:hover {
+            background: darken-fallback($edu-wa-text);
+            text-decoration: none;
+        }
+    }
+
+    .edu-btn--sm { padding: 6px 12px; font-size: 13px; }
+    .edu-btn--lg { padding: 12px 22px; font-size: 16px; }
+
+    // Auto-style legacy DMOJ buttons via class
+    .button,
+    button.btn,
+    a.btn,
+    input[type="submit"],
+    input[type="button"] {
+        font-family: $edu-font-ui;
+        border-radius: $edu-radius-md;
+    }
+}
+
+@function darken-fallback($color) { @return $color; } // placeholder; sass `darken` handled inline below
+
+// ── Tag / chip ──────────────────────────────────────────────
+body.edu {
+    .edu-chip,
+    .edu-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 10px;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 18px;
+        background: $edu-bg-muted;
+        color: $edu-text;
+        border: 1px solid transparent;
+        border-radius: $edu-radius-pill;
+        text-decoration: none;
+        transition: background $edu-duration-fast $edu-ease-out;
+
+        &:hover {
+            background: $edu-border;
+            text-decoration: none;
+        }
+    }
+
+    .edu-chip--accent {
+        background: $edu-accent-soft;
+        color: $edu-accent-strong;
+
+        &:hover { background: $edu-accent-soft; }
+    }
+
+    .edu-chip--warm {
+        background: $edu-warm-soft;
+        color: $edu-wa-text;
+    }
+}
+
+// ── Badge (for counts, status dots) ─────────────────────────
+body.edu {
+    .edu-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 6px;
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 18px;
+        background: $edu-accent;
+        color: #fff;
+        border-radius: 999px;
+    }
+}
+
+// ── Tabs ────────────────────────────────────────────────────
+// Override legacy `.tabs` and `ul.tabs` look.
+body.edu {
+    .tabs,
+    ul.tabs,
+    .edu-tabs {
+        display: flex;
+        align-items: stretch;
+        gap: 0;
+        list-style: none;
+        margin: 0 0 16px;
+        padding: 0;
+        border-bottom: 1px solid $edu-border;
+        background: transparent;
+
+        > li,
+        > a {
+            list-style: none;
+        }
+
+        a, button, > li > a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            margin-bottom: -1px;
+            font-size: 14px;
+            font-weight: 500;
+            color: $edu-text-muted;
+            text-decoration: none;
+            background: transparent;
+            border: 0;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: color $edu-duration-fast $edu-ease-out, border-color $edu-duration-fast $edu-ease-out;
+
+            &:hover {
+                color: $edu-accent;
+                text-decoration: none;
+            }
+        }
+
+        > li.active > a,
+        > li.active a,
+        > .active,
+        a.active {
+            color: $edu-accent;
+            border-bottom-color: $edu-accent;
+        }
+    }
+}
+
+// ── Pagination ──────────────────────────────────────────────
+body.edu {
+    .pagination,
+    ul.pagination {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        list-style: none;
+        margin: 16px 0;
+        padding: 0;
+
+        li {
+            list-style: none;
+
+            a, span {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 36px;
+                height: 36px;
+                padding: 0 10px;
+                font-size: 14px;
+                font-weight: 500;
+                color: $edu-text;
+                background: $edu-bg-paper;
+                border: 1px solid $edu-border;
+                border-radius: $edu-radius-sm;
+                text-decoration: none;
+                transition: background $edu-duration-fast $edu-ease-out, color $edu-duration-fast $edu-ease-out, border-color $edu-duration-fast $edu-ease-out;
+            }
+
+            a:hover {
+                background: $edu-bg-soft;
+                color: $edu-accent;
+                border-color: $edu-border-strong;
+                text-decoration: none;
+            }
+
+            &.active a,
+            &.active span {
+                background: $edu-accent;
+                color: #fff;
+                border-color: $edu-accent;
+            }
+
+            &.disabled a,
+            &.disabled span {
+                color: $edu-text-faint;
+                background: $edu-bg-soft;
+                cursor: not-allowed;
+                pointer-events: none;
+            }
+        }
+    }
+}
+
+// ── Inputs (override legacy where possible) ─────────────────
+body.edu {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="search"],
+    input[type="number"],
+    input[type="url"],
+    textarea,
+    select {
+        font-family: $edu-font-ui;
+        font-size: 14px;
+        color: $edu-text;
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border-strong;
+        border-radius: $edu-radius-md;
+        padding: 8px 12px;
+        line-height: 1.4;
+        transition: border-color $edu-duration-fast $edu-ease-out, box-shadow $edu-duration-fast $edu-ease-out;
+
+        &::placeholder { color: $edu-text-faint; }
+
+        &:hover { border-color: $edu-border-strong; }
+
+        &:focus {
+            outline: none;
+            border-color: $edu-accent;
+            box-shadow: $edu-shadow-focus;
+        }
+
+        &:disabled {
+            background: $edu-bg-muted;
+            color: $edu-text-faint;
+            cursor: not-allowed;
+        }
+    }
+
+    label {
+        font-size: 13px;
+        font-weight: 500;
+        color: $edu-text-strong;
+    }
+}
+
+// ── Tooltip (built-in title hint) ───────────────────────────
+body.edu {
+    [data-tooltip] {
+        position: relative;
+    }
+}

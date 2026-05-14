@@ -403,6 +403,7 @@
         {% else %}
           {{ problem.points|floatformat }} {% if problem.partial %}(p){% endif %}
         {% endif %}
+        {{ difficulty_pill(problem.points) }}
       </span>
     </span>
 

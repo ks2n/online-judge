@@ -1,0 +1,36 @@
+// ============================================================
+// _tokens.scss — Single source of truth for edu palette
+// ============================================================
+// Re-exports the $edu-* tokens defined in vars.scss so partials
+// can `@use "tokens" as *` without pulling in legacy DMOJ vars.
+// ============================================================
+
+@forward "../vars" show
+    $edu-bg-cream, $edu-bg-paper, $edu-bg-soft, $edu-bg-muted,
+    $edu-text, $edu-text-strong, $edu-text-muted, $edu-text-faint, $edu-text-on-accent,
+    $edu-accent, $edu-accent-hover, $edu-accent-soft, $edu-accent-border, $edu-accent-strong,
+    $edu-warm, $edu-warm-soft, $edu-warm-border,
+    $edu-border, $edu-border-strong, $edu-border-focus,
+    $edu-shadow-sm, $edu-shadow-md, $edu-shadow-lg, $edu-shadow-focus,
+    $edu-ac-bg, $edu-ac-text, $edu-ac-border,
+    $edu-wa-bg, $edu-wa-text, $edu-wa-border,
+    $edu-tle-bg, $edu-tle-text, $edu-tle-border,
+    $edu-ce-bg, $edu-ce-text, $edu-ce-border,
+    $edu-ir-bg, $edu-ir-text, $edu-ir-border,
+    $edu-font-ui, $edu-font-code, $edu-font-display,
+    $edu-type-display, $edu-type-display-lh,
+    $edu-type-h1, $edu-type-h1-lh,
+    $edu-type-h2, $edu-type-h2-lh,
+    $edu-type-h3, $edu-type-h3-lh,
+    $edu-type-body, $edu-type-body-lh,
+    $edu-type-small, $edu-type-small-lh,
+    $edu-type-caption, $edu-type-caption-lh,
+    $edu-type-code, $edu-type-code-lh,
+    $edu-radius-xs, $edu-radius-sm, $edu-radius-md, $edu-radius-lg, $edu-radius-pill,
+    $edu-ease-out, $edu-duration-fast, $edu-duration-base, $edu-duration-slow,
+    $edu-space-0, $edu-space-1, $edu-space-2, $edu-space-3, $edu-space-4,
+    $edu-space-5, $edu-space-6, $edu-space-7, $edu-space-8, $edu-space-9, $edu-space-10,
+    $edu-success-bg, $edu-success-text, $edu-success-border,
+    $edu-danger-bg, $edu-danger-text, $edu-danger-border,
+    $edu-warning-bg, $edu-warning-text, $edu-warning-border,
+    $edu-info-bg, $edu-info-text, $edu-info-border;

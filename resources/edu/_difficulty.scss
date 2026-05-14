@@ -1,0 +1,87 @@
+// ============================================================
+// _difficulty.scss — Problem difficulty pill (5 levels)
+// ============================================================
+// Mapping by `problem.points`:
+//   <  10  → helper   (Trợ giúp, slate)
+//   < 30   → easy     (Dễ, green)
+//   30–60  → medium   (Trung bình, amber)
+//   60–100 → hard     (Khó, orange)
+//   ≥100   → expert   (Rất khó, red)
+//
+// Markup:
+//   <span class="edu-difficulty edu-difficulty--medium">Trung bình</span>
+//
+// Pair colour + uppercase-ish Vietnamese label (colour-blind safe). Uses
+// the same surface/border/text triad scheme as verdict pills so users can
+// visually relate them.
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+    .edu-difficulty {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 2px 10px;
+        font-family: $edu-font-ui;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.6;
+        letter-spacing: 0.01em;
+        border-radius: $edu-radius-pill;
+        border: 1px solid transparent;
+        white-space: nowrap;
+        vertical-align: middle;
+
+        // Tiny dot prefix — uses currentColor so it picks up the variant text.
+        &::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            opacity: 0.7;
+        }
+
+        &.edu-difficulty--helper {
+            background: #F1F5F9;
+            color: #475569;
+            border-color: #CBD5E1;
+        }
+
+        &.edu-difficulty--easy {
+            background: $edu-ac-bg;
+            color: $edu-ac-text;
+            border-color: $edu-ac-border;
+        }
+
+        &.edu-difficulty--medium {
+            background: $edu-tle-bg;
+            color: $edu-tle-text;
+            border-color: $edu-tle-border;
+        }
+
+        &.edu-difficulty--hard {
+            background: $edu-ir-bg;
+            color: $edu-ir-text;
+            border-color: $edu-ir-border;
+        }
+
+        &.edu-difficulty--expert {
+            background: $edu-wa-bg;
+            color: $edu-wa-text;
+            border-color: $edu-wa-border;
+        }
+
+        // Compact variant for dense lists (problem table cells)
+        &.edu-difficulty--sm {
+            padding: 1px 8px;
+            font-size: 11px;
+            gap: 4px;
+
+            &::before { width: 5px; height: 5px; }
+        }
+    }
+}

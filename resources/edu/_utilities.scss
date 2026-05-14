@@ -1,0 +1,95 @@
+// ============================================================
+// _utilities.scss — small composable helpers
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+    // Spacing stack (vertical rhythm)
+    .edu-stack > * + * { margin-top: 12px; }
+    .edu-stack--sm > * + * { margin-top: 8px; }
+    .edu-stack--lg > * + * { margin-top: 24px; }
+
+    // Horizontal cluster
+    .edu-cluster {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .edu-cluster--lg { gap: 16px; }
+    .edu-cluster--between { justify-content: space-between; }
+
+    // Grid helpers
+    .edu-grid {
+        display: grid;
+        gap: 16px;
+    }
+    .edu-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .edu-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .edu-grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    @media (max-width: 1023px) {
+        .edu-grid--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .edu-grid--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 599px) {
+        .edu-grid--2,
+        .edu-grid--3,
+        .edu-grid--4 { grid-template-columns: 1fr; }
+    }
+
+    // Divider
+    .edu-divider {
+        height: 1px;
+        background: $edu-border;
+        margin: 16px 0;
+    }
+
+    // Soft surface (callouts, info boxes)
+    .edu-callout {
+        background: $edu-accent-soft;
+        border: 1px solid $edu-accent-border;
+        border-radius: $edu-radius-md;
+        padding: 12px 14px;
+        color: $edu-accent-strong;
+        font-size: 14px;
+    }
+
+    .edu-callout--warm {
+        background: $edu-warm-soft;
+        border-color: $edu-warm-border;
+        color: $edu-wa-text;
+    }
+
+    // Visually-hidden (a11y)
+    .edu-sr-only {
+        position: absolute;
+        width: 1px; height: 1px;
+        padding: 0; margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    // Text utilities
+    .edu-text-muted { color: $edu-text-muted; }
+    .edu-text-faint { color: $edu-text-faint; }
+    .edu-text-strong { color: $edu-text-strong; font-weight: 600; }
+    .edu-text-mono { font-family: $edu-font-code; }
+    .edu-text-numeric { font-family: $edu-font-code; font-variant-numeric: tabular-nums; }
+
+    // Border utility
+    .edu-bordered {
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-md;
+    }
+
+    // Shadow scale
+    .edu-shadow-sm { box-shadow: $edu-shadow-sm; }
+    .edu-shadow-md { box-shadow: $edu-shadow-md; }
+    .edu-shadow-lg { box-shadow: $edu-shadow-lg; }
+}

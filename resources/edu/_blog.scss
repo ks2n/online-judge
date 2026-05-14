@@ -1,0 +1,140 @@
+// ============================================================
+// _blog.scss — Blog post list (front page + /blog/)
+// ============================================================
+// Targets: templates/blog/list.html → blog/content.html
+// Legacy: bare <section.blog-box> with no card affordance.
+// Add card surface, surface authors strip, and tighter spacing.
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+    .blog-box {
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-lg;
+        padding: 18px 20px;
+        margin: 0 0 16px;
+        transition: border-color $edu-duration-fast $edu-ease-out, box-shadow $edu-duration-fast $edu-ease-out;
+
+        &:hover {
+            border-color: $edu-border-strong;
+            box-shadow: $edu-shadow-sm;
+        }
+
+        &.sticky {
+            border-color: $edu-warm-border;
+            background: linear-gradient(180deg, $edu-warm-soft 0%, $edu-bg-paper 64px);
+
+            .title a { color: $edu-text-strong; }
+        }
+
+        // Author / time strip
+        .post-content-header {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: $edu-text-muted;
+            font-style: normal;
+
+            .user-img {
+                width: 22px !important;
+                height: 22px !important;
+                border-radius: 50%;
+                border: 1px solid $edu-border;
+            }
+
+            .post-authors {
+                font-weight: 500;
+                color: $edu-text;
+
+                a { color: inherit; text-decoration: none; }
+                a:hover { color: $edu-accent; }
+            }
+
+            i.fa {
+                font-size: 11px;
+                color: $edu-warm;
+            }
+        }
+
+        h2.title {
+            margin: 8px 0 10px;
+            font-size: 18px;
+            line-height: 1.35;
+            font-weight: 600;
+
+            a {
+                color: $edu-text-strong;
+                text-decoration: none;
+
+                &:hover { color: $edu-accent; }
+            }
+        }
+
+        .blog-description {
+            position: relative;
+            font-size: 14.5px;
+            line-height: 1.6;
+            color: $edu-text;
+
+            .summary {
+                max-height: 7em;
+                overflow: hidden;
+
+                p { margin: 0 0 8px; }
+
+                p code,
+                li code {
+                    font-family: $edu-font-code;
+                    font-size: 0.92em;
+                    background: $edu-bg-soft;
+                    border: 1px solid $edu-border;
+                    border-radius: $edu-radius-xs;
+                    padding: 1px 5px;
+                }
+            }
+
+            .show-more {
+                display: inline-block;
+                margin-top: 6px;
+                font-size: 13px;
+                font-weight: 500;
+                color: $edu-accent;
+                cursor: pointer;
+
+                &:hover { color: $edu-accent-hover; text-decoration: underline; }
+            }
+        }
+
+        .actionbar-box {
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid $edu-border;
+        }
+    }
+
+    // ── No-posts fallback (when blog/content.html iterates 0 posts) ──
+    // Template `blog/content.html` does not emit an explicit empty state.
+    // It renders `{% for post in posts %}…{% endfor %}` followed by
+    // `{% include "feed/has_next.html" %}` — which is a `<div class="has_next" style="display:none">`.
+    // When zero posts, that `.has_next` becomes the only child of `.middle-content`.
+    // Use `:has()` on the parent to inject our own visible empty card via ::before
+    // (because the `.has_next` itself has inline `display:none` and therefore
+    // cannot host a visible ::after pseudo).
+    .middle-content:has(> .has_next:only-child)::before {
+        content: "Chưa có bài viết nào.\A Hãy quay lại sau hoặc khám phá các khoá học hiện có.";
+        white-space: pre-line;
+        display: block;
+        padding: 72px 24px 40px;
+        margin: 16px 0;
+        text-align: center;
+        font-size: 14px;
+        line-height: 1.7;
+        color: $edu-text-muted;
+        background: $edu-bg-paper url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3Cline x1='8' y1='13' x2='14' y2='13'/%3E%3Cline x1='8' y1='17' x2='14' y2='17'/%3E%3C/svg%3E") no-repeat center 28px;
+        border: 1px dashed $edu-border;
+        border-radius: $edu-radius-lg;
+    }
+}

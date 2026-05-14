@@ -1,0 +1,511 @@
+// ============================================================
+// _dashboard.scss — Learning Dashboard primitives (Phase 3 wires these)
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+    // Section wrapper used in learning home
+    .edu-section {
+        margin-bottom: 32px;
+
+        > .edu-section-head {
+            // Reset legacy global `header { background:#111; color:#aaa; height:60px; margin-top:-10px; padding:… }`
+            // (base.scss:504-512) — that rule paints a black strip behind every <header> element.
+            background: transparent;
+            color: inherit;
+            height: auto;
+            margin-top: 0;
+            padding: 0;
+
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+
+            .edu-section-title {
+                margin: 0;
+                font-size: $edu-type-h2;
+                line-height: $edu-type-h2-lh / $edu-type-h2;
+                font-weight: 600;
+                color: $edu-text-strong;
+            }
+
+            .edu-section-action {
+                font-size: 13px;
+                font-weight: 500;
+                color: $edu-text-muted;
+                text-decoration: none;
+
+                &:hover {
+                    color: $edu-accent;
+                    text-decoration: underline;
+                    text-underline-offset: 3px;
+                }
+            }
+        }
+    }
+
+    // Generic dashboard grid — used by edu-section content
+    // (course cards, problem cards, etc.)
+    .edu-grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: 1fr;
+
+        &--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        &--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+        @media (max-width: 1099px) {
+            &--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 599px) {
+            &--2,
+            &--3 { grid-template-columns: 1fr; }
+        }
+    }
+
+    // ── Three-column layout: global rebalance ─────────────────
+    // Override legacy `templates/three-column-content.html` inline style + base.scss:1549-1599
+    // uniformly across home / problems / contests / blog (instead of `.problems`-only scope).
+    // Why: legacy uses % widths (15% gutter, 75/25 split, 2% margins) without max-width,
+    // so layouts on ultrawide phình to and on 800-1100px hẹp với gutter mismatch.
+    @media (min-width: 800px) {
+        #three-col-container {
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        .middle-right-content {
+            align-items: flex-start;     // sticky-friendly (legacy default `stretch` collapses position:sticky children)
+            gap: 24px;                   // explicit gap instead of `margin-right: 2%` % hack
+            margin-right: 24px !important;
+        }
+
+        .middle-content {
+            flex: 1 1 auto !important;
+            max-width: none !important;
+            margin-right: 0 !important;
+        }
+
+        .right-sidebar,
+        .blog-sidebar {
+            flex: 0 0 300px !important;
+            max-width: 300px !important;
+            position: sticky;
+            top: 80px;
+            align-self: flex-start;
+            max-height: calc(100vh - 96px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: $edu-border transparent;
+
+            &::-webkit-scrollbar { width: 6px; }
+            &::-webkit-scrollbar-thumb { background: $edu-border; border-radius: 3px; }
+        }
+
+        // Soften the lonely "Khám phá nhóm" pill that home renders when an
+        // authenticated user has no recent_organizations / my_organizations.
+        .left-sidebar.home-sidebar-loggedin > .left-sidebar-item:only-child {
+            padding: 12px 16px;
+            border-radius: $edu-radius-md;
+            box-shadow: $edu-shadow-sm;
+            border: 1px solid $edu-border;
+            background: $edu-bg-paper;
+            color: $edu-text;
+
+            .sidebar-icon {
+                color: $edu-accent;
+                margin-right: 8px;
+                display: inline-flex !important;
+            }
+
+            &:hover {
+                border-color: $edu-accent-border;
+                background: $edu-accent-soft;
+                color: $edu-accent-strong;
+            }
+        }
+    }
+
+    // ── Mobile: home-sidebar-loggedin as horizontal pill row ──
+    // Legacy base.scss:1543 hides `.home-sidebar-loggedin` on mobile entirely.
+    // That removes navigation for logged-in users on small screens. Re-enable
+    // and style it as a scroll-x pill row, consistent with `.problems` mobile.
+    @media (max-width: 799px) {
+        .left-sidebar.home-sidebar-loggedin {
+            display: flex !important;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            gap: 8px;
+            overflow-x: auto;
+            margin-bottom: 16px;
+            padding-bottom: 4px;
+            -webkit-overflow-scrolling: touch;
+            // Scroll-x fade hint — gradient fade on right edge to indicate
+            // more pills are scrollable. Uses scroll-snap-style:none + mask.
+            mask-image: linear-gradient(to right, black 0%, black calc(100% - 24px), transparent 100%);
+            -webkit-mask-image: linear-gradient(to right, black 0%, black calc(100% - 24px), transparent 100%);
+
+            &::-webkit-scrollbar { display: none; }
+
+            > .left-sidebar-item {
+                flex: 0 0 auto;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 8px 14px;
+                margin: 0;
+                border-radius: $edu-radius-pill;
+                background: $edu-bg-paper;
+                border: 1px solid $edu-border;
+                white-space: nowrap;
+
+                .sidebar-icon {
+                    display: inline-flex !important;
+                    color: $edu-accent;
+                    margin: 0;
+                }
+
+                .sidebar-text {
+                    font-size: 13px;
+                }
+
+                .org-logo {
+                    width: 18px;
+                    height: 18px;
+                    border-radius: 4px;
+                }
+            }
+
+            > .left-sidebar-header {
+                display: none;
+            }
+        }
+    }
+
+    // Greeting hero
+    .edu-greeting {
+        background: linear-gradient(135deg, $edu-accent-soft 0%, $edu-bg-paper 80%);
+        border: 1px solid $edu-accent-border;
+        border-radius: $edu-radius-lg;
+        padding: 24px 28px;
+        margin-bottom: 24px;
+
+        .edu-greeting-eyebrow {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: $edu-accent;
+            margin-bottom: 6px;
+        }
+
+        .edu-greeting-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: $edu-text-strong;
+            margin: 0 0 6px;
+            line-height: 1.3;
+
+            .edu-greeting-sub {
+                display: block;
+                font-size: 16px;
+                font-weight: 400;
+                color: $edu-text-muted;
+                margin-top: 2px;
+            }
+        }
+
+        .edu-greeting-meta {
+            color: $edu-text-muted;
+            font-size: 14px;
+            margin-bottom: 14px;
+            max-width: 56ch;
+        }
+
+        .edu-btn {
+            font-weight: 500;
+        }
+
+        &--beginner {
+            background: linear-gradient(135deg, $edu-warm-soft 0%, $edu-bg-paper 80%);
+            border-color: $edu-warm-border;
+
+            .edu-greeting-eyebrow { color: $edu-warm; }
+        }
+
+        @media (max-width: 599px) {
+            padding: 18px 16px;
+            margin-bottom: 16px;
+            border-radius: $edu-radius-md;
+
+            .edu-greeting-title {
+                font-size: 20px;
+
+                .edu-greeting-sub {
+                    font-size: 14px;
+                }
+            }
+
+            .edu-greeting-meta {
+                font-size: 13px;
+            }
+        }
+    }
+
+    // Dashboard wrapper
+    .edu-dashboard {
+        margin-bottom: 24px;
+    }
+
+    // Stats row inside greeting
+    .edu-dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 24px;
+        margin-top: 18px;
+        padding: 16px 20px;
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-md;
+
+        @media (max-width: 599px) {
+            grid-template-columns: 1fr;
+            gap: 14px;
+            padding: 14px 16px;
+
+            .edu-stat .edu-stat-value { font-size: 22px; }
+        }
+    }
+
+    // Progress bar
+    .edu-progress {
+        position: relative;
+        height: 8px;
+        background: $edu-bg-muted;
+        border-radius: 999px;
+        overflow: hidden;
+
+        > .edu-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, $edu-accent 0%, $edu-accent-hover 100%);
+            border-radius: inherit;
+            transition: width $edu-duration-slow $edu-ease-out;
+        }
+    }
+
+    .edu-progress--warm > .edu-progress-fill {
+        background: linear-gradient(90deg, $edu-warm 0%, #F87171 100%);
+    }
+
+    // Streak badge
+    .edu-streak {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        background: $edu-warm-soft;
+        border: 1px solid $edu-warm-border;
+        color: $edu-wa-text;
+        font-weight: 600;
+        border-radius: $edu-radius-pill;
+        font-size: 13px;
+
+        i {
+            color: $edu-warm;
+        }
+
+        .edu-streak-count {
+            font-family: $edu-font-code;
+            font-variant-numeric: tabular-nums;
+        }
+    }
+
+    // Stat block (number + label)
+    .edu-stat {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        .edu-stat-value {
+            font-family: $edu-font-code;
+            font-variant-numeric: tabular-nums;
+            font-size: 28px;
+            font-weight: 700;
+            color: $edu-text-strong;
+            line-height: 1.1;
+        }
+
+        .edu-stat-label {
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: $edu-text-muted;
+        }
+
+        .edu-stat-delta {
+            font-size: 13px;
+            color: $edu-ac-text;
+            font-weight: 500;
+
+            &.is-down { color: $edu-wa-text; }
+        }
+    }
+
+    // Course card — desktop vertical, mobile horizontal
+    .edu-course-card {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 16px;
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-lg;
+        text-decoration: none;
+        color: inherit;
+        transition: box-shadow $edu-duration-fast $edu-ease-out, transform $edu-duration-fast $edu-ease-out, border-color $edu-duration-fast $edu-ease-out;
+
+        &:hover {
+            box-shadow: $edu-shadow-md;
+            transform: translateY(-1px);
+            border-color: $edu-border-strong;
+            text-decoration: none;
+
+            .edu-course-arrow { transform: translateX(2px); color: $edu-accent; }
+        }
+
+        .edu-course-cover {
+            aspect-ratio: 16 / 9;
+            background: linear-gradient(135deg, $edu-accent-soft 0%, $edu-bg-muted 100%);
+            border-radius: $edu-radius-md;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            // Placeholder icon — only visible when no <img> child (course
+            // without an uploaded cover). Falls back to plain gradient on
+            // browsers without :has() (Chrome <105 etc.) — still legible.
+            &:not(:has(img))::after {
+                content: "\f19d";              // fa-graduation-cap
+                font-family: "Font Awesome 5 Free", "FontAwesome", sans-serif;
+                font-weight: 900;
+                font-size: 36px;
+                color: $edu-accent;
+                opacity: 0.45;
+            }
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+        }
+
+        .edu-course-body {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .edu-course-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: $edu-text-strong;
+            margin: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .edu-course-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            color: $edu-text-muted;
+            margin-top: auto;
+        }
+
+        .edu-course-arrow {
+            color: $edu-text-muted;
+            transition: transform $edu-duration-fast $edu-ease-out, color $edu-duration-fast $edu-ease-out;
+        }
+
+        // Mobile: stack image left, text right (horizontal) to avoid 450px tall cards.
+        @media (max-width: 767px) {
+            flex-direction: row;
+            align-items: stretch;
+            gap: 14px;
+            padding: 14px;
+
+            .edu-course-cover {
+                width: 88px;
+                height: 88px;
+                aspect-ratio: 1 / 1;
+                border-radius: $edu-radius-md;
+                align-self: flex-start;
+            }
+
+            .edu-course-title {
+                font-size: 15px;
+                -webkit-line-clamp: 2;
+            }
+        }
+    }
+
+    // Problem suggestion card
+    .edu-problem-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-md;
+        text-decoration: none;
+        color: inherit;
+        transition: background $edu-duration-fast $edu-ease-out, border-color $edu-duration-fast $edu-ease-out;
+
+        &:hover {
+            background: $edu-bg-soft;
+            border-color: $edu-border-strong;
+            text-decoration: none;
+        }
+
+        .edu-problem-status {
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: $edu-text-faint;
+
+            &.is-ac { color: $edu-ac-text; }
+            &.is-wa { color: $edu-wa-text; }
+        }
+
+        .edu-problem-title {
+            flex: 1 1 auto;
+            font-size: 14px;
+            font-weight: 500;
+            color: $edu-text-strong;
+        }
+
+        .edu-problem-difficulty {
+            font-family: $edu-font-code;
+            font-size: 12px;
+            color: $edu-text-muted;
+        }
+    }
+}

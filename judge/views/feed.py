@@ -15,6 +15,7 @@ from judge.models.profile import (
     get_points_rank,
 )
 from judge.models import ContestProblemClarification, Contest
+from judge.models.course import Course
 from judge.utils.users import get_awards
 
 
@@ -134,5 +135,27 @@ class HomeFeedView(FeedView):
         context["top_rated"] = get_top_rating_profile(org_id)
         context["top_scorer"] = get_top_score_profile(org_id)
         context["top_contributors"] = get_top_contribution_profile(org_id)
+
+        # Learning dashboard hero context (logged-in users only).
+        # Data here is intentionally lightweight — heavy queries should land
+        # on dedicated endpoints, not the home feed.
+        if self.request.user.is_authenticated:
+            profile = self.request.profile
+            context["edu_dashboard"] = {
+                "username": self.request.user.username,
+                "rating": profile.rating,
+                "rating_class": profile.css_class,
+                "problem_count": profile.problem_count,
+                "performance_points": profile.performance_points,
+                "rating_rank": context.get("rating_rank"),
+                "points_rank": context.get("points_rank"),
+                "is_beginner": (profile.problem_count or 0) == 0,
+            }
+            context["edu_courses"] = list(
+                Course.get_user_courses(profile)[:3]
+            )
+        else:
+            context["edu_dashboard"] = None
+            context["edu_courses"] = []
 
         return context

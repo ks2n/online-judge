@@ -9,18 +9,18 @@
 {% endblock %}
 
 {% block body %}
-  <div id="common-content">
-    <div id="content-right">
-      <div class="info-float">{% block info_float %}{% endblock %}</div>
-    </div>
-    <div id="content-left" class="split-common-content">
-      <div class="content-description screen">
+  <div id="common-content" class="edu-workspace-shell">
+    <aside id="content-right" class="edu-workspace-sidebar">
+      <div class="info-float edu-workspace-sidebar-panel">{% block info_float %}{% endblock %}</div>
+    </aside>
+    <section id="content-left" class="split-common-content edu-workspace-main">
+      <div class="content-description screen edu-workspace-briefing">
         {% block description %}{% endblock %}
         {% block description_end %}
         {% endblock %}
       </div>
       {% block post_description_end %}{% endblock %}
       {% block comments %}{% endblock %}
-    </div>
+    </section>
   </div>
 {% endblock %}

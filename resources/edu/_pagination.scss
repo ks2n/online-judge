@@ -1,0 +1,127 @@
+// ============================================================
+// _pagination.scss — `.pagination` button group
+// ============================================================
+// Markup (templates/list-pages.html):
+//   <ul class="pagination">
+//     <li><a>«</a></li>
+//     <li class="disabled-page"><span>...</span></li>
+//     <li class="active-page"><a>3</a></li>
+//     ...
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+    ul.pagination {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        li {
+            display: inline-flex;
+            margin: 0;
+            padding: 0;
+
+            > a,
+            > span {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 34px;
+                height: 34px;
+                padding: 0 10px;
+                font-family: $edu-font-code;
+                font-variant-numeric: tabular-nums;
+                font-size: 13px;
+                font-weight: 500;
+                color: $edu-text;
+                background: $edu-bg-paper;
+                border: 1px solid $edu-border;
+                border-radius: $edu-radius-md;
+                text-decoration: none;
+                transition: border-color $edu-duration-fast $edu-ease-out, background $edu-duration-fast $edu-ease-out, color $edu-duration-fast $edu-ease-out;
+            }
+
+            > a:hover {
+                border-color: $edu-accent-border;
+                background: $edu-accent-soft;
+                color: $edu-accent-strong;
+            }
+
+            &.active-page > a,
+            &.active-page > span {
+                background: $edu-accent;
+                border-color: $edu-accent;
+                color: $edu-bg-paper;
+                cursor: default;
+            }
+
+            &.disabled-page > span {
+                color: $edu-text-faint;
+                background: $edu-bg-soft;
+                border-color: $edu-border;
+                cursor: not-allowed;
+            }
+        }
+    }
+
+    // ── Users-list pagination + search bar row ────────────────
+    // Markup: middle_content has pagination + #search-form floated right.
+    // Wrap into a flex row that handles wrap on mobile.
+    .middle-content #search-form {
+        display: inline-block;
+        float: none !important;
+        margin-left: 16px;
+    }
+
+    .middle-content #search-handle {
+        display: inline-block;
+        height: 34px;
+        padding: 0 12px 0 32px;
+        background: $edu-bg-paper url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 16 16'%3E%3Cpath fill='%236B7280' d='M11 7a4 4 0 11-8 0 4 4 0 018 0zm-.7 4.3a6 6 0 111.4-1.4l3.5 3.5-1.4 1.4-3.5-3.5z'/%3E%3C/svg%3E") no-repeat 10px center;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-md;
+        font-size: 13px;
+        color: $edu-text;
+        font-family: $edu-font-ui;
+        width: 220px;
+
+        &:focus {
+            outline: none;
+            border-color: $edu-accent;
+            box-shadow: $edu-shadow-focus;
+        }
+
+        &::placeholder { color: $edu-text-faint; }
+    }
+
+    // The wrapping div (style="margin-bottom: 7px; margin-top: 3px;") that
+    // contains pagination + search form. Lay out as flex row.
+    .middle-content > div:has(> ul.pagination):has(> #search-form) {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px !important;
+        margin-top: 0 !important;
+
+        > #search-form { margin-left: auto !important; }
+
+        // Hide the legacy clear:both
+        > div[style*="clear"] { display: none; }
+    }
+
+    @media (max-width: 599px) {
+        .middle-content #search-handle { width: 100%; }
+
+        .middle-content > div:has(> ul.pagination):has(> #search-form) {
+            > #search-form {
+                margin-left: 0 !important;
+                width: 100%;
+            }
+        }
+    }
+}

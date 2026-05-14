@@ -1,0 +1,767 @@
+// ============================================================
+// _problem-detail.scss — Problem statement reading-first layout
+// ============================================================
+// Targets:
+//   templates/problem/problem.html
+//   templates/common-content.html (workspace shell)
+// Goal: Reading prose max 70ch, sidebar with submit CTA + meta key/values,
+//       sample I/O 2-col, code/math comfortably scaled.
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+    // ── Workspace shell (common-content.html) ────────────────
+    .edu-workspace-shell {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 280px;
+        gap: 24px;
+        align-items: start;
+
+        // DOM order: <aside class="edu-workspace-sidebar"> trước <section class="edu-workspace-main">
+        // Desktop grid-template-columns đảo via grid-column. Mobile dùng order.
+        @media (min-width: 1024px) {
+            > .edu-workspace-main { grid-column: 1; grid-row: 1; }
+            > .edu-workspace-sidebar { grid-column: 2; grid-row: 1; }
+        }
+
+        @media (max-width: 1023px) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .edu-workspace-main {
+        min-width: 0; // grid overflow guard
+
+        // Cap so the briefing card hugs the prose width on ultrawide
+        // monitors instead of leaving a hollow strip between the body
+        // text and the right-hand sidebar.
+        @media (min-width: 1280px) {
+            max-width: 820px;
+        }
+    }
+
+    .edu-workspace-sidebar {
+        @media (min-width: 1024px) {
+            position: sticky;
+            top: 76px;
+            align-self: start;
+            max-height: calc(100vh - 96px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: $edu-border transparent;
+
+            &::-webkit-scrollbar { width: 6px; }
+            &::-webkit-scrollbar-thumb { background: $edu-border; border-radius: 3px; }
+        }
+
+        // Mobile: hoist statement above sidebar so reading flow is natural.
+        // Submit CTA stays accessible as the first sidebar item (still 1 tap
+        // since user just scrolls down past the prose).
+        @media (max-width: 1023px) {
+            order: 2;
+        }
+    }
+
+    @media (max-width: 1023px) {
+        .edu-workspace-main { order: 1; }
+    }
+
+    .edu-workspace-sidebar-panel {
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-lg;
+        box-shadow: $edu-shadow-sm;
+        padding: 16px;
+    }
+
+    // ── Workspace main "briefing" surface ────────────────────
+    .edu-workspace-briefing {
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-lg;
+        padding: 28px 32px;
+        box-shadow: $edu-shadow-sm;
+
+        @media (max-width: 599px) {
+            padding: 20px 18px;
+            border-radius: $edu-radius-md;
+        }
+    }
+
+    // ── Title row ────────────────────────────────────────────
+    .problem-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+
+        h2.title-row {
+            margin: 0;
+            font-size: 22px;
+            line-height: 1.3;
+            font-weight: 700;
+            color: $edu-text-strong;
+        }
+
+        .title-state {
+            float: none !important;
+            display: inline-flex !important;
+            width: 28px !important;
+            height: 28px !important;
+            margin: 0 !important;
+            font-size: 22px !important;
+            line-height: 1;
+            align-items: center;
+            justify-content: center;
+
+            &.solved-problem-color { color: $edu-ac-text !important; }
+            &.attempted-problem-color { color: $edu-tle-text !important; }
+        }
+
+        .spacer { flex: 1 1 auto; }
+
+        .view-pdf {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 500;
+            color: $edu-text-muted;
+            background: $edu-bg-soft;
+            border: 1px solid $edu-border;
+            border-radius: $edu-radius-md;
+            text-decoration: none;
+            transition: background $edu-duration-fast $edu-ease-out, color $edu-duration-fast $edu-ease-out;
+
+            &:hover {
+                background: $edu-accent-soft;
+                color: $edu-accent-strong;
+                border-color: $edu-accent-border;
+                text-decoration: none;
+            }
+
+            .pdf-icon { display: inline-flex; }
+        }
+    }
+
+    // ── Meta key-value bar (Points / Time / Memory / I/O) ────
+    // Legacy [problem.scss:726-820] renders this with a 3×2 grid,
+    // gradient bg + rainbow ::before. Override hard.
+    .new-problem-info.d-flex-problem,
+    .new-problem-info {
+        display: flex !important;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 0 0 24px !important;
+        padding: 0 !important;
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        min-height: 0 !important;
+        grid-template-columns: none !important;
+        grid-template-rows: none !important;
+        overflow: visible !important;
+
+        &::before {
+            display: none !important;
+            background: transparent !important;
+            content: none !important;
+        }
+
+        .info-block {
+            display: inline-flex !important;
+            align-items: center !important;  // beat baseline alignment with mixed mono/ui font
+            gap: 6px;
+            height: 32px !important;          // lock height regardless of font mix
+            padding: 0 12px !important;
+            background: $edu-bg-soft !important;
+            border: 1px solid $edu-border !important;
+            border-radius: $edu-radius-pill !important;
+            font-size: 13px !important;
+            line-height: 1 !important;
+            min-width: 0 !important;
+            white-space: nowrap;
+            grid-column: auto !important;
+            grid-row: auto !important;
+
+            &:hover {
+                background: $edu-bg-paper !important;
+                border-color: $edu-border-strong !important;
+                transform: none !important;
+            }
+
+            i {
+                color: $edu-accent !important;
+                background: transparent !important;
+                font-size: 12px !important;
+                margin-right: 2px;
+                width: auto !important;
+                padding: 0 !important;
+            }
+
+            .fa-check { color: $edu-ac-text !important; background: transparent !important; }
+            .fa-clock { color: $edu-tle-text !important; background: transparent !important; }
+            .fa-server { color: $edu-accent !important; background: transparent !important; }
+            .fa-file { color: $edu-accent !important; background: transparent !important; }
+
+            .pi-name {
+                color: $edu-text-muted !important;
+                font-weight: 500;
+                font-size: 12px !important;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+            }
+
+            .new-pi-value {
+                font-family: $edu-font-code !important;
+                font-variant-numeric: tabular-nums;
+                font-weight: 600 !important;
+                color: $edu-text-strong !important;
+                font-size: 13px !important;
+                padding: 0 !important;
+                background: transparent !important;
+            }
+        }
+    }
+
+    // ── Statement prose ──────────────────────────────────────
+    .content-description.screen {
+        // Reading width — ~70ch but contained in workspace main
+        > *:not(.new-problem-info):not(table):not(pre):not(.embed) {
+            max-width: 75ch;
+        }
+
+        h1, h2, h3, h4 {
+            color: $edu-text-strong;
+            margin: 24px 0 10px;
+        }
+
+        h1 { font-size: 22px; line-height: 1.3; }
+        h2 { font-size: 19px; line-height: 1.35; }
+        h3 { font-size: 17px; line-height: 1.4; }
+        h4 { font-size: 15px; }
+
+        // Hide the first markdown heading inside the statement body — most
+        // problems repeat the page title (e.g. "A + B Test") as an <h1> in
+        // the markdown render. The page header above already shows it.
+        // Markdown is wrapped in `.md-typeset.content-description` (nested),
+        // so we target the first heading inside that nested wrapper.
+        .md-typeset {
+            > h1:first-child,
+            > h2:first-child {
+                display: none;
+            }
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.65;
+            color: $edu-text;
+            margin: 0 0 14px;
+        }
+
+        ul, ol {
+            font-size: 16px;
+            line-height: 1.65;
+            margin: 0 0 14px;
+            padding-left: 24px;
+        }
+
+        li { margin: 4px 0; }
+
+        // Inline code
+        p code,
+        li code,
+        td code,
+        th code {
+            font-family: $edu-font-code;
+            font-size: 0.92em;
+            background: $edu-bg-soft;
+            border: 1px solid $edu-border;
+            padding: 1px 6px;
+            border-radius: $edu-radius-xs;
+            color: $edu-text-strong;
+        }
+
+        // Sample I/O — DMOJ markdown wraps in <pre>
+        pre {
+            font-family: $edu-font-code;
+            font-size: 14px;
+            line-height: 1.55;
+            background: $edu-bg-soft;
+            border: 1px solid $edu-border;
+            border-radius: $edu-radius-md;
+            padding: 14px 16px;
+            margin: 0 0 14px;
+            overflow-x: auto;
+            white-space: pre;
+            color: $edu-text-strong;
+
+            code { background: transparent; border: 0; padding: 0; }
+        }
+
+        // KaTeX inline & block
+        .katex { font-size: 1em; }
+        .katex-display {
+            margin: 16px 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        // License footer
+        .license {
+            display: inline-block;
+            margin-top: 24px;
+            padding: 4px 10px;
+            font-size: 12px;
+            color: $edu-text-muted;
+            background: $edu-bg-soft;
+            border: 1px solid $edu-border;
+            border-radius: $edu-radius-pill;
+
+            a { color: $edu-text-muted; text-decoration: none; }
+            a:hover { color: $edu-accent; text-decoration: underline; }
+        }
+    }
+
+    // ── Sidebar CTA (Submit) ─────────────────────────────────
+    .info-float .submit-btn,
+    .info-float .submit-btn.btn,
+    button.submit-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding: 12px 16px !important;
+        font-size: 15px !important;
+        font-weight: 600 !important;
+        color: #fff !important;
+        background: $edu-accent !important;
+        border: 1px solid $edu-accent !important;
+        border-radius: $edu-radius-md !important;
+        cursor: pointer;
+        text-decoration: none;
+        box-shadow: $edu-shadow-sm;
+        transition: background $edu-duration-fast $edu-ease-out, transform $edu-duration-fast $edu-ease-out;
+
+        // Override DMOJ legacy btn-green / btn-primary / btn-block
+        &.btn-green,
+        &.btn-primary {
+            background: $edu-accent !important;
+            border-color: $edu-accent !important;
+        }
+
+        &:hover {
+            background: $edu-accent-hover !important;
+            border-color: $edu-accent-hover !important;
+            transform: translateY(-1px);
+            text-decoration: none;
+        }
+
+        // Disabled state inside contest with no submissions left
+        &.btn-disabled {
+            background: $edu-bg-muted !important;
+            border-color: $edu-border !important;
+            color: $edu-text-faint !important;
+            cursor: not-allowed;
+            box-shadow: none;
+
+            &:hover { transform: none; background: $edu-bg-muted !important; }
+        }
+
+        .icon.icon-round {
+            // legacy uses background:#fff !important, kill it
+            background: transparent !important;
+            color: #fff !important;
+            width: auto;
+            height: auto;
+            box-shadow: none;
+            border: 0;
+        }
+
+        i { color: #fff; }
+    }
+
+    .submissions-left {
+        text-align: center;
+        font-size: 12px;
+        color: $edu-text-muted;
+        margin-top: 6px;
+
+        &.no-submissions-left { color: $edu-wa-text; }
+    }
+
+    // Sidebar action links
+    .info-float {
+        hr {
+            border: 0;
+            border-top: 1px solid $edu-border;
+            margin: 14px 0;
+        }
+
+        .link-row {
+            margin: 4px 0;
+
+            a {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 7px 10px;
+                color: $edu-text;
+                font-size: 13px;
+                text-decoration: none;
+                border-radius: $edu-radius-sm;
+                transition: background $edu-duration-fast $edu-ease-out;
+
+                i {
+                    color: $edu-text-muted;
+                    width: 16px;
+                    text-align: center;
+                }
+
+                &:hover {
+                    background: $edu-bg-soft;
+                    color: $edu-accent;
+
+                    i { color: $edu-accent; }
+                }
+            }
+
+            .badge {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 18px;
+                height: 18px;
+                padding: 0 6px;
+                margin-left: auto;
+                background: $edu-warm;
+                color: #fff;
+                font: 600 11px/1 $edu-font-ui;
+                border-radius: 999px;
+            }
+        }
+
+        // Toggleable sections (problem types, allowed langs, judges)
+        .toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 10px;
+            margin: 8px 0 0;
+            font-size: 13px;
+            font-weight: 500;
+            color: $edu-text-strong;
+            background: transparent;
+            border-radius: $edu-radius-sm;
+            cursor: pointer;
+            transition: background $edu-duration-fast $edu-ease-out;
+
+            &:hover { background: $edu-bg-soft; }
+
+            i {
+                font-size: 11px;
+                color: $edu-text-muted;
+                transition: transform $edu-duration-fast $edu-ease-out;
+            }
+
+            &.open i { transform: rotate(90deg); }
+        }
+
+        .toggled {
+            padding: 4px 10px 8px;
+            font-size: 13px;
+            color: $edu-text-muted;
+            line-height: 1.5;
+        }
+
+        // Problem info entry (author, time/mem limits per language)
+        .problem-info-entry {
+            margin: 10px 0 4px;
+            padding: 0;
+
+            i {
+                color: $edu-text-muted;
+                width: 14px;
+                margin-right: 4px;
+            }
+
+            .pi-name {
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                color: $edu-text-muted;
+            }
+
+            .pi-value {
+                margin-top: 2px;
+                font-size: 13px;
+                color: $edu-text;
+            }
+        }
+
+        .problem-lang-limits {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            margin: 4px 0 8px;
+
+            .lang-limit {
+                display: flex;
+                justify-content: space-between;
+                font-size: 12px;
+                color: $edu-text-muted;
+                padding: 2px 4px;
+
+                .lang-name { font-weight: 500; }
+                .lang-tl, .lang-ml {
+                    font-family: $edu-font-code;
+                    font-variant-numeric: tabular-nums;
+                    color: $edu-text;
+                }
+            }
+        }
+
+        // Authors block
+        .authors-value {
+            font-size: 13px;
+
+            a { color: $edu-accent; text-decoration: none; }
+            a:hover { text-decoration: underline; }
+        }
+    }
+
+    // Force the legacy 12.5em min-width to match our 280px sidebar
+    #content-right {
+        max-width: none !important;
+        min-width: 0 !important;
+    }
+
+    // ── Clarifications header ────────────────────────────────
+    #clarification_header_container {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        background: $edu-tle-bg;
+        border: 1px solid $edu-tle-border;
+        color: $edu-tle-text;
+        border-radius: $edu-radius-md;
+        margin-bottom: 16px;
+        cursor: pointer;
+        font-size: 13px;
+
+        i { color: $edu-tle-text; }
+        a { color: inherit; text-decoration: underline; cursor: pointer; }
+    }
+
+    // ── Submit page (templates/problem/submit.html) ──────────
+    // Markup: <form id="problem_submit" class="form-area">
+    //           <div id="submit-wrapper"><div id="editor">…ace…</div>
+    //             <div id="language"><div id="language-select"><select#id_language/>
+    //           <hr>
+    //           <input id="id_source_file"> <input id="id_judge"> <input.submit-btn>
+    form#problem_submit.form-area {
+        max-width: 1100px;
+        margin: 8px 0 32px;
+        padding: 24px;
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-lg;
+        box-shadow: $edu-shadow-sm;
+
+        // Reset legacy alignment quirks
+        text-align: left;
+
+        #submit-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        #editor {
+            border: 1px solid $edu-border;
+            border-radius: $edu-radius-md;
+            overflow: hidden;
+            min-height: 380px;
+            background: $edu-bg-paper;
+            position: relative;
+            transition: border-color $edu-duration-fast $edu-ease-out, box-shadow $edu-duration-fast $edu-ease-out;
+
+            // Indigo ring when typing
+            &:focus-within {
+                border-color: $edu-accent;
+                box-shadow: $edu-shadow-focus;
+            }
+
+            // Editor "frame" header — show the Ace editor mode + a hint.
+            // Drawn via ::before so we don't need template changes.
+            &::before {
+                content: 'Mã nguồn';
+                display: block;
+                padding: 8px 14px;
+                background: $edu-bg-soft;
+                border-bottom: 1px solid $edu-border;
+                font: 600 12px/1 $edu-font-ui;
+                color: $edu-text-muted;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+            }
+
+            .ace_editor {
+                border: 0 !important;
+                border-radius: 0 !important;
+                min-height: 380px;
+                font-family: $edu-font-code !important;
+            }
+
+            // Replace ACE github theme's pale-yellow active line (#fafadc) with a
+            // neutral cream tint that fits the cream/indigo palette. Same goes
+            // for the gutter highlight beside it.
+            .ace-github .ace_marker-layer .ace_active-line,
+            .ace_editor .ace_marker-layer .ace_active-line {
+                background: $edu-bg-soft !important;
+            }
+            .ace-github .ace_gutter-active-line,
+            .ace_editor .ace_gutter-active-line {
+                background: $edu-bg-muted !important;
+            }
+
+            // Hide the django-ace built-in toolbar — its gray gradient bar
+            // duplicates the `Mã nguồn` header we already draw via ::before.
+            .django-ace-toolbar {
+                display: none !important;
+            }
+
+            // Mobile: more vertical space for typing
+            @media (max-width: 599px) {
+                min-height: 50vh;
+                .ace_editor { min-height: 50vh; }
+            }
+        }
+
+        #language {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            #language-select { flex: 1 1 320px; }
+
+            // Wrap the select2 widget to a comfortable width
+            .select2-container {
+                min-width: 280px;
+            }
+        }
+
+        // File input — DMOJ uses <input type="file"> directly. Style the
+        // native chrome so it looks intentional rather than browser-default.
+        input[type="file"]#id_source_file,
+        input[type="file"] {
+            display: block;
+            width: 100%;
+            padding: 14px 16px;
+            background: $edu-bg-soft;
+            border: 1.5px dashed $edu-accent-border;
+            border-radius: $edu-radius-md;
+            cursor: pointer;
+            font-size: 13px;
+            color: $edu-text;
+            margin: 8px 0 16px;
+            transition: background $edu-duration-fast $edu-ease-out, border-color $edu-duration-fast $edu-ease-out;
+
+            // Style the inner browser button (Chrome/Firefox)
+            &::file-selector-button,
+            &::-webkit-file-upload-button {
+                margin-right: 12px;
+                padding: 6px 12px;
+                background: $edu-accent;
+                color: #fff;
+                border: 0;
+                border-radius: $edu-radius-sm;
+                font: 500 13px/1 $edu-font-ui;
+                cursor: pointer;
+                transition: background $edu-duration-fast $edu-ease-out;
+            }
+
+            &::file-selector-button:hover,
+            &::-webkit-file-upload-button:hover { background: $edu-accent-hover; }
+
+            &:hover { background: $edu-bg-paper; border-color: $edu-accent; }
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid $edu-border;
+            margin: 14px 0;
+        }
+
+        .submit-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+
+            // Judge dropdown (small, pushed left of submit)
+            select,
+            .select2-container { min-width: 180px; }
+
+            // Submit button — override legacy `.btn-green` green
+            input.submit-btn,
+            #submit-button,
+            input[type="submit"].submit-btn {
+                width: auto !important;
+                padding: 10px 28px !important;
+                background: $edu-accent !important;
+                color: #fff !important;
+                border: 1px solid $edu-accent !important;
+                border-radius: $edu-radius-md !important;
+                font-size: 15px !important;
+                font-weight: 600 !important;
+                cursor: pointer;
+                box-shadow: $edu-shadow-sm;
+                transition: background $edu-duration-fast $edu-ease-out;
+                margin: 0 !important;
+
+                &:hover:not(:disabled) {
+                    background: $edu-accent-hover !important;
+                    border-color: $edu-accent-hover !important;
+                }
+
+                &:disabled {
+                    background: $edu-bg-muted !important;
+                    color: $edu-text-faint !important;
+                    border-color: $edu-border !important;
+                    cursor: not-allowed;
+                    box-shadow: none;
+                }
+            }
+
+            #countdown-timer {
+                font-family: $edu-font-code;
+                font-weight: 600;
+                color: $edu-tle-text;
+            }
+        }
+    }
+
+    // Submit page title — strip legacy purple link styling on the problem name
+    body.edu .title-row a,
+    .edu-main h2.title-row a {
+        color: $edu-accent;
+
+        &:hover { color: $edu-accent-hover; }
+    }
+
+    // Ace editor wrapper (default DMOJ style)
+    .ace_editor {
+        border: 1px solid $edu-border !important;
+        border-radius: $edu-radius-md !important;
+    }
+}

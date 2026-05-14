@@ -63,6 +63,7 @@
 {% endblock %}
 
 {% block middle_content %}
+  {% include "home/learning-dashboard.html" %}
   {% if feed_items %}
     {% include "home/feed-content.html" %}
   {% else %}

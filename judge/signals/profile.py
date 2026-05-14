@@ -7,11 +7,11 @@ from judge.models.profile import _get_profile
 
 
 @receiver(post_save, sender=User)
-def on_user_save(sender, instance, **kwargs):
+def on_user_save(sender, instance, created, **kwargs):
     try:
         profile = instance.profile
         _get_profile.dirty(profile.id)
-    except:
+    except Exception:
         pass
 
 

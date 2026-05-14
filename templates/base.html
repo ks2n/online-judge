@@ -29,7 +29,7 @@
     <meta name="msapplication-TileColor" content="#FFBB33">
     <meta name="msapplication-TileImage" content="/mstile-144x144.png">
   {# Chrome 39 for Android colour #}
-    <meta name="theme-color" content="#FFBB33">
+    <meta name="theme-color" content="#FBF8F3">
     {% if og_image %}
       <meta property="og:image" content="{{ request.build_absolute_uri(og_image) }}">
     {% endif %}
@@ -61,7 +61,7 @@
     {% endcompress %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Noto+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="canonical"
           href="{{ DMOJ_SCHEME }}://{{ DMOJ_CANONICAL|default(site.domain) }}{{ request.get_full_path() }}">
     {% if request.user.is_impersonate %}
@@ -72,10 +72,9 @@
       </style>
     {% endif %}
 
-    {% if use_darkmode %}
-      <link rel="stylesheet" href="{{ static('darkmode.min.css') }}">
-      <link rel="stylesheet" href="{{ static('darkmode-svg.css') }}">
-    {% endif %}
+    {# Edu theme has native dark palette via body.dark; legacy darkmode.css
+       (DarkReader filter invert) is no longer loaded — it produced washed
+       gradients and broke the indigo accent system. #}
 
     <noscript>
       <style>
@@ -108,7 +107,7 @@
     {% endif %}
   </head>
 
-  <body>
+  <body class="edu{% if bare %} edu--bare{% endif %}{% if use_darkmode %} dark{% endif %}">
     <svg width="0" height="0" style="display: block">
       <defs>
         <clipPath id="rating-clip">
@@ -116,24 +115,31 @@
         </clipPath>
       </defs>
     </svg>
-    <nav id="navigation" class="unselectable">
-      <div id="nav-container" style="display: flex">
-        <span id="navicon"><i class="fa fa-bars"></i></span>
-        <ul id="nav-list">
-          <li class="home-nav-element"><a href="{{ url('home') }}">{% include "site-logo-fragment.html" %}</a></li>
-          <li class="home-menu-item"><a href="{{ url('home') }}" class="nav-home">{{ _('Home') }}</a></li>
+    <nav id="navigation" class="unselectable edu-nav">
+      <div id="nav-container" class="edu-nav-shell">
+        <div class="edu-nav-brand">
+          <span id="navicon"><i class="fa-solid fa-bars"></i></span>
+          <a href="{{ url('home') }}" class="edu-nav-logo" aria-label="{{ SITE_NAME }}">
+            {% include "site-logo-fragment.html" %}
+          </a>
+        </div>
+        <ul id="nav-list" class="edu-nav-list">
           {% for node in mptt_tree(nav_bar) recursive %}
-            <li>
+            <li{% if node.get_children() %} class="has-children"{% endif %}>
               {% if node.key == "more" %}
                 <a href="#" onclick="return false;"
-                   class="nav-icon-link nav-{{ node.key }}{% if node.key in nav_tab %} active{% endif %}"
-                   data-tooltip="{{ user_trans(node.label) }}">
+                    class="nav-icon-link nav-{{ node.key }}{% if node.key in nav_tab %} active{% endif %}"
+                    data-tooltip="{{ user_trans(node.label) }}">
                   <span class="nav-icon-container">
-                    <i class="fa fa-ellipsis"></i>
+                    <i class="fa-solid fa-ellipsis"></i>
                   </span>
+                  <span class="nav-label">{{ user_trans(node.label) }}</span>
                 </a>
                 {% with children=node.get_children() %}
                   {% if children %}
+                    <button class="nav-expand" type="button" aria-expanded="false" aria-label="{{ _('Open submenu') }}">
+                      <i class="fa fa-chevron-right"></i>
+                    </button>
                     <div class="nav-dropdown">
                       {% for child in children %}
                         <a href="{{ child.path }}" class="nav-dropdown-item">
@@ -144,21 +150,27 @@
                   {% endif %}
                 {% endwith %}
               {% else %}
-                <a href="{{ node.path }}"
-                   class="nav-icon-link nav-{{ node.key }}{% if node.key in nav_tab %} active{% endif %}"
-                   data-tooltip="{{ user_trans(node.label) }}">
-                  <span class="nav-icon-container">
-                    {% if node.key == "problems" %} <i class="fa fa-puzzle-piece"></i> {% endif %}
-                    {% if node.key == "submit" %} <i class="fa fa-code"></i> {% endif %}
-                    {% if node.key == "user" %} <i class="fa fa-user"></i> {% endif %}
-                    {% if node.key == "contest" %} <i class="fa fa-ranking-star"></i> {% endif %}
-                    {% if node.key == "group" %} <i class="fa fa-building-columns"></i> {% endif %}
-                    {% if node.key == "courses" %} <i class="fa fa-graduation-cap"></i> {% endif %}
-                    {% if node.key == "quiz" %} <i class="fa fa-file-alt"></i> {% endif %}
-                  </span>
-                </a>
+                 <a href="{{ node.path }}"
+                    class="nav-icon-link nav-{{ node.key }}{% if node.key in nav_tab %} active{% endif %}"
+                    data-tooltip="{{ user_trans(node.label) }}">
+                   <span class="nav-icon-container">
+                     {% if node.key == "about" %} <i class="fa-solid fa-circle-info"></i> {% endif %}
+                     {% if node.key == "chat" %} <i class="fa-regular fa-comment-dots"></i> {% endif %}
+                     {% if node.key == "problems" %} <i class="fa-solid fa-bolt"></i> {% endif %}
+                     {% if node.key == "submit" %} <i class="fa-solid fa-paper-plane"></i> {% endif %}
+                     {% if node.key == "user" %} <i class="fa-regular fa-circle-user"></i> {% endif %}
+                     {% if node.key == "contest" %} <i class="fa-solid fa-fire"></i> {% endif %}
+                     {% if node.key == "group" %} <i class="fa-solid fa-people-group"></i> {% endif %}
+                     {% if node.key == "courses" %} <i class="fa-solid fa-graduation-cap"></i> {% endif %}
+                     {% if node.key == "quiz" %} <i class="fa-solid fa-clipboard-check"></i> {% endif %}
+                   </span>
+                   <span class="nav-label">{{ user_trans(node.label) }}</span>
+                 </a>
                 {% with children=node.get_children() %}
                   {% if children %}
+                    <button class="nav-expand" type="button" aria-expanded="false" aria-label="{{ _('Open submenu') }}">
+                      <i class="fa fa-chevron-right"></i>
+                    </button>
                     <div class="nav-dropdown">
                       {% for child in children %}
                         <a href="{{ child.path }}" class="nav-dropdown-item">
@@ -168,27 +180,31 @@
                     </div>
                   {% endif %}
                 {% endwith %}
-              {% endif %}
-            </li>
+               {% endif %}
+             </li>
           {% endfor %}
         </ul>
 
-        <div style="display: flex; font-size: larger; align-items: center; height: 100%; gap: 1em; padding-left: 2em;">
-          {% if request.user.is_authenticated %}
-            <span title="{{_('Chat')}}">
-              <a id="chat-icon" href="{{ url('chat', '') }}" class="fab fa-weixin navbar-icon" aria-hidden="true"
-                 style="font-size: 22.5px;">
-                {% set unread_chat = request.profile.get_num_unread_chat_boxes() %}
-                {% if unread_chat %}
-                  <sub class="unread_boxes">{{unread_chat}}</sub>
-                {% endif %}
-              </a>
-            </span>
+        <form class="edu-nav-search" method="get" action="{{ url('problem_list') }}" role="search">
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <input type="search" name="search" id="edu-nav-search-input"
+                 value="{{ request.GET.search|default('', true) }}"
+                 placeholder="{{ _('Tìm bài tập, khoá học…') }}" aria-label="{{ _('Search') }}">
+          <kbd class="edu-nav-search-kbd" aria-hidden="true">/</kbd>
+        </form>
 
+        <div class="edu-nav-utility">
+          <button id="edu-theme-toggle" class="navbar-icon navbar-utility-link" type="button"
+                  title="{{ _('Toggle theme') }}" aria-label="{{ _('Toggle theme') }}"
+                  data-toggle-url="{{ url('toggle_darkmode_ajax') if request.user.is_authenticated else '' }}">
+            <i class="fa-regular fa-moon edu-theme-icon-dark"></i>
+            <i class="fa-regular fa-sun edu-theme-icon-light" style="display:none"></i>
+          </button>
+          {% if request.user.is_authenticated %}
             {% set unseen_cnt = request.profile.get_num_unseen_notifications() %}
             <span title="{{_('Notification')}}" class="{{ 'notification-open' if unseen_cnt > 0 }}">
-              <a href="{{ url('notification') }}" class="far fa-bell navbar-icon" id="notification" aria-hidden="true"
-                 style="font-size: 22.5px;">
+              <a href="{{ url('notification') }}" class="navbar-icon navbar-utility-link" id="notification">
+                <i class="fa-regular fa-bell"></i>
                 {% if unseen_cnt > 0 %}
                   <sub class="unread_boxes">{{unseen_cnt}}</sub>
                 {% endif %}
@@ -196,7 +212,8 @@
             </span>
           {% endif %}
           <span title="{{_('Language')}}">
-            <div class="navbar-icon" id="nav-lang-icon" aria-hidden="true" style="font-size: 22.5px;">
+            <div class="navbar-icon navbar-utility-link" id="nav-lang-icon">
+              <i class="fa-solid fa-globe"></i>
               {% if LANGUAGE_CODE == "vi" %}
                 <h4 class="black nav-right-text">Tiếng Việt</h4>
               {% endif %}
@@ -214,15 +231,15 @@
               <div class="popper-arrow" data-popper-arrow></div>
             </div>
           </span>
-          <span title="{{_('Dark Mode')}}">
-            <a class="far fa-moon navbar-icon black" id="nav-darkmode-icon" aria-hidden="true" href="?darkmode=1"
-               style="font-size: 22.5px;"></a>
-          </span>
-          {% if request.user.is_authenticated %}
-            <span id="user-links">
-              <img class="user-img" src="{{ gravatar(request.profile.id, 32) }}" height="24" width="24">
-              <i class="fa fa-angle-down" style="font-size: 18px; padding-top: 8px;"></i>
-            </span>
+            {% if request.user.is_authenticated %}
+              <span id="user-links">
+                <img class="user-img" src="{{ gravatar(request.profile.id, 32) }}" height="24" width="24">
+                <span class="nav-user-meta">
+                  <span class="nav-user-name">{{ request.user.username }}</span>
+                  <span class="nav-user-role">{{ _('Account') }}</span>
+                </span>
+                <i class="fa-solid fa-chevron-down" style="font-size: 10px; opacity: 0.5;"></i>
+              </span>
             <div class="dropdown" id="userlink_dropdown" role="tooptip">
               <div class="popper-arrow" data-popper-arrow></div>
               <a href="{{ url('user_page') }}">
@@ -303,17 +320,17 @@
           </a>
         </div>
       </div>
-    {% endif %}
-    <div id="page-container">
+      {% endif %}
+    <div id="page-container" class="edu-page">
       <div id="media">
         {% block media %}{% endblock %}
       </div>
       <noscript>
         <div id="noscript">{{ _('This site works best with JavaScript enabled.') }}</div>
       </noscript>
-      <main id="content" class="{{'wrapper' if layout != 'no_wrapper'}}">
+      <main id="content" class="edu-main {{'wrapper' if layout != 'no_wrapper'}}">
         {% block title_row %}
-          <h2 class="title-row">
+          <h2 class="title-row edu-title-row">
             {% block content_title %}
               {% if content_title %}{{ content_title }}{% else %}{{ title }}{% endif %}
             {% endblock %}
@@ -323,7 +340,7 @@
         {% block title_ruler %}
           <hr>
         {% endblock %}
-        <div id="content-body">{% block body %}{% endblock %}</div>
+        <div id="content-body" class="edu-content-body">{% block body %}{% endblock %}</div>
       </main>
 
       {% if i18n_config.announcement %}
@@ -429,18 +446,31 @@
       <script src="{{ static('katex_config.js') }}"></script>
       {% include "katex-load.html" %}
       {% block footer %}
-        <footer>
-          <span id="footer-content">
-            <br>
-            <a class="background-footer" target="_blank" href="https://dmoj.ca">proudly powered by <b>DMOJ</b></a>|<a
-              target="_blank" href="https://github.com/LQDJudge/online-judge"> developed by LQDJudge team</a>
-            {% if i18n_config.footer %}
-              {{ i18n_config.footer|safe }} |
-            {% endif %}
-            <form action="{{ url('set_language') }}" method="post" style="display: inline" id="form-lang">
+        <footer class="edu-footer">
+          <div class="edu-footer-inner" id="footer-content">
+            <div class="edu-footer-brand">
+              <span class="edu-footer-brand-mark" aria-hidden="true">
+                <i class="fa fa-graduation-cap"></i>
+              </span>
+              <span class="edu-footer-brand-text">
+                <b>LQDOJ</b>
+                <span class="edu-footer-brand-tagline">— {{ _('rèn thuật toán, học cùng nhau') }}</span>
+              </span>
+            </div>
+
+            <div class="edu-footer-meta">
+              <a target="_blank" rel="noopener" href="https://dmoj.ca">{{ _('Powered by DMOJ') }}</a>
+              {% if i18n_config.footer %}
+                <span class="edu-footer-sep" aria-hidden="true">·</span>
+                <span class="edu-footer-extra">{{ i18n_config.footer|safe }}</span>
+              {% endif %}
+            </div>
+
+            <form action="{{ url('set_language') }}" method="post" id="form-lang">
               {% csrf_token %}
               <input name="next" type="hidden" value="{{ request.get_full_path() }}">
-              <select name="language" onchange="form.submit()" style="height: 1.5em">
+              <i class="fa fa-globe edu-footer-lang-icon" aria-hidden="true"></i>
+              <select id="footer-lang-select" name="language" onchange="form.submit()" aria-label="{{ _('Language') }}">
                 {% for language in language_info_list(LANGUAGES) %}
                   <option value="{{ language.code }}" {% if language.code==LANGUAGE_CODE %}selected{% endif %}>
                     {{ language.name_local }} ({{ language.code }})
@@ -448,7 +478,7 @@
                 {% endfor %}
               </select>
             </form>
-          </span>
+          </div>
         </footer>
       {% endblock %}
     </div>
@@ -456,6 +486,27 @@
       <div id="dynamic-effects-container"></div>
       <script>window.DYNAMIC_EFFECT = '{{ request.profile.dynamic_effect }}';</script>
       <script src="{{ static('dynamic-effects.js') }}"></script>
+    {% endif %}
+    {% if messages %}
+      <script>
+        (function () {
+          function emit() {
+            if (!window.eduToast) { setTimeout(emit, 50); return; }
+            {% for message in messages %}
+              window.eduToast.show({
+                type: {% if 'success' in message.tags %}'success'{% elif 'error' in message.tags %}'error'{% elif 'warning' in message.tags %}'warning'{% else %}'info'{% endif %},
+                message: {{ message|string|json }},
+                duration: 5000
+              });
+            {% endfor %}
+          }
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', emit);
+          } else {
+            emit();
+          }
+        })();
+      </script>
     {% endif %}
   </body>
 

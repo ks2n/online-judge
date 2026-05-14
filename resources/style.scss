@@ -8,7 +8,7 @@
 @use "content-description" as *;
 @use "widgets" as *;
 @use "comments" as *;
-@use "submission" as *;
+@use "submission" as *;  // [refactor] kept for #content-left.submission, .statistics-table — edu/_submissions covers row visuals
 @use "contest" as *;
 @use "misc" as *;
 @use "chatbox" as *;
@@ -17,7 +17,7 @@
 @use "pagedown_widget" as *;
 @use "dmmd-preview" as *;
 @use "course" as *;
-@use "actionbar" as *;
+// @use "actionbar" as *;  // [refactor] Replaced by edu/_actionbar.scss
 @use "contest-problemset" as *;
 @use "user_upload" as *;
 @use "notification" as *;
@@ -28,3 +28,4 @@
 @use "package_import" as *;
 @use "ranking-live" as *;
 @use "resolver" as *;
+@use "edu-theme" as *;

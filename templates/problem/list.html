@@ -86,6 +86,7 @@
               <td class="problem">
                 <a href="{{ url('problem_detail', problem.code) }}">{{ problem.translated_name(LANGUAGE_CODE)
                   }}</a>
+                {{ difficulty_pill(problem.points, compact=True) }}
               </td>
               <td class="pcode">
                 <a class="pcodecell" href="{{ url('problem_detail', problem.code) }}">{{ problem.code }}</a>

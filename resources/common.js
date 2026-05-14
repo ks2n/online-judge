@@ -789,13 +789,17 @@ function onWindowReady() {
         };
 
         evt = evt || window.event;
+        var newState;
         if (evt.type in evtMap)
-            document.body.className = evtMap[evt.type];
+            newState = evtMap[evt.type];
         else
-            document.body.className = this[hidden] ? 'window-hidden' : 'window-visible';
+            newState = this[hidden] ? h : v;
+
+        document.body.classList.remove(v, h);
+        document.body.classList.add(newState);
 
         if ('$' in window)
-            $(window).trigger('dmoj:' + document.body.className);
+            $(window).trigger('dmoj:' + newState);
     }
 
     $('.tabs').each(function () {
@@ -878,18 +882,63 @@ function onWindowReady() {
     registerNavigation();
     registerPopper($('#nav-lang-icon'), $('#lang-dropdown'));
     registerPopper($('#user-links'), $('#userlink_dropdown'));
+
+    // Topbar search shortcut: press "/" to focus the search box, unless the
+    // user is already typing into another input. Mirrors GitHub/GitLab UX.
+    $(document).on('keydown.eduSearch', function (e) {
+        if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return;
+        var tag = (e.target && e.target.tagName || '').toLowerCase();
+        if (tag === 'input' || tag === 'textarea' || tag === 'select' ||
+            (e.target && e.target.isContentEditable)) {
+            return;
+        }
+        var $input = $('#edu-nav-search-input');
+        if (!$input.length) return;
+        e.preventDefault();
+        $input.trigger('focus').get(0).select();
+    });
 }
 
 function registerNavList() {
     var $nav_list = $('#nav-list');
-    $('#navicon').click(function (event) {
+
+    function hideNavSubmenus() {
+        var $submenus = $nav_list.find('li ul, .nav-dropdown');
+        if (isMobileNav()) {
+            $submenus.removeClass('is-open').hide();
+        } else {
+            $submenus.removeClass('is-open').css('display', '');
+        }
+        $nav_list.find('.nav-expand').attr('aria-expanded', 'false');
+    }
+
+    function isMobileNav() {
+        return window.matchMedia('(max-width: 1099px)').matches;
+    }
+
+    function closeNavList() {
+        hideNavSubmenus();
+        if (isMobileNav()) {
+            $nav_list.hide();
+            $('#navigation').removeClass('nav-list-open');
+        } else {
+            $nav_list.css('display', '');
+        }
+        $('#navicon').blur().removeClass('hover');
+    }
+
+    $('#navicon').off('click.navlist').on('click.navlist', function (event) {
+        if (!isMobileNav())
+            return;
         event.stopPropagation();
-        $nav_list.toggle();
-        if ($nav_list.is(':hidden'))
-            $(this).blur().removeClass('hover');
-        else {
+        if ($nav_list.is(':visible')) {
+            closeNavList();
+        } else {
+            $nav_list.css('display', 'block');
+            $('#navigation').addClass('nav-list-open');
             $(this).addClass('hover');
             $nav_list.find('li ul').css('left', $('#nav-list').width()).hide();
+            $nav_list.find('.nav-dropdown').hide().removeClass('is-open');
         }
     }).hover(function () {
         $(this).addClass('hover');
@@ -897,27 +946,46 @@ function registerNavList() {
         $(this).removeClass('hover');
     });
 
-    $nav_list.find('li a .nav-expand').click(function (event) {
+    $nav_list.find('.nav-expand').off('click.navlist').on('click.navlist', function (event) {
         event.preventDefault();
-        $(this).parent().siblings('ul').css('display', 'block');
+        event.stopPropagation();
+        var $button = $(this);
+        var $submenu = $button.siblings('ul, .nav-dropdown').first();
+        if (!$submenu.length)
+            return;
+
+        var willOpen = !$submenu.is(':visible');
+        hideNavSubmenus();
+        if (willOpen) {
+            $submenu.css('display', 'block').addClass('is-open');
+            $button.attr('aria-expanded', 'true');
+        }
     });
 
     $nav_list.find('li a').each(function () {
-        if (!$(this).siblings('ul').length)
+        var $link = $(this);
+        var $submenu = $link.siblings('ul, .nav-dropdown').first();
+        if (!$submenu.length)
             return;
-        $(this).on('contextmenu', function (event) {
+
+        $link.off('contextmenu.navlist taphold.navlist').on('contextmenu.navlist', function (event) {
             event.preventDefault();
-        }).on('taphold', function () {
-            $(this).siblings('ul').css('display', 'block');
+        }).on('taphold.navlist', function () {
+            hideNavSubmenus();
+            $submenu.css('display', 'block').addClass('is-open');
+            $link.siblings('.nav-expand').attr('aria-expanded', 'true');
         });
     });
 
-    $nav_list.click(function (event) {
+    $nav_list.off('click.navlist').on('click.navlist', function (event) {
         event.stopPropagation();
     });
 
-    $('html').click(function () {
-        $nav_list.hide();
+    $('html').off('click.navlist').on('click.navlist', function () {
+        if (isMobileNav())
+            closeNavList();
+        else
+            hideNavSubmenus();
     });
 }
 
@@ -927,8 +995,242 @@ $(function() {
     }
     onWindowReady();
     registerNavList();
-   
+
     window.addEventListener('popstate', (e) => {
         window.location.href = e.currentTarget.location.href;
     });
 });
+
+// ────────────────────────────────────────────────────────────────
+// Edu theme toggle — light ↔ dark, persisted in localStorage and
+// (when authenticated) synced to the Django session via AJAX so the
+// next page render is already correct.
+// ────────────────────────────────────────────────────────────────
+(function () {
+    function applyTheme(isDark) {
+        var body = document.body;
+        if (!body) return;
+        if (isDark) body.classList.add('dark');
+        else body.classList.remove('dark');
+        var btn = document.getElementById('edu-theme-toggle');
+        if (btn) {
+            var dark = btn.querySelector('.edu-theme-icon-dark');
+            var light = btn.querySelector('.edu-theme-icon-light');
+            if (dark) dark.style.display = isDark ? 'none' : '';
+            if (light) light.style.display = isDark ? '' : 'none';
+        }
+    }
+
+    function readStoredTheme() {
+        try { return localStorage.getItem('edu-theme'); } catch (_) { return null; }
+    }
+
+    function writeStoredTheme(value) {
+        try { localStorage.setItem('edu-theme', value); } catch (_) {}
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var btn = document.getElementById('edu-theme-toggle');
+        var serverDark = document.body.classList.contains('dark');
+        var stored = readStoredTheme();
+        var initialDark;
+        if (stored === 'dark' || stored === 'light') {
+            initialDark = stored === 'dark';
+        } else {
+            initialDark = serverDark;
+        }
+        applyTheme(initialDark);
+
+        if (!btn) return;
+        btn.addEventListener('click', function () {
+            var nextDark = !document.body.classList.contains('dark');
+            applyTheme(nextDark);
+            writeStoredTheme(nextDark ? 'dark' : 'light');
+            var url = btn.getAttribute('data-toggle-url');
+            if (url) {
+                var token = (typeof $ !== 'undefined' && $.cookie) ? $.cookie('csrftoken') : null;
+                fetch(url, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: token ? { 'X-CSRFToken': token } : {},
+                    body: new URLSearchParams({ mode: nextDark ? 'dark' : 'light' })
+                }).catch(function () {});
+            }
+        });
+    });
+})();
+
+// ────────────────────────────────────────────────────────────────
+// Edu toast — minimal vanilla snackbar.
+//   window.eduToast.show({ type, title, message, duration })
+// Mounts container lazily so callers don't have to.
+// ────────────────────────────────────────────────────────────────
+(function () {
+    var ICONS = {
+        success: 'fa-check-circle',
+        error:   'fa-times-circle',
+        warning: 'fa-exclamation-triangle',
+        info:    'fa-info-circle'
+    };
+
+    function getContainer() {
+        var c = document.getElementById('edu-toast-container');
+        if (c) return c;
+        c = document.createElement('div');
+        c.id = 'edu-toast-container';
+        c.className = 'edu-toast-container';
+        document.body.appendChild(c);
+        return c;
+    }
+
+    function dismiss(el) {
+        if (!el || el._eduToastDismissed) return;
+        el._eduToastDismissed = true;
+        el.classList.add('is-leaving');
+        setTimeout(function () {
+            if (el.parentNode) el.parentNode.removeChild(el);
+        }, 220);
+    }
+
+    function show(opts) {
+        opts = opts || {};
+        var type = opts.type || 'info';
+        var title = opts.title || '';
+        var message = opts.message || '';
+        var duration = (typeof opts.duration === 'number') ? opts.duration : 4000;
+
+        var el = document.createElement('div');
+        el.className = 'edu-toast edu-toast--' + type;
+        el.setAttribute('role', type === 'error' ? 'alert' : 'status');
+
+        var icon = document.createElement('i');
+        icon.className = 'edu-toast-icon fa ' + (ICONS[type] || ICONS.info);
+        icon.setAttribute('aria-hidden', 'true');
+
+        var body = document.createElement('div');
+        body.className = 'edu-toast-body';
+        if (title) {
+            var t = document.createElement('strong');
+            t.className = 'edu-toast-title';
+            t.textContent = title;
+            body.appendChild(t);
+        }
+        if (message) {
+            var m = document.createElement('div');
+            m.className = 'edu-toast-message';
+            m.textContent = message;
+            body.appendChild(m);
+        }
+
+        var close = document.createElement('button');
+        close.type = 'button';
+        close.className = 'edu-toast-close';
+        close.setAttribute('aria-label', 'Close');
+        close.innerHTML = '<i class="fa fa-times" aria-hidden="true"></i>';
+        close.addEventListener('click', function () { dismiss(el); });
+
+        el.appendChild(icon);
+        el.appendChild(body);
+        el.appendChild(close);
+        getContainer().appendChild(el);
+
+        if (duration > 0) {
+            setTimeout(function () { dismiss(el); }, duration);
+        }
+        return el;
+    }
+
+    window.eduToast = { show: show, dismiss: dismiss };
+})();
+
+// ────────────────────────────────────────────────────────────────
+// Edu modal — vanilla open/close with focus trap, ESC-to-close,
+// click-outside-to-close. Trigger via:
+//   <button data-edu-modal-open="confirm-delete">…</button>
+//   <div class="edu-modal-backdrop" id="confirm-delete" data-edu-modal hidden>…
+//   <button data-edu-modal-close>…</button> (anywhere inside)
+// JS API: window.eduModal.open(id|el), .close(id|el).
+// ────────────────────────────────────────────────────────────────
+(function () {
+    var openModals = [];
+
+    function resolve(target) {
+        if (!target) return null;
+        if (typeof target === 'string') return document.getElementById(target);
+        return target;
+    }
+
+    function trapFocus(modal) {
+        var focusable = modal.querySelectorAll(
+            'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+        var first = focusable[0];
+        var last = focusable[focusable.length - 1];
+        modal.addEventListener('keydown', function (e) {
+            if (e.key !== 'Tab') return;
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        });
+    }
+
+    function open(target) {
+        var el = resolve(target);
+        if (!el) return;
+        el.removeAttribute('hidden');
+        el.classList.add('is-open');
+        el.classList.remove('is-leaving');
+        openModals.push(el);
+        // Focus first focusable element inside
+        var focusable = el.querySelector(
+            'button:not([disabled]):not(.edu-modal-close), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable) focusable.focus();
+        trapFocus(el);
+    }
+
+    function close(target) {
+        var el = resolve(target);
+        if (!el) return;
+        el.classList.add('is-leaving');
+        setTimeout(function () {
+            el.classList.remove('is-open', 'is-leaving');
+            el.setAttribute('hidden', '');
+            var idx = openModals.indexOf(el);
+            if (idx > -1) openModals.splice(idx, 1);
+        }, 180);
+    }
+
+    document.addEventListener('click', function (e) {
+        var trigger = e.target.closest && e.target.closest('[data-edu-modal-open]');
+        if (trigger) {
+            e.preventDefault();
+            open(trigger.getAttribute('data-edu-modal-open'));
+            return;
+        }
+        var closer = e.target.closest && e.target.closest('[data-edu-modal-close]');
+        if (closer) {
+            e.preventDefault();
+            var modal = closer.closest('.edu-modal-backdrop');
+            if (modal) close(modal);
+            return;
+        }
+        // Click on backdrop itself (not its child .edu-modal)
+        if (e.target.classList && e.target.classList.contains('edu-modal-backdrop')) {
+            close(e.target);
+        }
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && openModals.length > 0) {
+            close(openModals[openModals.length - 1]);
+        }
+    });
+
+    window.eduModal = { open: open, close: close };
+})();

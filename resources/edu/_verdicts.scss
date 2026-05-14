@@ -1,0 +1,108 @@
+// ============================================================
+// _verdicts.scss — AC / WA / TLE / CE / IR semantic pills
+// ============================================================
+// Solid pastel pills, no glow. Color-blind friendly: paired with
+// uppercase mono code so colour is not the only signal.
+// ============================================================
+
+@use "tokens" as *;
+
+@mixin verdict($bg, $fg, $border) {
+    background: $bg;
+    color: $fg;
+    border-color: $border;
+}
+
+body.edu {
+    // Generic verdict pill — apply via .edu-verdict + modifier
+    .edu-verdict {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 10px;
+        font-family: $edu-font-code;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 16px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        border: 1px solid transparent;
+        border-radius: $edu-radius-pill;
+        white-space: nowrap;
+
+        &::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            opacity: 0.85;
+        }
+    }
+
+    .edu-verdict--ac  { @include verdict($edu-ac-bg,  $edu-ac-text,  $edu-ac-border); }
+    .edu-verdict--wa  { @include verdict($edu-wa-bg,  $edu-wa-text,  $edu-wa-border); }
+    .edu-verdict--tle { @include verdict($edu-tle-bg, $edu-tle-text, $edu-tle-border); }
+    .edu-verdict--mle { @include verdict($edu-tle-bg, $edu-tle-text, $edu-tle-border); }
+    .edu-verdict--ce  { @include verdict($edu-ce-bg,  $edu-ce-text,  $edu-ce-border); }
+    .edu-verdict--ir  { @include verdict($edu-ir-bg,  $edu-ir-text,  $edu-ir-border); }
+    .edu-verdict--rte { @include verdict($edu-ir-bg,  $edu-ir-text,  $edu-ir-border); }
+    .edu-verdict--queued,
+    .edu-verdict--pending {
+        @include verdict($edu-bg-muted, $edu-text-muted, $edu-border);
+    }
+
+    // ── Map DMOJ legacy verdict classes onto edu styling ─────
+    // judge/views/widgets renders verdicts with `.AC`, `.WA`, `.TLE`,
+    // `.MLE`, `.CE`, `.IR`, `._AC` (partial), `.RTE`, `.OLE`.
+    .submissions-table .sub-result,
+    .submission-row .sub-result,
+    .case-row .sub-result,
+    table .sub-result,
+    .sub-result {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 10px;
+        font-family: $edu-font-code;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 16px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        border: 1px solid transparent;
+        border-radius: $edu-radius-pill;
+
+        &::before {
+            content: "";
+            width: 6px; height: 6px;
+            background: currentColor;
+            border-radius: 50%;
+            opacity: 0.85;
+        }
+
+        &.AC,
+        &._AC,
+        .AC, ._AC { @include verdict($edu-ac-bg, $edu-ac-text, $edu-ac-border); }
+        &.WA, .WA { @include verdict($edu-wa-bg, $edu-wa-text, $edu-wa-border); }
+        &.TLE, .TLE,
+        &.MLE, .MLE,
+        &.OLE, .OLE { @include verdict($edu-tle-bg, $edu-tle-text, $edu-tle-border); }
+        &.CE, .CE { @include verdict($edu-ce-bg, $edu-ce-text, $edu-ce-border); }
+        &.IR, .IR,
+        &.RTE, .RTE { @include verdict($edu-ir-bg, $edu-ir-text, $edu-ir-border); }
+        &.QU, .QU,
+        &.G,  .G,
+        &.IE, .IE,
+        &.AB, .AB { @include verdict($edu-bg-muted, $edu-text-muted, $edu-border); }
+    }
+
+    // Some templates render verdict as direct class on the cell.
+    td.AC, span.AC { color: $edu-ac-text; font-weight: 600; }
+    td.WA, span.WA { color: $edu-wa-text; font-weight: 600; }
+    td.TLE, span.TLE,
+    td.MLE, span.MLE { color: $edu-tle-text; font-weight: 600; }
+    td.CE, span.CE { color: $edu-ce-text; font-weight: 600; }
+    td.IR, span.IR,
+    td.RTE, span.RTE { color: $edu-ir-text; font-weight: 600; }
+}

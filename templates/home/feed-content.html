@@ -9,7 +9,10 @@
   {% elif item.item_type == 'contest' %}
     {% include "home/feed-recommended-contest.html" %}
   {% elif item.item_type == 'courses' %}
-    {% include "home/feed-courses-card.html" %}
+    {# Suppress when learning-dashboard already rendered enrolled courses (duplicate). #}
+    {% if not edu_courses %}
+      {% include "home/feed-courses-card.html" %}
+    {% endif %}
   {% elif item.item_type == 'quizzes' %}
     {% include "home/feed-quizzes-card.html" %}
   {% elif item.item_type == 'groups' %}

@@ -1,0 +1,89 @@
+// ============================================================
+// _skeleton.scss — Loading shimmer placeholders
+// ============================================================
+// Drop a placeholder before content arrives:
+//   <div class="edu-skeleton edu-skeleton--text"></div>
+//   <div class="edu-skeleton edu-skeleton--card" style="height: 120px"></div>
+//   <div class="edu-skeleton edu-skeleton--circle" style="width: 40px; height: 40px"></div>
+//
+// The shimmer animation honours `prefers-reduced-motion` (renders as a
+// static muted block instead).
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+    .edu-skeleton {
+        display: block;
+        background: linear-gradient(
+            90deg,
+            $edu-bg-soft 0%,
+            $edu-bg-muted 50%,
+            $edu-bg-soft 100%
+        );
+        background-size: 200% 100%;
+        border-radius: $edu-radius-sm;
+        animation: edu-skeleton-shimmer 1.4s linear infinite;
+        // Don't render any text content visually — caller may still use it for a11y
+        color: transparent;
+        user-select: none;
+        pointer-events: none;
+    }
+
+    .edu-skeleton--text {
+        height: 14px;
+        margin: 6px 0;
+        border-radius: $edu-radius-xs;
+
+        &.edu-skeleton--lg { height: 22px; }
+        &.edu-skeleton--xl { height: 32px; border-radius: $edu-radius-sm; }
+        &.w-25 { width: 25%; }
+        &.w-50 { width: 50%; }
+        &.w-75 { width: 75%; }
+        &.w-100 { width: 100%; }
+    }
+
+    .edu-skeleton--card {
+        width: 100%;
+        height: 120px;
+        border-radius: $edu-radius-lg;
+    }
+
+    .edu-skeleton--circle {
+        border-radius: 50%;
+    }
+
+    .edu-skeleton--row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 0;
+
+        > .edu-skeleton--circle {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+        }
+
+        > .edu-skeleton-row-body {
+            flex: 1;
+            min-width: 0;
+
+            > .edu-skeleton--text {
+                margin: 4px 0;
+            }
+        }
+    }
+
+    @keyframes edu-skeleton-shimmer {
+        0%   { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .edu-skeleton {
+            animation: none;
+            background: $edu-bg-muted;
+        }
+    }
+}

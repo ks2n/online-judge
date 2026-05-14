@@ -1,0 +1,281 @@
+// ============================================================
+// _contest.scss — Contest list cards + tabs
+// ============================================================
+// Templates:
+//   contest/list.html       → .list-contest > .info-contest{3}
+//   contest/macros.html     → .contest-list-title, .contest-tags > .contest-tag*
+// Goal: replace legacy white card + grey shadow + 1.1em title with
+// edu surface, indigo CTA, structured 3-column meta.
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+    // ── Contest tabs (Active / Ongoing / Upcoming / Past) ─────
+    // Inside .middle-content > .tabs.tabs-no-flex > ul > li
+    .tabs.tabs-no-flex {
+        margin-bottom: 16px;
+
+        > ul {
+            display: flex;
+            gap: 4px;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            border-bottom: 1px solid $edu-border;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+
+            &::-webkit-scrollbar { display: none; }
+
+            // Scroll-x fade hint on mobile when 4 tabs overflow viewport
+            @media (max-width: 599px) {
+                -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent 100%);
+                        mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent 100%);
+            }
+
+            > li {
+                display: inline-flex;
+                margin: 0;
+                padding: 0;
+                border: 0;
+                background: transparent;
+
+                > a {
+                    display: inline-block;
+                    padding: 10px 16px;
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: $edu-text-muted;
+                    text-decoration: none;
+                    border-bottom: 2px solid transparent;
+                    margin-bottom: -1px;
+                    cursor: pointer;
+                    transition: color $edu-duration-fast $edu-ease-out, border-color $edu-duration-fast $edu-ease-out;
+
+                    &:hover { color: $edu-text-strong; }
+                }
+
+                &.active > a {
+                    color: $edu-accent;
+                    border-bottom-color: $edu-accent;
+                    font-weight: 600;
+                }
+            }
+        }
+    }
+
+    // ── Contest list card (.list-contest) ─────────────────────
+    .list-contest {
+        box-shadow: $edu-shadow-sm !important;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-lg !important;
+        background: $edu-bg-paper !important;
+        padding: 16px 20px !important;
+        margin-bottom: 12px !important;
+        gap: 24px;
+        align-items: flex-start;
+        transition: box-shadow $edu-duration-fast $edu-ease-out, border-color $edu-duration-fast $edu-ease-out, transform $edu-duration-fast $edu-ease-out;
+
+        &:hover {
+            box-shadow: $edu-shadow-md !important;
+            border-color: $edu-border-strong;
+            transform: translateY(-1px);
+        }
+
+        .info-contest:first-child,
+        .info-contest:nth-child(2) {
+            margin-right: 0 !important;
+        }
+
+        .info-contest {
+            flex: 1 1 0;
+            min-width: 0;
+
+            // Last col (CTA) is narrower
+            &.contest-format-user {
+                flex: 0 0 auto;
+                min-width: 160px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                align-items: stretch;
+            }
+        }
+
+        .contest-title {
+            font-size: 11px !important;
+            font-weight: 600 !important;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: $edu-text-muted !important;
+            margin-bottom: 6px !important;
+        }
+
+        .contest-list-title {
+            display: inline-block;
+            font-size: 16px;
+            font-weight: 600;
+            color: $edu-text-strong;
+            text-decoration: none;
+            line-height: 1.3;
+            margin-right: 8px;
+
+            &:hover { color: $edu-accent; }
+        }
+
+        .contest-block {
+            font-size: 13px;
+            color: $edu-text;
+            line-height: 1.5;
+
+            .time-left {
+                font-family: $edu-font-code;
+                font-variant-numeric: tabular-nums;
+                font-size: 13px;
+                color: $edu-text;
+
+                b { color: $edu-text-muted; font-weight: 500; }
+            }
+
+            .time {
+                display: block;
+                margin-top: 4px;
+                font-size: 12px;
+                color: $edu-warm;
+                font-family: $edu-font-code;
+                font-variant-numeric: tabular-nums;
+            }
+        }
+
+        // Mobile: stack columns
+        @media (max-width: 767px) {
+            flex-direction: column;
+            gap: 12px;
+
+            .info-contest {
+                width: 100%;
+
+                &.contest-format-user {
+                    min-width: 0;
+                    border-top: 1px dashed $edu-border;
+                    padding-top: 12px;
+                }
+            }
+        }
+    }
+
+    // ── Contest tags ──────────────────────────────────────────
+    .contest-tags {
+        display: inline-flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        margin-top: 4px;
+    }
+
+    .contest-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        font-size: 11px;
+        font-weight: 500;
+        border-radius: $edu-radius-pill;
+        background: $edu-bg-soft;
+        color: $edu-text-muted;
+        line-height: 1.4;
+        border: 1px solid $edu-border;
+
+        i { font-style: normal !important; font-size: 10px; }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+
+            &:hover { color: $edu-accent; }
+        }
+
+        &.contest-tag-rated {
+            background: $edu-accent-soft;
+            border-color: $edu-accent-border;
+            color: $edu-accent-strong;
+
+            i { color: $edu-accent; }
+        }
+
+        &.contest-tag-private {
+            background: $edu-warm-soft;
+            border-color: $edu-warm-border;
+            color: $edu-wa-text;
+
+            i { color: $edu-warm; }
+        }
+
+        &.contest-tag-hidden {
+            background: $edu-bg-muted;
+            color: $edu-text-faint;
+            border-color: $edu-border;
+
+            i { color: $edu-text-faint; }
+        }
+
+        &.contest-tag-edit {
+            background: $edu-tle-bg;
+            border-color: $edu-tle-border;
+            color: $edu-tle-text;
+
+            i { color: $edu-tle-text; }
+        }
+    }
+
+    // ── Action button (.action-btn) inside contest cards ──────
+    .list-contest .action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 8px 14px;
+        font-size: 13px;
+        font-weight: 500;
+        font-family: $edu-font-ui;
+        line-height: 1.4;
+        color: $edu-bg-paper;
+        background: $edu-accent;
+        border: 1px solid $edu-accent;
+        border-radius: $edu-radius-md;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background $edu-duration-fast $edu-ease-out, border-color $edu-duration-fast $edu-ease-out, transform $edu-duration-fast $edu-ease-out;
+
+        &:hover {
+            background: $edu-accent-hover;
+            border-color: $edu-accent-hover;
+            color: $edu-bg-paper;
+            text-decoration: none;
+        }
+
+        &:active { transform: translateY(1px); }
+
+        &:disabled,
+        &[disabled] {
+            background: $edu-bg-muted;
+            border-color: $edu-border;
+            color: $edu-text-muted;
+            cursor: not-allowed;
+        }
+
+        &.full { width: 100%; }
+    }
+
+    // Participate button wrapper
+    .list-contest .participate-button {
+        margin-top: auto;
+
+        form { margin: 0; }
+    }
+}

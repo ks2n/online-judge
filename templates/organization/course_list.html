@@ -94,7 +94,7 @@
               {% if course.course_image %}
                 <img src="{{ course.course_image.url }}" alt="{{ course.name }}" loading="lazy">
               {% else %}
-                {{ course.name|first|upper }}
+                <i class="fa fa-graduation-cap edu-course-thumb-icon" aria-hidden="true"></i>
               {% endif %}
             </div>
 

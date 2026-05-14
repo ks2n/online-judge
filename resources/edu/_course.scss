@@ -1,0 +1,489 @@
+// ============================================================
+// _course.scss — Course list, detail, lesson learning surfaces
+// ============================================================
+// Targets:
+//   templates/course/list.html, course.html, lesson.html
+//   Markup uses .course-item, .lesson-list, .progress-container etc.
+// Goal: warm learning-path feel, clear progress, locked-state support.
+// Note: course list/detail templates pull a separate course.css (built
+//   from resources/course.scss). Phase 1 token swap already cleaned the
+//   colours; this layer adds shape + edu polish via body.edu specificity.
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+
+    // ── Course list page ─────────────────────────────────────
+    .course-list-page {
+        // No max-width — let middle column drive width so 3-col shell
+        // doesn't leave a gutter between cards and the right sidebar.
+    }
+
+    .course-list {
+        display: grid;
+        // Auto-fill so cards stretch to fill the middle column width
+        // even when there are only 1-2 entries.
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+
+        @media (max-width: 799px) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .course-item {
+        display: flex;
+        align-items: stretch;
+        gap: 16px;
+        padding: 18px;
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-lg;
+        box-shadow: $edu-shadow-sm;
+        transition: transform $edu-duration-fast $edu-ease-out, box-shadow $edu-duration-fast $edu-ease-out, border-color $edu-duration-fast $edu-ease-out;
+
+        &:hover {
+            transform: translateY(-1px);
+            box-shadow: $edu-shadow-md;
+            border-color: $edu-border-strong;
+        }
+    }
+
+    .course-image {
+        flex: 0 0 96px;
+        width: 96px;
+        height: 96px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, $edu-accent-soft 0%, $edu-warm-soft 100%);
+        color: $edu-accent-strong;
+        font-family: $edu-font-display;
+        font-size: 36px;
+        font-weight: 700;
+        border-radius: $edu-radius-md;
+        overflow: hidden;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .edu-course-thumb-icon {
+            font-size: 32px;
+            color: $edu-accent;
+            opacity: 0.85;
+        }
+    }
+
+    .course-content {
+        flex: 1 1 auto;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .course-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .course-title {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .course-name {
+        display: inline-block;
+        font-family: $edu-font-display;
+        font-size: 16px;
+        font-weight: 600;
+        color: $edu-text-strong;
+        text-decoration: none;
+        line-height: 1.35;
+
+        &:hover {
+            color: $edu-accent;
+            text-decoration: none;
+        }
+    }
+
+    .course-badges {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border-radius: $edu-radius-pill;
+            border: 1px solid transparent;
+        }
+
+        .badge-open {
+            background: $edu-ac-bg;
+            color: $edu-ac-text;
+            border-color: $edu-ac-border;
+        }
+
+        .badge-closed {
+            background: $edu-bg-muted;
+            color: $edu-text-muted;
+            border-color: $edu-border;
+        }
+
+        // Join button — override legacy .background-green
+        .action-btn,
+        .action-btn.background-green {
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            background: $edu-accent !important;
+            color: #fff !important;
+            border: 1px solid $edu-accent !important;
+            border-radius: $edu-radius-md;
+            cursor: pointer;
+            transition: background $edu-duration-fast $edu-ease-out;
+
+            &:hover {
+                background: $edu-accent-hover !important;
+                border-color: $edu-accent-hover !important;
+            }
+        }
+    }
+
+    .course-description {
+        font-size: 13px;
+        line-height: 1.55;
+        color: $edu-text-muted;
+        // 2-line clamp for grid alignment
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+    }
+
+    .course-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: auto;
+        font-size: 12px;
+        color: $edu-text-muted;
+    }
+
+    .course-meta-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+
+        i {
+            color: $edu-text-faint;
+            font-size: 11px;
+        }
+
+        a {
+            color: $edu-text;
+            text-decoration: none;
+
+            &:hover { color: $edu-accent; text-decoration: underline; }
+        }
+    }
+
+    .no-courses {
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-lg;
+        padding: 40px 24px;
+        text-align: center;
+        max-width: 560px;
+
+        h3 {
+            margin: 0 0 8px;
+            font-size: 18px;
+            color: $edu-text-strong;
+        }
+
+        p {
+            margin: 0;
+            color: $edu-text-muted;
+            font-size: 14px;
+        }
+    }
+
+    // ── Course detail page ───────────────────────────────────
+    .course-detail-page {
+        max-width: 880px;
+        margin: 0 auto;
+        padding: 24px;
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-lg;
+        box-shadow: $edu-shadow-sm;
+
+        center h2 {
+            text-align: left;
+            font-size: 26px;
+            font-weight: 700;
+            color: $edu-text-strong;
+            margin: 0 0 16px;
+        }
+        // Cancel <center> default text-align cascade for inner blocks
+        > center { text-align: left; }
+    }
+
+    .course-content-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: $edu-text-strong;
+        margin: 24px 0 12px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid $edu-border;
+    }
+
+    .course-leave-form {
+        margin-bottom: 16px;
+
+        .action-btn,
+        .action-btn.background-red {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            background: $edu-bg-paper !important;
+            color: $edu-wa-text !important;
+            border: 1px solid $edu-wa-border !important;
+            border-radius: $edu-radius-md;
+            cursor: pointer;
+
+            &:hover {
+                background: $edu-wa-bg !important;
+            }
+        }
+    }
+
+    .course-total-points {
+        display: inline-block;
+        margin-left: 8px;
+        padding: 3px 10px;
+        font-family: $edu-font-code;
+        font-variant-numeric: tabular-nums;
+        font-size: 14px;
+        font-weight: 600;
+        color: $edu-accent-strong;
+        background: $edu-accent-soft;
+        border: 1px solid $edu-accent-border;
+        border-radius: $edu-radius-pill;
+    }
+
+    // ── Lesson list (syllabus on course detail) ──────────────
+    .lesson-list {
+        list-style: none;
+        margin: 0 0 16px;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        > a {
+            text-decoration: none;
+            color: inherit;
+
+            &:hover { text-decoration: none; }
+        }
+
+        li {
+            list-style: none;
+            background: $edu-bg-paper;
+            border: 1px solid $edu-border;
+            border-radius: $edu-radius-md;
+            padding: 14px 16px;
+            transition: background $edu-duration-fast $edu-ease-out, border-color $edu-duration-fast $edu-ease-out, transform $edu-duration-fast $edu-ease-out;
+        }
+
+        > a:hover li {
+            background: $edu-bg-soft;
+            border-color: $edu-accent-border;
+            transform: translateX(2px);
+        }
+
+        // Locked lesson
+        .lesson-locked {
+            background: $edu-bg-soft;
+            border-color: $edu-border;
+            color: $edu-text-muted;
+            opacity: 0.85;
+
+            .lesson-title { color: $edu-text-muted; }
+        }
+    }
+
+    .lesson-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 500;
+        color: $edu-text-strong;
+        font-size: 15px;
+
+        .lesson-lock-icon {
+            color: $edu-text-faint;
+        }
+
+        .lesson-points {
+            margin-left: auto;
+            font-family: $edu-font-code;
+            font-variant-numeric: tabular-nums;
+            font-size: 13px;
+            color: $edu-text-muted;
+            font-weight: 400;
+
+            .locked-text {
+                font-family: $edu-font-ui;
+                color: $edu-text-faint;
+                font-size: 12px;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+            }
+        }
+    }
+
+    .prerequisite-info {
+        margin-top: 6px;
+        font-size: 12px;
+        color: $edu-text-muted;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+
+        i { color: $edu-text-faint; }
+
+        .prereq-item {
+            color: $edu-text;
+        }
+    }
+
+    // Progress bar inside lesson item
+    .progress-container {
+        position: relative;
+        height: 6px;
+        background: $edu-bg-muted;
+        border-radius: 999px;
+        overflow: hidden;
+        margin-top: 10px;
+
+        .progress-bar {
+            position: relative;
+            height: 100%;
+            background: linear-gradient(90deg, $edu-accent 0%, $edu-accent-hover 100%);
+            border-radius: inherit;
+            transition: width $edu-duration-slow $edu-ease-out;
+
+            // Hide percentage text inside the bar (too small/cramped)
+            color: transparent;
+            font-size: 0;
+        }
+    }
+
+    // Percentage label outside the bar
+    .lesson-list li {
+        position: relative;
+    }
+
+    // ── Lesson detail page (lesson.html) ─────────────────────
+    .course-problem-list {
+        list-style: none;
+        margin: 0 0 16px;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        > a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        li {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: $edu-bg-paper;
+            border: 1px solid $edu-border;
+            border-radius: $edu-radius-md;
+            transition: background $edu-duration-fast $edu-ease-out, border-color $edu-duration-fast $edu-ease-out;
+
+            i {
+                font-size: 18px;
+                width: 22px;
+                text-align: center;
+
+                &.solved-problem-color { color: $edu-ac-text; }
+                &.attempted-problem-color { color: $edu-tle-text; }
+                &.unsolved-problem-color { color: $edu-text-faint; }
+            }
+
+            .problem-name {
+                flex: 1 1 auto;
+                color: $edu-text-strong;
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            .score {
+                font-family: $edu-font-code;
+                font-variant-numeric: tabular-nums;
+                font-size: 13px;
+                color: $edu-text-muted;
+            }
+
+            .quiz-attempts {
+                font-size: 12px;
+                color: $edu-text-faint;
+                margin-left: 6px;
+            }
+
+            .quiz-locked i {
+                color: $edu-text-faint;
+            }
+        }
+
+        > a:hover li {
+            background: $edu-bg-soft;
+            border-color: $edu-accent-border;
+        }
+    }
+
+    // ── Course contests table ────────────────────────────────
+    .course-detail-page table.table {
+        // Re-styled in _data-display.scss; just adjust meta details.
+        .contest-name {
+            color: $edu-accent;
+            text-decoration: none;
+            font-weight: 500;
+
+            &:hover { text-decoration: underline; }
+        }
+
+        .contest-details .time {
+            font-size: 12px;
+            color: $edu-tle-text;
+        }
+    }
+}

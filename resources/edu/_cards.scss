@@ -1,0 +1,180 @@
+// ============================================================
+// _cards.scss — solid panels, no glass, subtle shadow
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+    // Generic card primitive
+    .edu-card {
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-lg;
+        padding: 20px;
+        box-shadow: $edu-shadow-sm;
+        transition: box-shadow $edu-duration-fast $edu-ease-out, transform $edu-duration-fast $edu-ease-out;
+    }
+
+    a.edu-card,
+    .edu-card--clickable {
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+
+        &:hover {
+            box-shadow: $edu-shadow-md;
+            transform: translateY(-1px);
+            text-decoration: none;
+            border-color: $edu-border-strong;
+        }
+    }
+
+    .edu-card--padded { padding: 24px; }
+    .edu-card--cozy   { padding: 14px 16px; }
+    .edu-card--flat   { box-shadow: none; }
+    .edu-card--accent {
+        border-color: $edu-accent-border;
+        background: linear-gradient(180deg, $edu-accent-soft 0%, $edu-bg-paper 60%);
+    }
+
+    .edu-card-header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 12px;
+
+        h3, h4 {
+            margin: 0;
+            font-size: $edu-type-h3;
+            line-height: $edu-type-h3-lh / $edu-type-h3;
+            font-weight: 600;
+            color: $edu-text-strong;
+        }
+
+        .edu-card-action {
+            font-size: 13px;
+            color: $edu-text-muted;
+            text-decoration: none;
+
+            &:hover {
+                color: $edu-accent;
+                text-decoration: underline;
+                text-underline-offset: 3px;
+            }
+        }
+    }
+
+    // ── Override legacy DMOJ container patterns ──────────────
+    // .sidebox, .content-description, .info-float etc. were styled with
+    // heavy shadows + light-gray bg from base.scss. Token swap (Phase 1)
+    // removes the gray; this layer adds modern card affordance.
+
+    .sidebox {
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-lg;
+        margin-bottom: 16px;
+        overflow: hidden;
+        box-shadow: $edu-shadow-sm;
+
+        h3 {
+            margin: 0;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: $edu-text-strong;
+            background: $edu-bg-soft;
+            border-bottom: 1px solid $edu-border;
+            text-transform: none;
+            letter-spacing: 0;
+
+            i {
+                color: $edu-accent;
+                margin-right: 8px;
+            }
+
+            .fa { margin-right: 8px; }
+        }
+
+        .sidebox-content {
+            padding: 12px 16px;
+        }
+
+        .sidebox-table {
+            width: 100%;
+            margin: 0;
+
+            tr td {
+                border: 0;
+                padding: 6px 16px;
+            }
+        }
+    }
+
+    .info-float {
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-lg;
+        box-shadow: $edu-shadow-sm;
+        padding: 16px;
+    }
+
+    .content-description.screen,
+    .content-description {
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-lg;
+        padding: 24px;
+        box-shadow: $edu-shadow-sm;
+    }
+
+    // Three-column wrapper baseline (only colour, layout left to legacy)
+    #three-col-container {
+        background: transparent;
+    }
+
+    .middle-content,
+    .middle-right-content {
+        background: transparent;
+    }
+
+    .left-sidebar {
+        background: transparent;
+    }
+
+    // Sidebar items (course list, problem filter side)
+    .left-sidebar-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-md;
+        margin-bottom: 6px;
+        color: $edu-text;
+        text-decoration: none;
+        transition: background $edu-duration-fast $edu-ease-out, border-color $edu-duration-fast $edu-ease-out, color $edu-duration-fast $edu-ease-out;
+
+        .sidebar-icon i { color: $edu-text-muted; }
+
+        &:hover {
+            background: $edu-bg-soft;
+            border-color: $edu-border-strong;
+            color: $edu-accent;
+            text-decoration: none;
+
+            .sidebar-icon i { color: $edu-accent; }
+        }
+
+        &.active {
+            background: $edu-accent-soft;
+            border-color: $edu-accent-border;
+            color: $edu-accent-strong;
+            font-weight: 500;
+
+            .sidebar-icon i { color: $edu-accent; }
+        }
+    }
+}

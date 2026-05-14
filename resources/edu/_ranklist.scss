@@ -1,0 +1,195 @@
+// ============================================================
+// _ranklist.scss — Users / leaderboard table
+// ============================================================
+// Targets: templates/user/list.html → user/users-table.html
+// Goal: replace legacy bold-indigo header band, cursive numerics,
+// and trophy column heaviness with calm scannable edu look.
+// Hide empty Contribution / About columns when no rows have data
+// using :has() (graceful fallback: still styled, just visible).
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+    // ── Page wrapper ─────────────────────────────────────────
+    #users-table {
+        width: 100%;
+        background: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-lg;
+        border-collapse: separate;
+        border-spacing: 0;
+        overflow: hidden;
+        font-family: $edu-font-ui;
+        font-size: 14px;
+
+        thead tr th {
+            background: $edu-bg-soft !important;
+            border-bottom: 1px solid $edu-border;
+            padding: 12px 14px !important;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: $edu-text-muted !important;
+            line-height: 1.2;
+            white-space: nowrap;
+
+            // Reset legacy purple solid header
+            background-image: none !important;
+
+            a {
+                color: $edu-text-muted !important;
+                text-decoration: none;
+                &:hover { color: $edu-accent !important; }
+            }
+
+            &.rank { width: 56px; text-align: center; }
+            &.points,
+            &.problems,
+            &.contribution { width: 90px; text-align: right; }
+            &.about-column { width: 32%; }
+        }
+
+        tbody {
+            tr {
+                background: $edu-bg-paper;
+                transition: background $edu-duration-fast $edu-ease-out;
+
+                &:not(:last-child) td { border-bottom: 1px solid $edu-border; }
+                &:hover { background: $edu-bg-soft; }
+            }
+
+            td {
+                padding: 12px 14px;
+                vertical-align: middle;
+                color: $edu-text;
+                line-height: 1.35;
+            }
+
+            // Rank cell — kill the legacy "Jersey M54" arcade font
+            .rank-td {
+                font-family: $edu-font-code !important;
+                font-size: 14px !important;
+                font-weight: 600;
+                color: $edu-text-strong;
+                text-align: center;
+                font-variant-numeric: tabular-nums;
+            }
+
+            // Avatar column
+            .user-img {
+                width: 36px !important;
+                height: 36px !important;
+                border-radius: 50%;
+                border: 1px solid $edu-border;
+                background: $edu-bg-soft;
+            }
+
+            // Username cell
+            .user-name {
+                a {
+                    color: $edu-text-strong;
+                    font-weight: 500;
+                    text-decoration: none;
+
+                    &:hover { color: $edu-accent; text-decoration: underline; }
+                }
+
+                .user-rating-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    margin-left: 8px;
+                    padding: 1px 8px;
+                    font-family: $edu-font-code;
+                    font-size: 11px;
+                    font-weight: 600;
+                    color: $edu-text-muted;
+                    background: $edu-bg-muted;
+                    border: 1px solid $edu-border;
+                    border-radius: $edu-radius-pill;
+                }
+            }
+
+            // Numeric columns — kill legacy `cursive`
+            .user-points,
+            .user-problem-count,
+            .user-contribution,
+            .rating-td {
+                font-family: $edu-font-code !important;
+                font-variant-numeric: tabular-nums;
+                font-weight: 500;
+                color: $edu-text;
+                text-align: right;
+            }
+
+            .user-points {
+                color: $edu-text-strong;
+                font-weight: 600;
+            }
+
+            // Faded zero values so empty contribution rows aren't visual noise
+            .user-contribution:where(:empty) { color: $edu-text-faint; }
+
+            // About column — keep prose narrow + truncate
+            .about-td {
+                font-size: 13px;
+                line-height: 1.5;
+                color: $edu-text-muted;
+                max-height: 3em;
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+
+                p { margin: 0; font-size: 13px; }
+            }
+        }
+    }
+
+    // ── Hide empty Contribution / About columns site-wide ──
+    // Many ranklists never set contribution_points / about → an empty
+    // half-screen column with no data. We can't reliably do this in
+    // pure CSS without :has(), but :has() is broadly supported now
+    // (Chrome 105+, Safari 15.4+, Firefox 121+). Fallback: column
+    // is still styled, just visible.
+    @supports selector(:has(*)) {
+        #users-table:not(:has(.user-contribution:not(:empty))) {
+            th.contribution,
+            td.user-contribution { display: none; }
+        }
+        // Hide About column when every .about-td is empty (no markdown)
+        #users-table:not(:has(.about-td > *)) {
+            th.about-column,
+            td:has(.about-td) { display: none; }
+        }
+    }
+
+    // ── Mobile responsive ────────────────────────────────────
+    @media (max-width: 799px) {
+        #users-table {
+            font-size: 13px;
+
+            thead th.about-column,
+            tbody td:nth-of-type(7) { display: none; }
+
+            thead th.contribution,
+            tbody td.user-contribution { display: none; }
+
+            thead th { padding: 10px 8px !important; font-size: 11px; }
+            tbody td { padding: 10px 8px; }
+
+            .user-img { width: 28px !important; height: 28px !important; }
+        }
+    }
+
+    // Narrow phones: drop the Problems column too so the leaderboard
+    // shows just rank · avatar · username · points without horizontal scroll.
+    @media (max-width: 519px) {
+        #users-table {
+            thead th.problems,
+            tbody td.user-problem-count { display: none; }
+        }
+    }
+}

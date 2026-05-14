@@ -1,0 +1,137 @@
+// ============================================================
+// _typography.scss — type scale, headings, prose
+// ============================================================
+
+@use "tokens" as *;
+
+body.edu {
+    h1, h2, h3, h4, h5, h6 {
+        font-family: $edu-font-display;
+        font-weight: 600;
+        color: $edu-text-strong;
+        margin: 0 0 12px;
+        letter-spacing: -0.01em;
+    }
+
+    h1 { font-size: $edu-type-h1; line-height: $edu-type-h1-lh / $edu-type-h1; }
+    h2 { font-size: $edu-type-h2; line-height: $edu-type-h2-lh / $edu-type-h2; }
+    h3 { font-size: $edu-type-h3; line-height: $edu-type-h3-lh / $edu-type-h3; }
+    h4 { font-size: 16px; line-height: 24px; font-weight: 600; }
+    h5 { font-size: 14px; line-height: 22px; font-weight: 600; }
+    h6 { font-size: 13px; line-height: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: $edu-text-muted; }
+
+    p { margin: 0 0 12px; }
+
+    small { font-size: $edu-type-small; line-height: 1.5; color: $edu-text-muted; }
+
+    strong, b { font-weight: 600; color: $edu-text-strong; }
+
+    em, i { font-style: italic; }
+
+    code, kbd, samp {
+        font-family: $edu-font-code;
+        font-size: 0.92em;
+        background: $edu-bg-soft;
+        border: 1px solid $edu-border;
+        padding: 1px 6px;
+        border-radius: $edu-radius-xs;
+        color: $edu-text-strong;
+    }
+
+    pre {
+        font-family: $edu-font-code;
+        font-size: $edu-type-code;
+        line-height: $edu-type-code-lh / $edu-type-code;
+        background: $edu-bg-soft;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-md;
+        padding: 14px 16px;
+        overflow-x: auto;
+        margin: 12px 0;
+
+        code {
+            background: transparent;
+            border: 0;
+            padding: 0;
+            font-size: inherit;
+        }
+    }
+
+    a {
+        color: $edu-accent;
+        text-decoration: none;
+        transition: color $edu-duration-fast $edu-ease-out;
+
+        &:hover {
+            color: $edu-accent-hover;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+    }
+
+    blockquote {
+        margin: 12px 0;
+        padding: 8px 16px;
+        border-left: 3px solid $edu-accent-border;
+        color: $edu-text-muted;
+        background: $edu-bg-soft;
+        border-radius: 0 $edu-radius-sm $edu-radius-sm 0;
+    }
+
+    .title-row,
+    .edu-title-row {
+        font-size: $edu-type-h1;
+        line-height: $edu-type-h1-lh / $edu-type-h1;
+        font-weight: 600;
+        color: $edu-text-strong;
+        margin: 0 0 16px;
+    }
+}
+
+// Prose container — for problem statements, blog posts, lessons.
+.edu-prose {
+    max-width: 70ch;
+    color: $edu-text;
+    font-size: 16px;
+    line-height: 26px;
+
+    h1, h2, h3, h4 {
+        margin-top: 28px;
+        margin-bottom: 10px;
+    }
+
+    h2 { font-size: 22px; }
+    h3 { font-size: 18px; }
+
+    p { margin: 0 0 16px; }
+
+    ul, ol {
+        margin: 0 0 16px;
+        padding-left: 24px;
+    }
+
+    li { margin: 4px 0; }
+
+    img {
+        max-width: 100%;
+        height: auto;
+        border-radius: $edu-radius-md;
+    }
+
+    table {
+        width: 100%;
+        margin: 16px 0;
+        border-collapse: collapse;
+
+        th, td {
+            border: 1px solid $edu-border;
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        th {
+            background: $edu-bg-soft;
+            font-weight: 600;
+        }
+    }
+}

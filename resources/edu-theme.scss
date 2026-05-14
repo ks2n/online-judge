@@ -1,0 +1,41 @@
+// ============================================================
+// LQDOJ — Edu theme entry
+// ============================================================
+// Tone: warm cream + indigo. Light theme. Friendly + focused.
+// All partials live in resources/edu/. Token swap in vars.scss
+// drives legacy SCSS so this layer focuses on edu-specific
+// affordances (greeting, learning surfaces, verdict pills).
+// ============================================================
+
+@use "edu/tokens" as *;
+@use "edu/global";
+@use "edu/typography";
+@use "edu/navigation";
+@use "edu/components";
+@use "edu/cards";
+@use "edu/data-display";
+@use "edu/verdicts";
+@use "edu/forms";
+@use "edu/utilities";
+@use "edu/dashboard";
+@use "edu/problem-list";
+@use "edu/problem-detail";
+@use "edu/course";
+@use "edu/empty-state";
+@use "edu/ranklist";
+@use "edu/organizations";
+@use "edu/blog";
+@use "edu/chat";
+@use "edu/footer";
+@use "edu/sidebar-widgets";
+@use "edu/contest";
+@use "edu/submissions";
+@use "edu/status";
+@use "edu/pagination";
+@use "edu/actionbar";
+@use "edu/comments";
+@use "edu/difficulty";
+@use "edu/toast";
+@use "edu/skeleton";
+@use "edu/modal";
+@use "edu/dark";

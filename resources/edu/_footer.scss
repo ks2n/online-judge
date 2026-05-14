@@ -1,0 +1,174 @@
+// ============================================================
+// _footer.scss — Site footer (editorial)
+// ============================================================
+// Two-tier layout:
+//   1. Top tier:  primary nav links centered (Giới thiệu / Bài tập / …)
+//   2. Hairline:  brand mark · powered-by · language switcher
+// Cream → paper gradient, indigo accent on hover, dot grid texture.
+// ============================================================
+
+@use "tokens" as *;
+
+// Hide footer entirely when page opts out of layout (e.g. chat 100vh shell)
+body.edu.edu--bare .edu-footer {
+    display: none !important;
+}
+
+body.edu .edu-footer {
+    box-sizing: border-box;
+    width: 100%;
+    margin-top: $edu-space-6;
+    padding: 10px $edu-space-6;
+    background:
+        radial-gradient(circle at 0% 0%, rgba(79, 70, 229, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at 100% 100%, rgba(249, 112, 102, 0.04) 0%, transparent 40%),
+        linear-gradient(180deg, $edu-bg-paper 0%, $edu-bg-cream 100%);
+    border-top: 1px solid $edu-border;
+    color: $edu-text-muted;
+    font-size: 12px;
+    line-height: 1;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    .edu-footer-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: $edu-space-3 $edu-space-4;
+        font-size: 12px;
+        line-height: 1;
+    }
+
+    a {
+        color: $edu-text-muted;
+        text-decoration: none;
+        transition: color $edu-duration-fast $edu-ease-out;
+
+        &:hover { color: $edu-accent; text-decoration: none; }
+
+        b { color: $edu-text; font-weight: 600; transition: color $edu-duration-fast $edu-ease-out; }
+        &:hover b { color: $edu-accent; }
+    }
+
+    // ── Brand cluster (left) ──────────────────────────────────
+    .edu-footer-brand {
+        display: inline-flex;
+        align-items: center;
+        gap: $edu-space-2;
+    }
+
+    .edu-footer-brand-mark {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: $edu-accent-soft;
+        color: $edu-accent;
+        font-size: 10px;
+
+        i { font-style: normal !important; }
+    }
+
+    .edu-footer-brand-text {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 6px;
+        flex-wrap: wrap;
+
+        b {
+            color: $edu-text;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+    }
+
+    .edu-footer-brand-tagline {
+        color: $edu-text-muted;
+        font-style: italic;
+    }
+
+    // ── Meta cluster (centre, grows) ──────────────────────────
+    .edu-footer-meta {
+        display: inline-flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: $edu-space-2;
+        margin: 0 auto;
+        color: $edu-text-muted;
+    }
+
+    .edu-footer-sep {
+        color: $edu-text-faint;
+        user-select: none;
+    }
+
+    .edu-footer-extra { color: $edu-text-muted; }
+
+    // ── Lang switcher (right) ─────────────────────────────────
+    #form-lang {
+        display: inline-flex;
+        align-items: center;
+        gap: $edu-space-2;
+    }
+
+    .edu-footer-lang-icon {
+        font-style: normal !important;
+        color: $edu-text-faint;
+        font-size: 13px;
+    }
+
+    #form-lang select {
+        height: auto;
+        padding: 2px 24px 2px 8px;
+        font-family: $edu-font-ui;
+        font-size: 12px;
+        font-weight: 500;
+        color: $edu-text;
+        background-color: $edu-bg-paper;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-pill;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%236B7280' d='M2 4l3 3 3-3z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 8px center;
+        transition: border-color $edu-duration-fast $edu-ease-out, background-color $edu-duration-fast $edu-ease-out, box-shadow $edu-duration-fast $edu-ease-out;
+
+        &:hover {
+            background-color: $edu-bg-soft;
+            border-color: $edu-accent-border;
+        }
+
+        &:focus {
+            outline: none;
+            border-color: $edu-accent;
+            box-shadow: $edu-shadow-focus;
+        }
+    }
+
+    // ── Mobile ────────────────────────────────────────────────
+    @media (max-width: 599px) {
+        padding: $edu-space-3 $edu-space-3;
+
+        .edu-footer-inner {
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            gap: $edu-space-3;
+        }
+
+        .edu-footer-brand,
+        .edu-footer-meta,
+        #form-lang { margin: 0 auto; }
+    }
+}
