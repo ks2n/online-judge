@@ -1,5 +1,5 @@
 """
-Built-in rate limiting decorator for LQDOJ
+Built-in rate limiting decorator for LTOJ
 Compatible with django-ratelimit API for seamless replacement
 
 Uses O(1) sliding window counter algorithm for efficient rate limiting

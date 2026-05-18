@@ -96,7 +96,7 @@ _SKILL_TIERS = [
 
 # slug, name, short_name, is_open
 _ORG_DEFS = [
-    ("lqdoj-staff", "LQDOJ Staff", "Staff", False),
+    ("ltoj-staff", "LTOJ Staff", "Staff", False),
     ("algo-club", "Algorithm Club", "AlgoClub", True),
     ("icpc-vn", "ICPC Vietnam", "ICPC", False),
     ("beginners", "Beginners Circle", "Beginners", True),
@@ -119,14 +119,14 @@ _PROB_CATS = [
 # Total: 20*8 + 25*2 = 210 problems
 
 _BLOG_TITLES = [
-    ("Welcome to LQDOJ Dev Environment", True, 30),
+    ("Welcome to LTOJ Dev Environment", True, 30),
     ("Announcement: System Maintenance", False, 25),
-    ("Editorial: LQDOJ Round #1", False, 20),
+    ("Editorial: LTOJ Round #1", False, 20),
     ("Tips for Competitive Programming", True, 18),
-    ("Editorial: LQDOJ Round #2", False, 15),
+    ("Editorial: LTOJ Round #2", False, 15),
     ("New Problems Added — March 2026", False, 12),
     ("Contest Schedule — April 2026", True, 10),
-    ("Editorial: LQDOJ Round #3", False, 8),
+    ("Editorial: LTOJ Round #3", False, 8),
     ("How to use the judge effectively", False, 6),
     ("Results: Beginner Contest #3", False, 4),
     ("Upcoming: ICPC Warmup Series", True, 3),
@@ -409,7 +409,7 @@ class Command(BaseCommand):
                 defaults=dict(
                     name=name,
                     short_name=short,
-                    about=f"Official LQDOJ organization: {name}.",
+                    about=f"Official LTOJ organization: {name}.",
                     is_open=is_open,
                     registrant=admin,
                     is_community=False,
@@ -582,7 +582,7 @@ class Command(BaseCommand):
             specs.append(
                 dict(
                     key=f"dev_round{n:02d}",
-                    name=f"LQDOJ Round #{n}",
+                    name=f"LTOJ Round #{n}",
                     start=now - timedelta(days=n * 7 + 2, hours=14),
                     end=now - timedelta(days=n * 7 + 2, hours=10),
                     rated=True,
@@ -623,7 +623,7 @@ class Command(BaseCommand):
         specs.append(
             dict(
                 key="dev_live01",
-                name="LQDOJ Live Contest",
+                name="LTOJ Live Contest",
                 start=now - timedelta(hours=1),
                 end=now + timedelta(hours=3),
                 rated=False,
@@ -648,7 +648,7 @@ class Command(BaseCommand):
             specs.append(
                 dict(
                     key=f"dev_upcoming{n:02d}",
-                    name=f"LQDOJ Round #{n + 10}",
+                    name=f"LTOJ Round #{n + 10}",
                     start=now + timedelta(days=n * 7 - 3, hours=14),
                     end=now + timedelta(days=n * 7 - 3, hours=18),
                     rated=True,

@@ -486,13 +486,13 @@ def notify_problem_authors(
     cache.set(throttle_key, True, 3600)
 
     # Prepare email content
-    subject = f"[LQDOJ] {error_type} in Problem {problem.code}"
+    subject = f"[LTOJ] {error_type} in Problem {problem.code}"
 
     context = {
         "problem": problem,
         "error_message": error_message,
         "error_type": error_type,
-        "site_name": getattr(settings, "SITE_NAME", "LQDOJ"),
+        "site_name": getattr(settings, "SITE_NAME", "LTOJ"),
         "problem_url": f"{getattr(settings, 'SITE_DOMAIN', '')}/problem/{problem.code}",
         "edit_url": f"{getattr(settings, 'SITE_DOMAIN', '')}/problem/{problem.code}/test_data",
         "protocol": "http",

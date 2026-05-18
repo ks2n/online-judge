@@ -106,7 +106,7 @@ def gen_problems(output_path):
                     p["code"],
                     p["name"],
                     p["points"],
-                    "lqdoj.edu.vn/problem/" + p["code"],
+                    "ltoj.edu.vn/problem/" + p["code"],
                     p["ac_rate"],
                     p["user_count"],
                     p["group__id"] or 0,

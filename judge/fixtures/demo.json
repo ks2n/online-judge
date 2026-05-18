@@ -146,7 +146,7 @@
     {
         "fields": {
             "domain": "localhost:8000",
-            "name": "LQDOJ"
+            "name": "LTOJ"
         },
         "model": "sites.site",
         "pk": 1

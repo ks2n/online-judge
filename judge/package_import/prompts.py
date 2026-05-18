@@ -155,7 +155,7 @@ IMPORT_PROMPT = """\
 I uploaded a competitive programming problem package (zip file).
 Extract it, analyze all files, detect the format, and create the output files described below.
 
-=== LQDOJ DESCRIPTION FORMAT ===
+=== LTOJ DESCRIPTION FORMAT ===
 Convert the problem statement to this markdown format.
 
 FORMATTING RULES:
@@ -188,7 +188,7 @@ HERE IS A COMPLETE EXAMPLE of the target format:
 
 {description_template}
 
-=== LQDOJ CHECKER FORMAT (C++) ===
+=== LTOJ CHECKER FORMAT (C++) ===
 Takes 3 file arguments: input_file, output_file, ans_file
 Open them with ifstream. Return exit code: 0=AC, 1=WA, 2=partial.
 For partial: print a score (0.0 to 1.0) to stderr, return 2.
@@ -200,7 +200,7 @@ Template:
 {checker_template}
 ```
 
-=== LQDOJ GENERATOR FORMAT (C++) ===
+=== LTOJ GENERATOR FORMAT (C++) ===
 Takes command-line arguments (each line of generator script = one test's args).
 Print INPUT to stdout (cout).
 Print ANSWER to stderr (cerr).
@@ -212,7 +212,7 @@ Template:
 {generator_template}
 ```
 
-=== LQDOJ INTERACTIVE JUDGE FORMAT (C++) ===
+=== LTOJ INTERACTIVE JUDGE FORMAT (C++) ===
 Takes 2 file arguments: input_file, answer_file
 Communicate with contestant via stdin (read from contestant) / stdout (write to contestant).
 Return exit code: 0=AC, 1=WA, 2=partial.
@@ -230,7 +230,7 @@ Template:
 
 2. CREATE THESE OUTPUT FILES:
 
-   a) description.md — Problem statement converted to LQDOJ format (see template above).
+   a) description.md — Problem statement converted to LTOJ format (see template above).
       - Use $...$ for inline math, $$...$$ for display math
       - Convert LaTeX commands to markdown
       - Include ALL examples using the !!! question admonition format
@@ -240,15 +240,15 @@ Template:
         cd <parent_dir> && zip -r /mnt/testdata.zip <test_folder>/
       Do NOT use Python's zipfile module to read and re-write files.
       Do NOT rename or modify any test files.
-      LQDOJ supports these extensions: .in, .inp, .out, .ans, .a, and extensionless files.
+      LTOJ supports these extensions: .in, .inp, .out, .ans, .a, and extensionless files.
       Just zip the test folder as-is.
 
-   c) checker.cpp — Convert the checker to LQDOJ format (see template above).
+   c) checker.cpp — Convert the checker to LTOJ format (see template above).
       Rewrite using ifstream(argv[1/2/3]) instead of testlib.h.
       Preserve the exact comparison logic from the original.
       If no custom checker exists, do not create this file.
 
-   d) generator.cpp — Convert to LQDOJ format (see template above).
+   d) generator.cpp — Convert to LTOJ format (see template above).
       Must print input to stdout AND answer to stderr.
       Use an accepted solution's logic (from the package) to compute the answer.
       If no generator exists, do not create this file.
@@ -259,7 +259,7 @@ Template:
       Skip manual/sample tests. If no generator commands found, do not create this file.
 
    f) interactive.cpp — If this is an interactive problem, convert the interactor
-      to LQDOJ format (see template above). If not interactive, do not create this file.
+      to LTOJ format (see template above). If not interactive, do not create this file.
 
    g) If the problem statement references images (e.g., diagrams, figures),
       find those image files in the package and send them back as attachments too.

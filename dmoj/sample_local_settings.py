@@ -118,7 +118,7 @@ ADMINS = [
 ]
 
 # The sender for the aforementioned emails.
-# SERVER_EMAIL = 'LQDOJ: Le Quy Don Online Judge <>'
+# SERVER_EMAIL = 'LTOJ: Le Thuy Online Judge <>'
 
 ##################################################
 ########### Static files configuration. ##########
@@ -198,7 +198,7 @@ REJUDGE_SUBMISSION_LIMIT = 10
 # WebSocket daemon connection settings - used by Django to post events
 # Must match the settings in websocket/config.js
 # EVENT_DAEMON_URL = 'http://127.0.0.1:15100'
-# EVENT_DAEMON_KEY = 'lqdoj'  # Must match backend_auth_token in websocket/config.js
+# EVENT_DAEMON_KEY = 'ltoj'  # Must match backend_auth_token in websocket/config.js
 
 # Public URL for client WebSocket connections
 # In development, set to same value as EVENT_DAEMON_URL

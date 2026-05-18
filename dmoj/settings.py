@@ -30,10 +30,10 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 SITE_ID = 1
-SITE_NAME = "LQDOJ"
-SITE_LONG_NAME = "LQDOJ: Le Quy Don Online Judge"
+SITE_NAME = "LTOJ"
+SITE_LONG_NAME = "LTOJ: Le Thuy Online Judge"
 SITE_ADMIN_EMAIL = False
-SITE_DOMAIN = "lqdoj.edu.vn"
+SITE_DOMAIN = "ltoj.edu.vn"
 
 DMOJ_REQUIRE_STAFF_2FA = True
 
@@ -161,7 +161,7 @@ else:
 
     WPADMIN = {
         "admin": {
-            "title": "LQDOJ Admin",
+            "title": "LTOJ Admin",
             "menu": {
                 "top": "wpadmin.menu.menus.BasicTopMenu",
                 "left": "wpadmin.menu.custom.CustomModelLeftMenuWithDashboard",
@@ -419,7 +419,7 @@ BRIDGED_AUTO_CREATE_JUDGE = False
 EVENT_DAEMON_USE = False
 EVENT_DAEMON_URL = "ws://localhost:9996/"
 EVENT_DAEMON_PUBLIC_URL = "ws://localhost:9996/"
-EVENT_DAEMON_KEY = None
+EVENT_DAEMON_KEY = "ltoj"
 EVENT_DAEMON_AMQP_EXCHANGE = "dmoj-events"
 EVENT_DAEMON_SUBMISSION_KEY = (
     "6Sdmkx^%pk@GsifDfXcwX*Y7LRF%RGT8vmFpSxFBT$fwS7trc8raWfN#CSfQuKApx&$B#Gh2L7p%W!Ww"

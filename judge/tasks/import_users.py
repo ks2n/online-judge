@@ -15,7 +15,7 @@ descriptions = [
     "my_username(edit old one if exist)",
     "123456 (must have)",
     "Le Van A (can be empty)",
-    "Le Quy Don (can be empty)",
+    "Le Thuy (can be empty)",
     "email@email.com (can be empty)",
     "org1&org2&org3&... (can be empty - org slug in URL)",
 ]
@@ -89,8 +89,8 @@ def import_users(self, users, profile_id=None, muted=True):
             if pwd:
                 user.set_password(pwd)
             elif created:
-                user.set_password("lqdoj")
-                cur_log += "Missing password, set password = lqdoj - "
+                user.set_password("ltoj")
+                cur_log += "Missing password, set password = ltoj - "
 
             if "name" in row.keys() and row["name"]:
                 user.first_name = row["name"]

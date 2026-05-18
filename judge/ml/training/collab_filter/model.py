@@ -1,6 +1,6 @@
 """
 Collaborative Filtering via Matrix Factorization in PyTorch.
-Port of LQDOJ_ML/src/_collab_filter.py from TensorFlow.
+Port of LTOJ_ML/src/_collab_filter.py from TensorFlow.
 
 Loss = MSE(observed) + regularization + gravity
 """

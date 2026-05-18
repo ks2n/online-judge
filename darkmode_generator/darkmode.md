@@ -1,6 +1,6 @@
 # Dark Mode CSS Generator
 
-A simple tool to automatically generate dark mode CSS for the LQDOJ platform using DarkReader.
+A simple tool to automatically generate dark mode CSS for the LTOJ platform using DarkReader.
 
 ## Quick Start
 
@@ -14,7 +14,7 @@ node generate_darkmode.js
 
 This script:
 1. Launches a headless browser
-2. Loads your LQDOJ site
+2. Loads your LTOJ site
 3. Injects DarkReader
 4. Generates dark mode CSS
 5. Saves two files in `resources/`:

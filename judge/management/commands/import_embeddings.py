@@ -116,9 +116,9 @@ class Command(BaseCommand):
             "--from-modal",
             type=str,
             nargs="?",
-            const="lqdoj-ml-volume",
+            const="ltoj-ml-volume",
             default=None,
-            help="Download from Modal volume and import (default volume: lqdoj-ml-volume)",
+            help="Download from Modal volume and import (default volume: ltoj-ml-volume)",
         )
         parser.add_argument(
             "--batch-size",

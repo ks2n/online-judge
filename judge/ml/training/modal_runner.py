@@ -11,8 +11,8 @@ image = (
     .add_local_dir("judge/ml/training", remote_path="/root/training")
 )
 
-app = modal.App("LQDOJ_ML", image=image)
-vol = modal.Volume.from_name("lqdoj-ml-volume", create_if_missing=True)
+app = modal.App("LTOJ_ML", image=image)
+vol = modal.Volume.from_name("ltoj-ml-volume", create_if_missing=True)
 
 
 @app.function(
@@ -65,5 +65,5 @@ def main(
     print("Training complete. Download embeddings with:")
     for model_name in models_to_train:
         print(
-            f"  modal volume get lqdoj-ml-volume /{model_name}/embeddings.npz /tmp/{model_name}.npz"
+            f"  modal volume get ltoj-ml-volume /{model_name}/embeddings.npz /tmp/{model_name}.npz"
         )

@@ -35,7 +35,7 @@ from reversion import revisions
 class ChatView(ListView):
     context_object_name = "message"
     template_name = "chat/chat.html"
-    title = _("LQDOJ Chat")
+    title = _("LTOJ Chat")
 
     def __init__(self):
         super().__init__()
