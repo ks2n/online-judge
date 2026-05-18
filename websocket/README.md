@@ -1,6 +1,6 @@
 # WebSocket Service
 
-This directory contains the WebSocket daemon that handles real-time communication between the LQDOJ web application and clients.
+This directory contains the WebSocket daemon that handles real-time communication between the LTOJ web application and clients.
 
 ## Purpose
 

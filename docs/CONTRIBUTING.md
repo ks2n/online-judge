@@ -1,4 +1,4 @@
-# Contributing to LQDOJ
+# Contributing to LTOJ
 
 ## Git Workflow
 
@@ -6,7 +6,7 @@
 
 This fork uses two remotes:
 
-- **origin**: Upstream LQDJudge repository (https://github.com/LQDJudge/online-judge.git)
+- **origin**: Upstream LTJudge repository (https://github.com/LTJudge/online-judge.git)
 - **ks2n**: Personal fork (git@github.com:ks2n/online-judge.git)
 
 ### Commit Practice

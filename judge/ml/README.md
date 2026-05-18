@@ -70,7 +70,7 @@ modal run judge/ml/training/modal_runner.py --data-path /tmp/ml_data/
 python manage.py import_embeddings --all --from-modal
 
 # Or download and import a single model manually
-modal volume get lqdoj-ml-volume /collab_filter/embeddings.npz /tmp/collab_filter.npz
+modal volume get ltoj-ml-volume /collab_filter/embeddings.npz /tmp/collab_filter.npz
 python manage.py import_embeddings --model collab_filter --file /tmp/collab_filter.npz
 ```
 

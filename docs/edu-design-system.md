@@ -1,4 +1,4 @@
-# LQDOJ Edu Design System
+# LTOJ Edu Design System
 
 > Tone: **Brilliant.org / Duolingo** — ấm áp, khuyến khích, dễ đọc lâu.
 > Audience: HS cấp 3 ôn tin học, SV CS, GV ra đề, beginner.

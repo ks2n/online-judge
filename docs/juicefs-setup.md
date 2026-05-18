@@ -6,14 +6,14 @@ directory — zero judge code changes needed.
 
 ```
 Site + Judge hosts         Redis (metadata)       R2 (data)
-  /home/ubuntu/problems  <------>  :6379/1  <------>  lqdoj-problem-data
+  /home/ubuntu/problems  <------>  :6379/1  <------>  ltoj-problem-data
      (FUSE mount)
 ```
 
 ## 1. R2 Bucket
 
 Create a **private** R2 bucket (not the public media bucket):
-- Cloudflare Dashboard → R2 → Create bucket → `lqdoj-problem-data`
+- Cloudflare Dashboard → R2 → Create bucket → `ltoj-problem-data`
 - Do NOT enable public access
 - Create API token with read/write access
 
@@ -66,10 +66,10 @@ curl -sSL https://d.juicefs.com/install | sh -
 ```bash
 juicefs format \
   --storage s3 \
-  --bucket https://<ACCOUNT_ID>.r2.cloudflarestorage.com/lqdoj-problem-data \
+  --bucket https://<ACCOUNT_ID>.r2.cloudflarestorage.com/ltoj-problem-data \
   --access-key <R2_KEY> --secret-key <R2_SECRET> \
   "redis://:<password>@<redis-host>:6379/0" \
-  lqdoj-problems
+  ltoj-problems
 ```
 
 ## 5. Mount (All Servers)
@@ -118,7 +118,7 @@ sudo docker run \
   -d --network="host" \
   --cap-add=SYS_PTRACE \
   --restart=always \
-  vnoj/judge-tierlqdoj:latest \
+  vnoj/judge-tierltoj:latest \
   run -c "$config_file" --no-watchdog 0.0.0.0 "$judge_id"
 ```
 
@@ -160,7 +160,7 @@ JuiceFS auto-backs up metadata to `meta/` in the R2 bucket every
 # 2. Load latest backup from R2
 juicefs load "redis://:<password>@<redis-host>:6379/0" \
   --storage s3 \
-  --bucket https://<ACCOUNT_ID>.r2.cloudflarestorage.com/lqdoj-problem-data \
+  --bucket https://<ACCOUNT_ID>.r2.cloudflarestorage.com/ltoj-problem-data \
   --access-key <R2_KEY> --secret-key <R2_SECRET> \
   meta/dump-2026-03-15-120000.json.gz
 # 3. Verify

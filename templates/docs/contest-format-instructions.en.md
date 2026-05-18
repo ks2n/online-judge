@@ -1,6 +1,6 @@
 [TOC]
 
-This page documents the contest formats supported by the LQDOJ. Each contest format implements different scoring rules and submission handling.
+This page documents the contest formats supported by the LTOJ. Each contest format implements different scoring rules and submission handling.
 
 ## 1. Default
 

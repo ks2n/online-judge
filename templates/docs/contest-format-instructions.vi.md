@@ -2,7 +2,7 @@
 
 ---
 
-Trang này mô tả các định dạng cuộc thi được hỗ trợ bởi LQDOJ. Mỗi định dạng cuộc thi thực hiện các quy tắc chấm điểm và xử lý bài nộp khác nhau.
+Trang này mô tả các định dạng cuộc thi được hỗ trợ bởi LTOJ. Mỗi định dạng cuộc thi thực hiện các quy tắc chấm điểm và xử lý bài nộp khác nhau.
 
 ## 1. Default (Mặc định)
 
