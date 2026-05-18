@@ -45,7 +45,6 @@ body.edu.dark {
     .edu-course-card,
     .edu-problem-card,
     .edu-workspace-briefing,
-    .edu-workspace-sidebar-panel,
     .left-sidebar-item,
     .testcases-table,
     .edu-dashboard-stats,
@@ -59,6 +58,50 @@ body.edu.dark {
         background-color: #1A1F2E !important;
         border-color: #2F3548 !important;
         color: #E5E7EB;
+    }
+
+    // Sidebar panel is a transparent flex wrapper — cards own their surfaces
+    .edu-workspace-sidebar-panel {
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+    }
+
+    // Sidebar cards get their own dark surfaces
+    .sidebar-actions-card {
+        background: #1A1F2E !important;
+        border-color: #2F3548 !important;
+
+        .link-row {
+            border-bottom-color: #2F3548 !important;
+        }
+
+        .link-row a {
+            color: #E5E7EB !important;
+
+            i { color: #9CA3AF !important; }
+
+            &:hover {
+                background: #252B3B !important;
+                color: #818CF8 !important;
+
+                i { color: #818CF8 !important; }
+            }
+        }
+    }
+
+    .sidebar-meta-card {
+        background: #1A1F2E !important;
+        border-color: #2F3548 !important;
+        color: #E5E7EB;
+
+        hr { border-top-color: #2F3548 !important; }
+
+        .toggle { color: #E5E7EB !important; }
+        .toggle:hover { color: #818CF8 !important; }
+        .toggled { color: #9CA3AF !important; }
+        .problem-info-entry { color: #E5E7EB; }
+        .pi-name { color: #9CA3AF; }
     }
 
     // Soft surface (table headers, hover bg, alt rows)
