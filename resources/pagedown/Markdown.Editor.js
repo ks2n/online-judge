@@ -31,7 +31,7 @@
 
         link: "Hyperlink <a> Ctrl+L",
         linkdescription: "enter link description here",
-        linkdialog: "<p><b>Insert Hyperlink</b></p><p>https://lqdoj.edu.vn/ \"optional title\"</p>",
+        linkdialog: "<p><b>Insert Hyperlink</b></p><p>https://ltoj.edu.vn/ \"optional title\"</p>",
 
         user: "User reference",
         userexample: "enter username here",
@@ -44,7 +44,7 @@
 
         image: "Image <img> Ctrl+G",
         imagedescription: "enter image description here",
-        imagedialog: "<p><b>Insert Image</b></p><p>https://lqdoj.edu.vn/logo.png \"optional title\"<br><br>Need <a href='http://www.google.com/search?q=free+image+hosting' target='_blank'>free image hosting?</a></p>",
+        imagedialog: "<p><b>Insert Image</b></p><p>https://ltoj.edu.vn/logo.png \"optional title\"<br><br>Need <a href='http://www.google.com/search?q=free+image+hosting' target='_blank'>free image hosting?</a></p>",
 
         olist: "Numbered List <ol> Ctrl+O",
         ulist: "Bulleted List <ul> Ctrl+U",

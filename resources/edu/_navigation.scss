@@ -325,9 +325,9 @@ body.edu {
     .edu-nav-utility {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 12px;                           // Increased from 6px to 12px for more spacing
         flex: 0 0 auto;
-        margin-left: auto;                       // anchor utility to right edge
+        margin-left: auto;                   // anchor utility to right edge
         height: 100%;
 
         // Force <i> upright everywhere in utility (notifications, lang globe,
@@ -352,10 +352,12 @@ body.edu {
             color: $edu-text-muted;
             text-decoration: none;
             border-radius: $edu-radius-sm;
+            border: none !important;         // Remove any borders (fixes dark mode toggle)
+            background: transparent !important; // Ensure flat/borderless appearance
             transition: background $edu-duration-fast $edu-ease-out, color $edu-duration-fast $edu-ease-out;
 
             &:hover {
-                background: $edu-bg-soft;
+                background: $edu-bg-soft !important;
                 color: $edu-accent;
             }
         }

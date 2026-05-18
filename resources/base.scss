@@ -296,90 +296,93 @@ img {
 }
 
 // Submit button style - preserves the original problem submit button design
-.submit-btn,
-input[type="submit"].submit-btn {
-    // Inherit from the existing .btn styles for the special submit button design
-    // This preserves the original rounded submit button with icon design
-    // Override action-btn styles when both classes are present
-    background: $color-success !important;
-    border: 1px solid $color-success !important;
-    color: white !important;
-    border-radius: 40px !important;
-    padding: 12px 18px !important;
-    font-size: 16px !important;
-    font-weight: 500 !important;
-    box-shadow: 0px 10px 20px -6px rgba(0, 0, 0, 0.12) !important;
-    overflow: hidden !important;
-    position: relative !important;
-    transition: all 0.3s ease !important;
-    cursor: pointer !important;
-
-    // Override action-btn styles
-    text-decoration: none !important;
-    display: inline-block !important;
-    align-items: center !important;
-    gap: normal !important;
-
-    // Remove action-btn specific effects
-    &::before {
-        display: none !important;
-    }
-
-    span {
-        font-size: 15px !important;
-        margin-left: -25px !important;
-        transition: all 0.3s ease !important;
-    }
-
-    .icon {
-        position: absolute !important;
-        top: 0 !important;
-        right: 0 !important;
-        width: 50px !important;
-        bottom: 0 !important;
-        background: #fff !important;
-
-        i {
-            font-size: 21px !important;
-            color: $color-success !important;
-        }
-
-        &.icon-round {
-            border-radius: 50% !important;
-        }
-    }
-
-    &:hover,
-    &:active,
-    &:focus {
-        outline: none !important;
-        background: $color-success-hover !important;
-        border-color: $color-success-hover !important;
+// Scoped to non-edu pages only; edu theme has its own submit button styles
+body:not(.edu) {
+    .submit-btn,
+    input[type="submit"].submit-btn {
+        // Inherit from the existing .btn styles for the special submit button design
+        // This preserves the original rounded submit button with icon design
+        // Override action-btn styles when both classes are present
+        background: $color-success !important;
+        border: 1px solid $color-success !important;
         color: white !important;
+        border-radius: 40px !important;
+        padding: 12px 18px !important;
+        font-size: 16px !important;
+        font-weight: 500 !important;
+        box-shadow: 0px 10px 20px -6px rgba(0, 0, 0, 0.12) !important;
+        overflow: hidden !important;
+        position: relative !important;
+        transition: all 0.3s ease !important;
+        cursor: pointer !important;
+
+        // Override action-btn styles
         text-decoration: none !important;
-        transform: none !important;
-        box-shadow: 0px 12px 25px -6px rgba(0, 0, 0, 0.18) !important;
+        display: inline-block !important;
+        align-items: center !important;
+        gap: normal !important;
+
+        // Remove action-btn specific effects
+        &::before {
+            display: none !important;
+        }
 
         span {
-            margin-left: -12px !important;
+            font-size: 15px !important;
+            margin-left: -25px !important;
+            transition: all 0.3s ease !important;
         }
-    }
 
-    &.btn-disabled {
-        background: gray !important;
-        border-color: gray !important;
-        color: #fff !important;
-        cursor: not-allowed !important;
+        .icon {
+            position: absolute !important;
+            top: 0 !important;
+            right: 0 !important;
+            width: 50px !important;
+            bottom: 0 !important;
+            background: #fff !important;
+
+            i {
+                font-size: 21px !important;
+                color: $color-success !important;
+            }
+
+            &.icon-round {
+                border-radius: 50% !important;
+            }
+        }
 
         &:hover,
         &:active,
         &:focus {
+            outline: none !important;
+            background: $color-success-hover !important;
+            border-color: $color-success-hover !important;
+            color: white !important;
+            text-decoration: none !important;
+            transform: none !important;
+            box-shadow: 0px 12px 25px -6px rgba(0, 0, 0, 0.18) !important;
+
+            span {
+                margin-left: -12px !important;
+            }
+        }
+
+        &.btn-disabled {
             background: gray !important;
             border-color: gray !important;
             color: #fff !important;
+            cursor: not-allowed !important;
 
-            span {
-                margin-left: -25px !important;
+            &:hover,
+            &:active,
+            &:focus {
+                background: gray !important;
+                border-color: gray !important;
+                color: #fff !important;
+
+                span {
+                    margin-left: -25px !important;
+                }
             }
         }
     }
