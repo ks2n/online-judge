@@ -482,14 +482,129 @@ body.edu {
         }
     }
 
+    // ── Pagination ───────────────────────────────────────────
+    .pagination {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        list-style: none;
+        padding: 0;
+        margin: 20px 0 0;
+
+        li {
+            a, span {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 36px;
+                height: 36px;
+                padding: 0 10px;
+                font-size: 14px;
+                font-weight: 500;
+                font-family: $edu-font-code;
+                color: $edu-text;
+                background: $edu-bg-paper;
+                border: 1px solid $edu-border;
+                border-radius: $edu-radius-md;
+                text-decoration: none;
+                transition: background $edu-duration-fast $edu-ease-out,
+                            border-color $edu-duration-fast $edu-ease-out,
+                            color $edu-duration-fast $edu-ease-out;
+            }
+
+            a:hover {
+                background: $edu-bg-soft;
+                border-color: $edu-border-strong;
+                color: $edu-accent;
+            }
+
+            &.active-page a {
+                background: $edu-accent;
+                border-color: $edu-accent;
+                color: #fff;
+                pointer-events: none;
+            }
+
+            &.disabled-page span {
+                color: $edu-text-faint;
+                background: transparent;
+                border-color: $edu-border;
+                cursor: default;
+            }
+        }
+    }
+
+    // ── Sticky table header ──────────────────────────────────
+    #problem-table thead {
+        position: sticky;
+        top: 56px; // nav height
+        z-index: 5;
+    }
+
+    // ── Screen-reader only utility ───────────────────────────
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
     // ── Mobile responsive ─────────────────────────────────────
     @media (max-width: 799px) {
-        // Hide minor columns to keep list scannable on phone
         #problem-table {
             thead th.category,
             thead th.users,
             tbody td.category,
             tbody td.users {
+                display: none;
+            }
+
+            // Tighter padding on mobile
+            thead th,
+            tbody td {
+                padding: 10px 8px !important;
+                font-size: 13px !important;
+            }
+
+            // Problem code as smaller text
+            tbody td.pcode .pcodecell {
+                font-size: 11px !important;
+                padding: 1px 6px !important;
+            }
+
+            // Ensure touch targets
+            tbody td[solved] a {
+                min-width: 36px;
+                min-height: 36px;
+            }
+        }
+
+        // Pagination touch targets
+        .pagination li {
+            a, span {
+                min-width: 40px;
+                height: 40px;
+            }
+        }
+    }
+
+    @media (max-width: 599px) {
+        // Hide problem code on very small screens
+        #problem-table {
+            thead th.pcode,
+            tbody td.pcode {
+                display: none;
+            }
+
+            // Also hide types to save space
+            thead th.types,
+            tbody td.types {
                 display: none;
             }
         }
