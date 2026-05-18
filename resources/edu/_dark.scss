@@ -552,6 +552,10 @@ body.edu.dark {
     table.table tbody tr {
         background: #1A1F2E !important;
         border-color: #2F3548 !important;
+        color: #E5E7EB !important;
+    }
+    table.table tbody td {
+        color: #E5E7EB !important;
     }
     table.table tbody tr:hover { background: #252B3D !important; }
     table.table thead tr,
@@ -559,6 +563,36 @@ body.edu.dark {
         background: #252B3D !important;
         color: #C7D2FE !important;
         border-color: #3F4658 !important;
+    }
+    table.table tbody td a {
+        color: #A5B4FC !important;
+    }
+    table.table tbody td a:hover {
+        color: #C7D2FE !important;
+    }
+
+    // Problem table specific — override $edu-text tokens that compile to dark colors
+    #problem-table tbody td {
+        color: #E5E7EB !important;
+    }
+    #problem-table tbody td.category,
+    #problem-table tbody td.ac-rate {
+        color: #9CA3AF !important;
+    }
+    #problem-table tbody td a {
+        color: #A5B4FC !important;
+    }
+    #problem-table tbody td a:hover {
+        color: #C7D2FE !important;
+    }
+    #problem-table tbody td .pcodecell {
+        background: #252B3D !important;
+        color: #9CA3AF !important;
+        border-color: #3F4658 !important;
+    }
+    #problem-table tbody td .type-tag {
+        background: rgba(129, 140, 248, 0.15) !important;
+        color: #A5B4FC !important;
     }
 
     // ── Sidebox / right-rail widgets — match Round 2 #10 ─────

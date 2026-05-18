@@ -535,12 +535,12 @@ body.edu {
         }
     }
 
-    // ── Sticky table header ──────────────────────────────────
-    #problem-table thead {
-        position: sticky;
-        top: 56px; // nav height
-        z-index: 5;
-    }
+    // ── Sticky table header disabled — conflicts with overflow:hidden ──
+    // #problem-table thead {
+    //     position: sticky;
+    //     top: 56px; // nav height
+    //     z-index: 5;
+    // }
 
     // ── Screen-reader only utility ───────────────────────────
     .sr-only {
