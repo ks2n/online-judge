@@ -68,6 +68,8 @@ body.edu {
 
     // ── Contest list card (.list-contest) ─────────────────────
     .list-contest {
+        display: flex !important; // Explicit flex — do not depend on legacy CSS
+        flex-direction: row;
         box-shadow: $edu-shadow-sm !important;
         border: 1px solid $edu-border;
         border-radius: $edu-radius-lg !important;
@@ -275,7 +277,56 @@ body.edu {
     // Participate button wrapper
     .list-contest .participate-button {
         margin-top: auto;
+        float: none !important; // Override inline float:right
 
         form { margin: 0; }
+    }
+
+    // Override inline CSS: .contest-format-user { flex: 0.5 !important }
+    .list-contest .info-contest.contest-format-user {
+        flex: 0 0 auto !important;
+    }
+
+    // ── Empty states ─────────────────────────────────────────
+    .middle-content > i:only-child,
+    .middle-content > p > i:only-of-type {
+        display: block;
+        padding: 48px 24px;
+        text-align: center;
+        font-style: normal;
+        font-size: 14px;
+        line-height: 1.7;
+        color: $edu-text-muted;
+        background: $edu-bg-paper;
+        border: 1px dashed $edu-border;
+        border-radius: $edu-radius-lg;
+    }
+
+    // ── Mobile contest cards ─────────────────────────────────
+    @media (max-width: 767px) {
+        .list-contest {
+            flex-direction: column !important;
+            gap: 12px !important;
+            padding: 14px 16px !important;
+
+            .info-contest {
+                width: 100%;
+
+                &.contest-format-user {
+                    min-width: 0 !important;
+                    padding-top: 10px;
+                    border-top: 1px dashed $edu-border;
+                    flex-direction: row !important;
+                    flex-wrap: wrap;
+                    align-items: center;
+                    justify-content: space-between;
+                }
+            }
+
+            .participate-button {
+                margin-top: 0;
+                flex: 0 0 auto;
+            }
+        }
     }
 }
