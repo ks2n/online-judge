@@ -1,6 +1,6 @@
-# LLM Service for LQDOJ
+# LLM Service for LTOJ
 
-This package provides general LLM API functionality for LQDOJ using large language models via Poe API.
+This package provides general LLM API functionality for LTOJ using large language models via Poe API.
 
 ## Features
 
@@ -109,17 +109,17 @@ export POE_SLEEP_TIME="2.5"
 
 ## File Storage Systems
 
-The LLM service supports two different storage systems used by LQDOJ:
+The LLM service supports two different storage systems used by LTOJ:
 
 ### 1. Regular Media Files (MEDIA_ROOT)
-- **Location**: Django's `MEDIA_ROOT` setting (e.g., `/home/user/LQDOJ/media`)
+- **Location**: Django's `MEDIA_ROOT` setting (e.g., `/home/user/LTOJ/media`)
 - **File Types**: Images, user uploads, pagedown uploads
 - **URL Patterns**: 
   - `/media/path/file.ext`
   - `/path/file.ext` (without media prefix)
 
 ### 2. Problem Data Files (DMOJ_PROBLEM_DATA_ROOT)
-- **Location**: LQDOJ's `DMOJ_PROBLEM_DATA_ROOT` setting (e.g., `/home/user/LQDOJ/problems`)
+- **Location**: LTOJ's `DMOJ_PROBLEM_DATA_ROOT` setting (e.g., `/home/user/LTOJ/problems`)
 - **File Types**: Problem PDFs, test data, custom checkers
 - **URL Pattern**: `/problem/{problem_code}/data/{filename}`
 - **Storage Path**: `{DMOJ_PROBLEM_DATA_ROOT}/{problem_code}/{filename}`
@@ -128,12 +128,12 @@ The LLM service supports two different storage systems used by LQDOJ:
 
 **For PDFs** (`/problem/{code}/data/{filename}`):
 1. **Try Local First**: Check `{DMOJ_PROBLEM_DATA_ROOT}/{code}/{filename}`
-2. **Public URL Fallback**: If local file not found, try `https://lqdoj.edu.vn/problem/{code}/data/{filename}`
+2. **Public URL Fallback**: If local file not found, try `https://ltoj.edu.vn/problem/{code}/data/{filename}`
 
 **For Media Files** (`/media/path/file` or `/path/file`):
 1. **Local Only**: Check `{MEDIA_ROOT}/{cleaned_path}` (removes `media/` prefix if present)
 
-**For Public URLs** (`https://lqdoj.edu.vn/...`):
+**For Public URLs** (`https://ltoj.edu.vn/...`):
 1. **Direct Upload**: Upload directly from the provided URL
 
 ## Error Handling

@@ -1,5 +1,5 @@
 """
-Problem tagging package for LQDOJ
+Problem tagging package for LTOJ
 Provides AI-powered problem difficulty and tag prediction
 """
 

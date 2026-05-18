@@ -1,6 +1,6 @@
-# AI Features for LQDOJ
+# AI Features for LTOJ
 
-Business logic layer for all AI-powered features in LQDOJ. Uses `llm_service/` for LLM API interactions.
+Business logic layer for all AI-powered features in LTOJ. Uses `llm_service/` for LLM API interactions.
 
 ## Features
 

@@ -1,5 +1,5 @@
 """
-Quiz AI service for LQDOJ
+Quiz AI service for LTOJ
 Provides AI-powered markdown improvement and explanation generation for quiz questions.
 Uses LLMService (Poe API) with quiz-specific prompts — distinct from the competitive
 programming MarkdownImprover which targets problem statements with ####Input/Output format.

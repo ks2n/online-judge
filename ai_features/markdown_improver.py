@@ -1,6 +1,6 @@
 """
 Markdown improver for problem descriptions
-Uses LLM to format problem statements according to LQDOJ's markdown format
+Uses LLM to format problem statements according to LTOJ's markdown format
 """
 
 import time
@@ -106,7 +106,7 @@ class MarkdownImprover:
         markdown_rules = get_markdown_rules_for_prompt(start_number=9)
 
         system_prompt = f"""You are an expert at formatting competitive programming problem statements.
-Your task is to convert problem statements to a specific LQDOJ markdown format.
+Your task is to convert problem statements to a specific LTOJ markdown format.
 
 IMPORTANT FORMATTING RULES:
 1. Use LaTeX math notation with $ for inline math (e.g., $n$, $a_i$, $10^9$)
@@ -146,7 +146,7 @@ CRITICAL INSTRUCTIONS:
 
 """
 
-        user_prompt = f"""{problem_info}Please convert the following problem statement to the LQDOJ markdown format.
+        user_prompt = f"""{problem_info}Please convert the following problem statement to the LTOJ markdown format.
 If the content includes PDF references/attachments, analyze the PDF content and extract the problem statement from it.
 
 ORIGINAL PROBLEM STATEMENT:

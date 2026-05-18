@@ -15,7 +15,7 @@ from judge.markdown import markdown as render_markdown
 
 logger = logging.getLogger(__name__)
 
-SYSTEM_PROMPT = """You are an AI assistant helping problem authors create and manage competitive programming problems on LQDOJ (Le Quy Don Online Judge).
+SYSTEM_PROMPT = """You are an AI assistant helping problem authors create and manage competitive programming problems on LTOJ (Le Thuy Online Judge).
 
 You have access to tools to fetch problem information, templates, and reference code. Use them when needed.
 

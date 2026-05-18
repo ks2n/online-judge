@@ -293,7 +293,7 @@ class LLMService:
             site_domain = site_domain.lower()
 
             # Check if URL domain matches site domain or is a subdomain
-            # e.g., cdn.lqdoj.edu.vn is subdomain of lqdoj.edu.vn
+            # e.g., cdn.ltoj.edu.vn is subdomain of ltoj.edu.vn
             return url_domain == site_domain or url_domain.endswith(f".{site_domain}")
         except Exception:
             return False
@@ -371,7 +371,7 @@ class LLMService:
             elif url.startswith("/"):
                 attachment = self._upload_local_file(url)
                 if not attachment and url.startswith("/problem/") and "/data/" in url:
-                    public_url = f"https://{site_domain or 'lqdoj.edu.vn'}{url}"
+                    public_url = f"https://{site_domain or 'ltoj.edu.vn'}{url}"
                     attachment = self._upload_file_from_url(public_url)
                 return attachment
             else:

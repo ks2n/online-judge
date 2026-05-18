@@ -1,6 +1,6 @@
 """
-Problem tag service for LQDOJ
-Functions to work with LQDOJ Problem models for tagging and difficulty prediction
+Problem tag service for LTOJ
+Functions to work with LTOJ Problem models for tagging and difficulty prediction
 """
 
 import os

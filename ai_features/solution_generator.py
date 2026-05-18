@@ -289,7 +289,7 @@ print(ans)
         ac_solution = self._get_ac_solution(problem_obj) if problem_obj else None
         markdown_rules = get_markdown_rules_for_prompt(start_number=10)
 
-        system_prompt = f"""You are an expert competitive programming coach writing solution editorials for LQDOJ, a platform used by many beginners and students.
+        system_prompt = f"""You are an expert competitive programming coach writing solution editorials for LTOJ, a platform used by many beginners and students.
 Your task is to write clear, educational solution explanations for competitive programming problems.
 
 IMPORTANT FORMATTING RULES:
