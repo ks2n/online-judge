@@ -1,7 +1,7 @@
 # Docker-specific settings — mounted over local_settings.py inside the container.
 # Uses the real mysqlclient driver (installed via libmysqlclient-dev), no pymysql shim needed.
 
-SECRET_KEY = "lqdoj-docker-dev-key-not-for-production"
+SECRET_KEY = "ltoj-docker-dev-key-not-for-production"
 
 DEBUG = True
 ALLOWED_HOSTS = ["*"]
@@ -43,8 +43,8 @@ MEDIA_ROOT = "/media"
 DMOJ_PROBLEM_DATA_ROOT = "/problems"
 
 # ── Site identity ────────────────────────────────────────────────────────────
-SITE_NAME = "LQDOJ"
-SITE_LONG_NAME = "Le Quy Don Online Judge"
+SITE_NAME = "LTOJ"
+SITE_LONG_NAME = "Le Thuy Online Judge"
 
 # ── Chat (required) ──────────────────────────────────────────────────────────
 CHAT_SECRET_KEY = "ey7AAB1E6_14AMGUNY6yIKM05wWx9dTE9N0naq4Hr58="

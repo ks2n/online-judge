@@ -23,7 +23,7 @@ All Docker config lives here: `online-judge/.docker/dev-local/`
    ```bash
    # Inside WSL terminal
    cd ~
-   git clone <repo-url> LQDOJ
+   git clone <repo-url> LTOJ
    ```
 4. Run all commands from the WSL terminal, not PowerShell
 
@@ -34,7 +34,7 @@ All Docker config lives here: `online-judge/.docker/dev-local/`
 
 ## How to run
 
-All commands below use `-f` so you can run them from **the repo root** (`LQDOJ/`).
+All commands below use `-f` so you can run them from **the repo root** (`LTOJ/`).
 If you prefer, `cd online-judge/.docker/dev-local` and drop the `-f` flag entirely.
 
 ```bash
@@ -47,7 +47,7 @@ export COMPOSE_FILE=online-judge/.docker/dev-local/docker-compose.yml
 ## First-time setup
 
 ```bash
-cd ~/hobby-projects/LQDOJ
+cd ~/hobby-projects/LTOJ
 
 # Build the image (once, or after Dockerfile / requirements.txt changes)
 docker compose -f online-judge/.docker/dev-local/docker-compose.yml build

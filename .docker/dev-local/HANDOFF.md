@@ -1,4 +1,4 @@
-# LQDOJ Handoff
+# LTOJ Handoff
 
 ## Setup Status: Complete
 
@@ -10,7 +10,7 @@ Runs a real Linux environment (Python 3.11 / Debian Bookworm / MariaDB 10.11) id
 
 **First-time setup:**
 ```bash
-cd ~/hobby-projects/LQDOJ
+cd ~/hobby-projects/LTOJ
 
 # Start DB + services, wait for healthy
 docker compose up -d db memcached redis
@@ -30,7 +30,7 @@ docker compose up web
 
 **Daily usage:**
 ```bash
-cd ~/hobby-projects/LQDOJ
+cd ~/hobby-projects/LTOJ
 docker compose -f online-judge/.docker/dev-local/docker-compose.yml up
 ```
 
@@ -53,12 +53,12 @@ docker compose -f online-judge/.docker/dev-local/docker-compose.yml down -v
 ### Option B — Native Mac (legacy, avoid for new work)
 
 - DB: MariaDB via Homebrew, user `dmoj`, password `dmoj`, database `dmoj`
-- Venv: `~/hobby-projects/LQDOJ/dmojsite` (Python 3.14 — causes occasional Django deserialization bugs)
+- Venv: `~/hobby-projects/LTOJ/dmojsite` (Python 3.14 — causes occasional Django deserialization bugs)
 - `demo` fixture skipped — Python 3.14 / Django 4.2 deserialization bug
 
 ```bash
-source ~/hobby-projects/LQDOJ/dmojsite/bin/activate
-cd ~/hobby-projects/LQDOJ/online-judge
+source ~/hobby-projects/LTOJ/dmojsite/bin/activate
+cd ~/hobby-projects/LTOJ/online-judge
 python3 manage.py runserver 0.0.0.0:8001
 ```
 
