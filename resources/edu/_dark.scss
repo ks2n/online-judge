@@ -54,7 +54,13 @@ body.edu.dark {
     .toggled .source-wrap,
     .highlight pre,
     .source-wrap,
-    .edu-progress {
+    .edu-progress,
+    .post-card,
+    .blog-post,
+    .empty-state,
+    .no-content-message,
+    .sidebar-widget,
+    .widget-card {
         background-color: #1A1F2E !important;
         border-color: #2F3548 !important;
         color: #E5E7EB;
@@ -712,5 +718,175 @@ body.edu.dark {
     #edu-theme-toggle {
         color: #FCD34D !important;
         &:hover { background: #252B3D !important; }
+    }
+
+    // ── Blog card content (home page) ────────────────────────
+    .blog-box {
+        .blog-description,
+        .blog-description .summary,
+        .blog-description .summary .content-description {
+            background: transparent !important;
+            color: #E5E7EB !important;
+        }
+
+        // Blog post content area
+        .md-typeset.content-description,
+        .content-description.md-typeset {
+            background: transparent !important;
+            color: #E5E7EB !important;
+
+            p, div, span {
+                background: transparent !important;
+                color: #E5E7EB !important;
+            }
+        }
+
+        h2.title a {
+            color: #F9FAFB !important;
+            &:hover { color: #A5B4FC !important; }
+        }
+
+        .post-content-header {
+            color: #9CA3AF !important;
+
+            .post-authors a { color: #C7D2FE !important; }
+        }
+
+        .show-more {
+            color: #818CF8 !important;
+        }
+
+        // Sticky blog post gradient needs dark override
+        &.sticky {
+            background: linear-gradient(180deg, #2A1F1F 0%, #1A1F2E 64px) !important;
+            border-color: #5B3A3A !important;
+        }
+    }
+
+    // ── Content-description areas (markdown/prose) ───────────
+    .content-description,
+    .content-description.screen,
+    .md-typeset {
+        color: #E5E7EB !important;
+
+        h1, h2, h3, h4, h5, h6 { color: #F9FAFB !important; }
+        a { color: #A5B4FC !important; }
+        a:hover { color: #C7D2FE !important; }
+        code {
+            background: #252B3D !important;
+            border-color: #3F4658 !important;
+            color: #E5E7EB !important;
+        }
+        pre {
+            background: #252B3D !important;
+            border-color: #3F4658 !important;
+            color: #E5E7EB !important;
+        }
+        blockquote {
+            border-left-color: #4F46E5 !important;
+            background: rgba(79, 70, 229, 0.08) !important;
+            color: #C7D2FE !important;
+        }
+    }
+
+    // ── Course empty state ───────────────────────────────────
+    .no-courses,
+    .course-list-page .no-courses {
+        background: #1A1F2E !important;
+        border-color: #2F3548 !important;
+        color: #E5E7EB !important;
+
+        h3 { color: #9CA3AF !important; }
+        p { color: #9CA3AF !important; }
+    }
+
+    // ── Generic white surface overrides ──────────────────────
+    .card,
+    .panel,
+    .content-description.screen {
+        background: #1A1F2E !important;
+        border-color: #2F3548 !important;
+        color: #E5E7EB !important;
+    }
+
+    // Middle content area — catch any remaining white backgrounds
+    .middle-content > div:not(.has_next) {
+        color: #E5E7EB;
+    }
+
+    // ── Pagination dark mode ─────────────────────────────────
+    .pagination li {
+        a, span {
+            background: #1A1F2E !important;
+            border-color: #2F3548 !important;
+            color: #E5E7EB !important;
+        }
+        a:hover {
+            background: #252B3D !important;
+            color: #A5B4FC !important;
+        }
+        &.active-page a {
+            background: #4F46E5 !important;
+            border-color: #4F46E5 !important;
+            color: #fff !important;
+        }
+        &.disabled-page span {
+            color: #4B5563 !important;
+            background: transparent !important;
+        }
+    }
+
+    // ── Inputs / form controls ───────────────────────────────
+    input[type="text"],
+    input[type="search"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    textarea,
+    select {
+        background: #1A1F2E !important;
+        border-color: #2F3548 !important;
+        color: #E5E7EB !important;
+
+        &::placeholder { color: #6B7280 !important; }
+    }
+
+    .select2-container--default .select2-selection--single,
+    .select2-container--default .select2-selection--multiple {
+        background: #1A1F2E !important;
+        border-color: #2F3548 !important;
+
+        .select2-selection__rendered { color: #E5E7EB !important; }
+    }
+
+    // ── Filter form in sidebox ───────────────────────────────
+    .filter-form-group label,
+    .bold-text.margin-label {
+        color: #9CA3AF !important;
+    }
+
+    // ── User profile stats cards ─────────────────────────────
+    .user-stat,
+    .user-info-card,
+    .profile-card .card-body {
+        background: #1A1F2E !important;
+        border-color: #2F3548 !important;
+        color: #E5E7EB !important;
+    }
+
+    // ── Actionbar in dark mode ───────────────────────────────
+    .actionbar {
+        border-top-color: #2F3548 !important;
+    }
+    .actionbar-button {
+        color: #9CA3AF !important;
+        &:hover {
+            background: #252B3D !important;
+            color: #E5E7EB !important;
+        }
+    }
+    .problem-actionbar-wrapper {
+        background: #141924 !important;
+        border-color: #2F3548 !important;
     }
 }
