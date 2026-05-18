@@ -182,16 +182,18 @@ pre {
     .content-description pre:has(code) {
         min-width: 3em;
     }
-    #common-content {
+    // Legacy flex layout — only for non-edu pages
+    // Edu pages use CSS Grid from _problem-detail.scss
+    #common-content:not(.edu-workspace-shell) {
         display: flex;
         flex-direction: row-reverse;
     }
 
-    #content-left {
+    #content-left:not(.edu-workspace-main) {
         flex: 86%;
         width: 100%;
 
-        &.split-common-content {
+        &.split-common-content:not(.edu-workspace-main) {
             width: 70%;
         }
 
@@ -200,7 +202,7 @@ pre {
         }
     }
 
-    #content-right {
+    #content-right:not(.edu-workspace-sidebar) {
         flex: 14%;
         max-width: 12.5em;
         min-width: 8em;
@@ -239,7 +241,7 @@ pre {
 }
 
 @media not all and (min-width: 800px) {
-    #content-right .info-float {
+    #content-right:not(.edu-workspace-sidebar) .info-float {
         float: none;
         width: 100% !important;
         position: static !important;

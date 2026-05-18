@@ -111,8 +111,8 @@
         margin-bottom: 0.75rem;
     }
 
-    // Improved link rows
-    .link-row {
+    // Improved link rows - only apply to direct children, not nested in sidebar cards
+    > .link-row {
         border-radius: 6px;
         margin: 2px 0;
         padding: 8px 10px;

@@ -12,80 +12,130 @@
 
 body.edu {
     // ── Workspace shell (common-content.html) ────────────────
+    // Improved grid layout with better robustness and clearer structure
+    // CRITICAL: Must override legacy #common-content { display: flex } with !important
+    // Legacy source: content-description.scss line 185-188
+    #common-content.edu-workspace-shell,
     .edu-workspace-shell {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 280px;
-        gap: 24px;
-        align-items: start;
+        display: grid !important; // Override legacy flex layout
+        gap: 24px !important;
+        align-items: start !important;
+        max-width: 1400px !important;
+        margin: 0 auto !important;
+        padding: 0 24px 24px !important; // No top padding — #content.wrapper already provides it
+        flex-direction: initial !important; // Kill legacy row-reverse
+        flex: initial !important; // Kill any flex values
 
-        // DOM order: <aside class="edu-workspace-sidebar"> trước <section class="edu-workspace-main">
-        // Desktop grid-template-columns đảo via grid-column. Mobile dùng order.
+        // Desktop: 2-column layout (main + sidebar)
         @media (min-width: 1024px) {
-            > .edu-workspace-main { grid-column: 1; grid-row: 1; }
-            > .edu-workspace-sidebar { grid-column: 2; grid-row: 1; }
+            grid-template-columns: minmax(320px, 1fr) 280px !important;
+            grid-template-areas: "main sidebar" !important;
         }
 
-        @media (max-width: 1023px) {
-            grid-template-columns: 1fr;
+        // Tablet: single column, sidebar below main
+        @media (min-width: 768px) and (max-width: 1023px) {
+            grid-template-columns: 1fr !important;
+            grid-template-areas:
+                "main"
+                "sidebar" !important;
+            gap: 16px !important;
+            padding: 16px !important;
+        }
+
+        // Mobile: single column, tighter spacing
+        @media (max-width: 767px) {
+            grid-template-columns: 1fr !important;
+            grid-template-areas:
+                "main"
+                "sidebar" !important;
+            gap: 12px !important;
+            padding: 12px !important;
         }
     }
 
+    #content-left.edu-workspace-main,
     .edu-workspace-main {
-        min-width: 0; // grid overflow guard
-
-        // Cap so the briefing card hugs the prose width on ultrawide
-        // monitors instead of leaving a hollow strip between the body
-        // text and the right-hand sidebar.
-        @media (min-width: 1280px) {
-            max-width: 820px;
-        }
+        grid-area: main !important;
+        min-width: 0 !important; // Prevent grid overflow
+        width: 100% !important;
+        max-width: none !important;
+        flex: initial !important; // Kill legacy flex: 86%
+        padding-left: 0 !important;
+        padding-right: 0 !important;
     }
 
+    #content-right.edu-workspace-sidebar,
     .edu-workspace-sidebar {
+        grid-area: sidebar !important;
+        min-width: 0 !important; // Prevent grid overflow
+        width: 100% !important;
+        max-width: none !important;
+        flex: initial !important; // Kill legacy flex values
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+
+        // Desktop: sticky sidebar that scrolls with viewport
         @media (min-width: 1024px) {
             position: sticky;
-            top: 76px;
+            top: 72px; // nav height (56px) + spacing (16px)
             align-self: start;
             max-height: calc(100vh - 96px);
             overflow-y: auto;
             scrollbar-width: thin;
             scrollbar-color: $edu-border transparent;
 
-            &::-webkit-scrollbar { width: 6px; }
-            &::-webkit-scrollbar-thumb { background: $edu-border; border-radius: 3px; }
+            &::-webkit-scrollbar {
+                width: 6px;
+            }
+            &::-webkit-scrollbar-thumb {
+                background: transparent;
+                border-radius: 3px;
+            }
+            &:hover::-webkit-scrollbar-thumb {
+                background: $edu-border;
+            }
         }
 
-        // Mobile: hoist statement above sidebar so reading flow is natural.
-        // Submit CTA stays accessible as the first sidebar item (still 1 tap
-        // since user just scrolls down past the prose).
+        // Tablet & Mobile: static positioning, no sticky
         @media (max-width: 1023px) {
-            order: 2;
+            position: static;
+            max-height: none;
+            overflow-y: visible;
         }
     }
 
-    @media (max-width: 1023px) {
-        .edu-workspace-main { order: 1; }
-    }
-
+    // Sidebar panel is a transparent flex container — cards inside have their own borders
     .edu-workspace-sidebar-panel {
-        background: $edu-bg-paper;
-        border: 1px solid $edu-border;
-        border-radius: $edu-radius-lg;
-        box-shadow: $edu-shadow-sm;
-        padding: 16px;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 16px !important;
+        background: transparent !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        float: none !important;
+        width: 100% !important;
+        max-width: none !important;
+        box-sizing: border-box !important;
+        margin: 0 !important;
     }
 
     // ── Workspace main "briefing" surface ────────────────────
     .edu-workspace-briefing {
         background: $edu-bg-paper;
         border: 1px solid $edu-border;
-        border-radius: $edu-radius-lg;
-        padding: 28px 32px;
-        box-shadow: $edu-shadow-sm;
+        border-radius: 12px;
+        padding: 32px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        // Remove fixed/min height - let content determine height naturally
+        height: auto;
+        display: flex;
+        flex-direction: column;
 
-        @media (max-width: 599px) {
-            padding: 20px 18px;
-            border-radius: $edu-radius-md;
+        @media (max-width: 767px) {
+            padding: 20px;
+            border-radius: 8px;
         }
     }
 
@@ -96,10 +146,11 @@ body.edu {
         gap: 12px;
         flex-wrap: wrap;
         margin-bottom: 16px;
+        margin-top: 0;
 
         h2.title-row {
             margin: 0;
-            font-size: 22px;
+            font-size: 28px;
             line-height: 1.3;
             font-weight: 700;
             color: $edu-text-strong;
@@ -176,7 +227,7 @@ body.edu {
             align-items: center !important;  // beat baseline alignment with mixed mono/ui font
             gap: 6px;
             height: 32px !important;          // lock height regardless of font mix
-            padding: 0 12px !important;
+            padding: 0 20px !important;       // Increased from 16px to 20px for more breathing room
             background: $edu-bg-soft !important;
             border: 1px solid $edu-border !important;
             border-radius: $edu-radius-pill !important;
@@ -231,7 +282,7 @@ body.edu {
     .content-description.screen {
         // Reading width — ~70ch but contained in workspace main
         > *:not(.new-problem-info):not(table):not(pre):not(.embed) {
-            max-width: 75ch;
+            max-width: 65ch;
         }
 
         h1, h2, h3, h4 {
@@ -332,10 +383,11 @@ body.edu {
     .info-float .submit-btn.btn,
     button.submit-btn {
         display: flex !important;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        width: 100%;
+        flex-direction: row !important; // Explicit horizontal layout
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 12px !important;
+        width: 100% !important;
         padding: 12px 16px !important;
         font-size: 15px !important;
         font-weight: 600 !important;
@@ -347,6 +399,11 @@ body.edu {
         text-decoration: none;
         box-shadow: $edu-shadow-sm;
         transition: background $edu-duration-fast $edu-ease-out, transform $edu-duration-fast $edu-ease-out;
+        text-align: center !important; // Ensure text centering
+
+        // Kill any legacy positioning
+        position: relative !important;
+        float: none !important;
 
         // Override DMOJ legacy btn-green / btn-primary / btn-block
         &.btn-green,
@@ -374,16 +431,71 @@ body.edu {
         }
 
         .icon.icon-round {
-            // legacy uses background:#fff !important, kill it
+            // Kill ALL legacy positioning and styling
+            position: static !important;
+            top: auto !important;
+            right: auto !important;
+            bottom: auto !important;
+            left: auto !important;
             background: transparent !important;
             color: #fff !important;
-            width: auto;
-            height: auto;
-            box-shadow: none;
-            border: 0;
+            width: auto !important;
+            height: auto !important;
+            box-shadow: none !important;
+            border: 0 !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+
+            // Flexbox alignment
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-shrink: 0 !important;
         }
 
-        i { color: #fff; }
+        i {
+            color: #fff;
+            margin: 0 !important; // Remove all margins
+        }
+    }
+
+    // Fix icon wrapper to work with flexbox
+    .submit-btn .icon,
+    .submit-btn .icon-round {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-shrink: 0 !important; // Prevent icon from shrinking
+    }
+
+    // Ensure text span doesn't interfere
+    .submit-btn span {
+        display: inline-block !important;
+        line-height: 1 !important;
+    }
+
+    // Explicit overrides for all legacy button class combinations
+    // to ensure edu indigo wins over legacy green from base.scss
+    .submit-btn,
+    .submit-btn.btn-green,
+    .submit-btn.btn-primary,
+    button.submit-btn,
+    .info-float .submit-btn {
+        background: $edu-accent !important;
+        border-color: $edu-accent !important;
+        color: #fff !important;
+
+        &:hover:not(.btn-disabled) {
+            background: $edu-accent-hover !important;
+            border-color: $edu-accent-hover !important;
+        }
+
+        &.btn-disabled {
+            background: $edu-bg-muted !important;
+            border-color: $edu-border !important;
+            color: $edu-text-faint !important;
+        }
     }
 
     .submissions-left {
@@ -395,7 +507,7 @@ body.edu {
         &.no-submissions-left { color: $edu-wa-text; }
     }
 
-    // Sidebar action links
+    // Sidebar action links (legacy styles for non-card context only)
     .info-float {
         hr {
             border: 0;
@@ -403,7 +515,10 @@ body.edu {
             margin: 14px 0;
         }
 
-        .link-row {
+        // Legacy link-row styles - only apply to direct children or CTA section
+        // NOT to links inside .sidebar-actions-card or .sidebar-meta-card
+        > .link-row,
+        .sidebar-section--cta .link-row {
             margin: 4px 0;
 
             a {
@@ -416,11 +531,19 @@ body.edu {
                 text-decoration: none;
                 border-radius: $edu-radius-sm;
                 transition: background $edu-duration-fast $edu-ease-out;
+                width: 100%; // Ensure buttons stretch full width
+                box-sizing: border-box;
 
                 i {
                     color: $edu-text-muted;
                     width: 16px;
                     text-align: center;
+                    flex-shrink: 0; // Prevent icon from shrinking
+                }
+
+                span {
+                    flex: 1; // Allow text to take remaining space
+                    word-wrap: break-word; // Allow long text to wrap
                 }
 
                 &:hover {
@@ -477,6 +600,13 @@ body.edu {
             font-size: 13px;
             color: $edu-text-muted;
             line-height: 1.5;
+
+            // Fix strikethrough on unavailable languages
+            .lang-unavailable {
+                color: $edu-text-faint;
+                font-style: italic;
+                text-decoration: none; // Remove strikethrough
+            }
         }
 
         // Problem info entry (author, time/mem limits per language)
@@ -763,5 +893,316 @@ body.edu {
     .ace_editor {
         border: 1px solid $edu-border !important;
         border-radius: $edu-radius-md !important;
+    }
+
+    // Replace inline style attributes with utility classes
+    .info-float hr {
+        padding-bottom: 0;
+        padding-top: 0;
+    }
+
+    .problem-info-entry {
+        padding-top: 0;
+    }
+
+    // Clearfix utility for style="clear:both"
+    .clearfix {
+        clear: both;
+    }
+
+    .sidebar-section {
+        &--cta {
+            // Submit button section - no card wrapper
+        }
+
+        &--actions,
+        &--meta {
+            background: transparent;
+            border: 0;
+            padding: 0;
+        }
+    }
+
+    // ── Sidebar action links card ────────────────────────────
+    // Must override: widgets.scss .link-row (global flex+padding)
+    //                problem.scss .info-float > .link-row (border-radius, margin)
+    //                _problem-detail.scss .info-float .link-row (edu legacy)
+    .sidebar-actions-card {
+        display: flex !important;
+        flex-direction: column !important;
+        background: $edu-bg-paper !important;
+        border: 1px solid $edu-border !important;
+        border-radius: $edu-radius-lg !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: hidden !important;
+        box-shadow: $edu-shadow-sm !important;
+
+        .link-row {
+            display: block !important; // Override global flex
+            margin: 0 !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+            border-bottom: 1px solid $edu-border !important;
+            transition: none !important;
+            cursor: auto !important;
+            background: transparent !important;
+
+            &:last-child {
+                border-bottom: 0 !important;
+            }
+
+            &:hover {
+                background: transparent !important;
+                transform: none !important;
+                color: inherit !important;
+            }
+
+            a {
+                display: flex !important;
+                align-items: center !important;
+                gap: 10px !important;
+                width: 100% !important;
+                padding: 12px 16px !important;
+                margin: 0 !important;
+                border-radius: 0 !important;
+                color: $edu-text !important;
+                font-size: 14px !important;
+                font-weight: 400 !important;
+                text-decoration: none !important;
+                box-sizing: border-box !important;
+                transition: background $edu-duration-fast $edu-ease-out,
+                            color $edu-duration-fast $edu-ease-out !important;
+
+                &:hover {
+                    background: $edu-bg-soft !important;
+                    color: $edu-accent !important;
+                    text-decoration: none !important;
+                    transform: none !important;
+
+                    i {
+                        color: $edu-accent !important;
+                    }
+                }
+
+                i {
+                    flex-shrink: 0 !important;
+                    width: 18px !important;
+                    text-align: center !important;
+                    color: $edu-text-muted !important;
+                    flex-grow: 0 !important;
+                }
+
+                span {
+                    flex: 1 !important;
+                    flex-grow: 1 !important;
+                }
+
+                .badge {
+                    flex: none !important;
+                    margin-left: 6px !important;
+                    padding: 2px 6px !important;
+                    font-size: 11px !important;
+                    font-weight: 600 !important;
+                    background: $edu-accent-soft !important;
+                    color: $edu-accent !important;
+                    border-radius: $edu-radius-sm !important;
+                    min-width: auto !important;
+                    height: auto !important;
+                }
+            }
+        }
+    }
+
+    // ── Sidebar metadata card ────────────────────────────────
+    .sidebar-meta-card {
+        display: block !important;
+        background: $edu-bg-paper !important;
+        border: 1px solid $edu-border !important;
+        border-radius: $edu-radius-lg !important;
+        padding: 16px !important;
+        margin: 0 !important;
+        overflow: hidden !important;
+        box-shadow: $edu-shadow-sm !important;
+
+        .problem-info-entry,
+        .toggle,
+        .toggled {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        hr {
+            border: 0 !important;
+            border-top: 1px solid $edu-border !important;
+            margin: 12px -16px !important;
+            padding: 0 !important;
+        }
+
+        .toggle {
+            cursor: pointer !important;
+            user-select: none;
+            padding: 8px 0 !important;
+            margin: 0 !important;
+            color: $edu-text !important;
+            font-weight: 500 !important;
+
+            &:hover {
+                color: $edu-accent !important;
+            }
+
+            i {
+                transition: transform $edu-duration-fast $edu-ease-out;
+            }
+
+            &.open i {
+                transform: rotate(90deg);
+            }
+        }
+
+        .toggled {
+            padding: 4px 0 8px !important;
+            color: $edu-text-muted !important;
+            font-size: 14px !important;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .sidebar-actions-card,
+        .sidebar-meta-card {
+            border-radius: $edu-radius-md !important;
+        }
+
+        .sidebar-meta-card {
+            padding: 12px !important;
+
+            hr {
+                margin: 10px -12px !important;
+            }
+        }
+    }
+
+    // ── Action bar wrapper (end of problem description) ──────
+    .problem-actionbar-wrapper {
+        margin-top: 24px;
+        padding: 16px 20px;
+        background: $edu-bg-soft;
+        border: 1px solid $edu-border;
+        border-radius: $edu-radius-lg;
+
+        .actionbar {
+            margin-top: 0;
+            padding-top: 0;
+            border-top: 0;
+        }
+
+        @media (max-width: 767px) {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: $edu-radius-md;
+        }
+    }
+
+    // Clarification link styling
+    .clarify {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        margin-top: 24px;
+        background: $edu-accent-soft;
+        border: 1px solid $edu-accent-border;
+        border-radius: $edu-radius-md;
+        color: $edu-accent;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background $edu-duration-fast $edu-ease-out,
+                    border-color $edu-duration-fast $edu-ease-out;
+
+        &:hover {
+            background: $edu-accent;
+            border-color: $edu-accent;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        i {
+            flex-shrink: 0;
+        }
+    }
+
+    // Utility: toggled elements (replaces style="display:none")
+    .toggled {
+        display: none;
+
+        &.open {
+            display: block;
+        }
+    }
+
+    // ── Focus-visible states for keyboard accessibility ──────
+    .submit-btn:focus-visible,
+    .view-pdf:focus-visible,
+    .clarify:focus-visible {
+        outline: 2px solid $edu-accent !important;
+        outline-offset: 2px;
+    }
+
+    .sidebar-actions-card .link-row a:focus-visible {
+        outline: 2px solid $edu-accent !important;
+        outline-offset: -2px;
+        background: $edu-bg-soft;
+    }
+
+    .sidebar-meta-card .toggle:focus-visible {
+        outline: 2px solid $edu-accent !important;
+        outline-offset: 2px;
+    }
+
+    // ── Table styling for problem statements ─────────────────
+    .content-description.screen {
+        table:not(.highlighttable):not(.codehilitetable) {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px;
+            max-width: 100%;
+            overflow-x: auto;
+            display: block;
+
+            thead th {
+                background: $edu-bg-soft;
+                font-weight: 600;
+                text-align: left;
+                color: $edu-text-strong;
+            }
+
+            th, td {
+                padding: 10px 14px;
+                border: 1px solid $edu-border;
+                vertical-align: top;
+            }
+
+            tbody tr:hover {
+                background: rgba($edu-accent-soft, 0.3);
+            }
+
+            @media (max-width: 767px) {
+                font-size: 13px;
+
+                th, td {
+                    padding: 8px 10px;
+                }
+            }
+        }
+    }
+
+    // ── Comment section spacing ──────────────────────────────
+    #comment-section {
+        margin-top: 24px;
+    }
+
+    .clarifications-area {
+        margin-top: 24px;
     }
 }

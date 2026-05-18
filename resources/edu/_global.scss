@@ -14,11 +14,13 @@ body.edu {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    overflow-x: hidden; // Prevent horizontal scrollbar
 }
 
 body.edu .edu-page {
     background: $edu-bg-cream;
     min-height: 100vh;
+    overflow-x: hidden; // Prevent horizontal scrollbar on page container
     // Sticky footer: page is the column, main grows, footer hugs the bottom
     // even on short pages (e.g. courses with 2 cards or contests with empty
     // state). Without this, .edu-footer floats up against the content card.
@@ -65,6 +67,12 @@ body.edu ::selection {
 body.edu #content,
 body.edu #content-body {
     background: transparent;
+}
+
+// Reduce excessive top padding on #content.wrapper
+// Legacy: padding: 2em (32px) — too much whitespace above title
+body.edu #content.wrapper {
+    padding-top: 1em !important; // 16px instead of 32px
 }
 
 // Sticky footer compromise: ensure the body is at least viewport height so

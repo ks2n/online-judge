@@ -87,9 +87,9 @@ body.edu {
             &:active { transform: translateY(1px); }
 
             &.disabled {
-                opacity: 0.45;
-                cursor: not-allowed;
-                pointer-events: none;
+                opacity: 0.55;
+                cursor: default;
+                pointer-events: auto; // Keep pointer-events so native title tooltip works
             }
         }
 
@@ -236,5 +236,12 @@ body.edu {
         margin-top: 16px;
         padding-top: 16px;
         border-top: 1px dashed $edu-border;
+    }
+
+    // ── Focus-visible for keyboard accessibility ─────────────
+    .actionbar-button:focus-visible {
+        outline: 2px solid $edu-accent;
+        outline-offset: 2px;
+        border-radius: $edu-radius-md;
     }
 }
